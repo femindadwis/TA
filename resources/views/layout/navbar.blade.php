@@ -32,7 +32,7 @@
           </li>
           <li class="onhover-dropdown p-0">
             <button class="btn btn-primary-light" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" type="button"><i data-feather="log-out"></i>Log out</button>
-            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+            <form id="logout-form" action="{{ url('logout') }}" method="POST" class="d-none">
                 @csrf
               </form>
         </li>

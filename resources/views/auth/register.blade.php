@@ -55,7 +55,7 @@
 	        <div class="row m-0">
 	            <div class="col-12 p-0">
 	                <div class="login-card">
-	                    <form class="theme-form login-form" method="POST" action="{{ route('register') }}">
+	                    <form class="theme-form login-form" method="POST" action="{{ url('register') }}">
                             @csrf
     >
 	                        <h4>Create your account</h4>

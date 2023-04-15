@@ -55,7 +55,7 @@
 	            <div class="col-xl-5"><img class="bg-img-cover bg-center" src="https://laravel.pixelstrap.com/viho/assets/images/login/3.jpg" alt="looginpage" /></div>
 	            <div class="col-xl-7 p-0">
 	                <div class="login-card">
-	                    <form class="theme-form login-form" method="POST" action="{{ route('login') }}">
+	                    <form class="theme-form login-form" method="POST" action="{{ url('login') }}">
                             @csrf
 
 	                        <h4>Login</h4>

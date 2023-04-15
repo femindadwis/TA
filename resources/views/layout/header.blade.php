@@ -37,7 +37,7 @@
 <!-- Feather icon-->
 <link rel="stylesheet" type="text/css" href="https://laravel.pixelstrap.com/viho/assets/css/feather-icon.css">
 <!-- Plugins css start-->
-
+<link rel="stylesheet" type="text/css" href="https://laravel.pixelstrap.com/viho/assets/css/datatables.css">
 <link rel="stylesheet" type="text/css" href="https://laravel.pixelstrap.com/viho/assets/css/date-picker.css">
 <!-- Plugins css Ends-->
 <!-- Bootstrap css-->

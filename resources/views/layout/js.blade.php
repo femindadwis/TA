@@ -13,6 +13,8 @@
   <script src="https://laravel.pixelstrap.com/viho/assets/js/datepicker/date-picker/datepicker.js"></script>
   <script src="https://laravel.pixelstrap.com/viho/assets/js/datepicker/date-picker/datepicker.en.js"></script>
   <script src="https://laravel.pixelstrap.com/viho/assets/js/datepicker/date-picker/datepicker.custom.js"></script>
+  <script src="https://laravel.pixelstrap.com/viho/assets/js/datatable/datatables/jquery.dataTables.min.js"></script>
+    <script src="https://laravel.pixelstrap.com/viho/assets/js/datatable/datatables/datatable.custom.js"></script>
     <!-- Plugins JS Ends-->
   <!-- Theme js-->
   <script src="https://laravel.pixelstrap.com/viho/assets/js/script.js"></script>

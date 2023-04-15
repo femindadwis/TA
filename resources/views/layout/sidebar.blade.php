@@ -5,22 +5,9 @@
     <div class="sidebar-user text-center">
         <a class="setting-primary" href="javascript:void(0)"><i data-feather="settings"></i></a><img class="img-90 rounded-circle" src="https://laravel.pixelstrap.com/viho/assets/images/dashboard/1.png" alt="" />
         <div class="badge-bottom"><span class="badge badge-primary">New</span></div>
-        <a href="user-profile"> <h6 class="mt-3 f-14 f-w-600">Emay Walter</h6></a>
-        <p class="mb-0 font-roboto">Human Resources Department</p>
-        <ul>
-            <li>
-                <span><span class="counter">19.8</span>k</span>
-                <p>Follow</p>
-            </li>
-            <li>
-                <span>2 year</span>
-                <p>Experince</p>
-            </li>
-            <li>
-                <span><span class="counter">95.2</span>k</span>
-                <p>Follower</p>
-            </li>
-        </ul>
+        <a href="user-profile"> <h6 class="mt-3 f-14 f-w-600">{{ Auth::user()->name }}</h6></a>
+        <p class="mb-0 font-roboto">{{ Auth::user()->email }}</p>
+
     </div>
     <nav>
         <div class="main-navbar">
@@ -32,17 +19,19 @@
                     </li>
                     <li class="sidebar-main-title">
                         <div>
-                            <h6>General</h6>
+                            <h6>Umum</h6>
                         </div>
                     </li>
                     <li class="dropdown">
-                        <a class="nav-link menu-title link-nav active " href="#"><i data-feather="home"></i><span>Dashboard</span></a>
+                        <a class="nav-link menu-title link-nav" href="#"><i data-feather="home"></i><span>Dashboard</span></a>
                     </li>
                     <li class="dropdown">
-                        <a class="nav-link menu-title " href="javascript:void(0)"><i data-feather="airplay"></i><span>Widgets</span></a>
+                        <a class="nav-link menu-title " href="javascript:void(0)"><i data-feather="airplay"></i><span>Data</span></a>
                         <ul class="nav-submenu menu-content"  style="display: none;">
-                            <li><a href="https://laravel.pixelstrap.com/viho/widgets/general-widget" class="">General</a></li>
-                            <li><a href="https://laravel.pixelstrap.com/viho/widgets/chart-widget" class="">Chart</a></li>
+                            @if (Auth::user()->level == 1 )
+                            <li><a href="/user/user" class="">Data User</a></li>
+                             @endif
+                            <li><a href="/driver/driver" class="">Data Driver</a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
