@@ -10,6 +10,15 @@
   <script src="https://laravel.pixelstrap.com/viho/assets/js/bootstrap/popper.min.js"></script>
   <script src="https://laravel.pixelstrap.com/viho/assets/js/bootstrap/bootstrap.min.js"></script>
   <!-- Plugins JS start-->
+  {{-- maps --}}
+	<script src="https://laravel.pixelstrap.com/viho/assets/js/map-js/mapsjs-core.js"></script>
+    <script src="https://laravel.pixelstrap.com/viho/assets/js/map-js/mapsjs-service.js"></script>
+    <script src="https://laravel.pixelstrap.com/viho/assets/js/map-js/mapsjs-ui.js"></script>
+    <script src="https://laravel.pixelstrap.com/viho/assets/js/map-js/mapsjs-mapevents.js"></script>
+    <script src="https://laravel.pixelstrap.com/viho/assets/js/map-js/custom.js"></script>
+<!-- Plugins JS Ends-->
+ <!-- Plugins JS start-->
+    {{-- date --}}
   <script src="https://laravel.pixelstrap.com/viho/assets/js/datepicker/date-picker/datepicker.js"></script>
   <script src="https://laravel.pixelstrap.com/viho/assets/js/datepicker/date-picker/datepicker.en.js"></script>
   <script src="https://laravel.pixelstrap.com/viho/assets/js/datepicker/date-picker/datepicker.custom.js"></script>

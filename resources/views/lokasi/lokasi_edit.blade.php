@@ -13,26 +13,18 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-header pb-0">
-                    <h5>Tambah Data Driver</h5>
-                </div>
-                <form class="form theme-form" action="/driver/store" method="post">
+                    <h5>Edit Data Lokasi</h5>
+                </div>@foreach($lokasi as $l)
+                <form class="form theme-form" action="/lokasi/update " method="post">
                     @csrf
                     <div class="card-body">
 
                         <div class="row">
                             <div class="col">
                                 <div class="mb-3">
+                                    <input type="hidden" name="id" value="{{ $l->id }}">
                                     <label class="form-label" for="exampleFormControlInput1">Nama</label>
-                                    <input class="form-control" name="name" id="name" type="text" placeholder="Nama" required="required">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col">
-                                <div class="mb-3">
-                                    <label class="form-label" for="exampleFormControlInput1">Email address</label>
-                                    <input class="form-control" id="email" name="email" type="email" placeholder="name@example.com" required="required">
+                                    <input class="form-control" name="name" id="name" type="text" placeholder="Nama" value="{{ $l->name }}" required="required">
                                 </div>
                             </div>
                         </div>
@@ -41,11 +33,28 @@
                             <div class="col">
                                 <div class="mb-3">
                                     <label class="form-label" for="exampleFormControlInput1">Alamat</label>
-                                    <input class="form-control" name="alamat" id="alamat" type="text" placeholder="Alamat" required="required">
+                                    <input class="form-control" id="alamat" name="alamat" type="alamat" placeholder="Alamat" value="{{ $l->alamat }}" required="required">
                                 </div>
                             </div>
                         </div>
 
+                        <div class="row">
+                            <div class="col">
+                                <div class="mb-3">
+                                    <label class="form-label" for="exampleFormControlInput1">Longitude</label>
+                                    <input class="form-control" name="longitude" id="longitude" type="text" placeholder="Longitude" value="{{ $l->longitude }}" required="required">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col">
+                                <div class="mb-3">
+                                    <label class="form-label" for="exampleFormControlInput1">Latitude</label>
+                                    <input class="form-control" name="latitude" id="latitude" type="text" placeholder="latitude" value="{{ $l->latitude }}" required="required">
+                                </div>
+                            </div>
+                        </div>
 
                         </div>
 
@@ -54,6 +63,7 @@
                         <input class="btn btn-light" type="reset" value="Cancel" />
                     </div>
                 </form>
+                @endforeach
             </div>
 
         </div></div>

@@ -23,7 +23,10 @@
                         </div>
                     </li>
                     <li class="dropdown">
-                        <a class="nav-link menu-title link-nav" href="#"><i data-feather="home"></i><span>Dashboard</span></a>
+                        <a class="nav-link menu-title link-nav" href="/dashboard"><i data-feather="home"></i><span>Dashboard</span></a>
+                    </li>
+                    <li class="dropdown">
+                        <a class="nav-link menu-title link-nav" href="/maps/maps"><i data-feather="home"></i><span>Maps</span></a>
                     </li>
                     <li class="dropdown">
                         <a class="nav-link menu-title " href="javascript:void(0)"><i data-feather="airplay"></i><span>Data</span></a>
@@ -32,8 +35,10 @@
                             <li><a href="/user/user" class="">Data User</a></li>
                              @endif
                             <li><a href="/driver/driver" class="">Data Driver</a></li>
+                            <li><a href="/lokasi/lokasi" class="">Data Lokasi</a></li>
                         </ul>
                     </li>
+
                     <li class="dropdown">
                         <a class="nav-link menu-title " href="javascript:void(0)"><i data-feather="layout"></i><span>Page layout</span></a>
                         <ul class="nav-submenu menu-content"  style="display: none;">

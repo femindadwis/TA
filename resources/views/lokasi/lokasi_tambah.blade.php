@@ -13,9 +13,9 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-header pb-0">
-                    <h5>Tambah Data Driver</h5>
+                    <h5>Tambah Lokasi</h5>
                 </div>
-                <form class="form theme-form" action="/driver/store" method="post">
+                <form class="form theme-form" action="/lokasi/store" method="post">
                     @csrf
                     <div class="card-body">
 
@@ -31,8 +31,8 @@
                         <div class="row">
                             <div class="col">
                                 <div class="mb-3">
-                                    <label class="form-label" for="exampleFormControlInput1">Email address</label>
-                                    <input class="form-control" id="email" name="email" type="email" placeholder="name@example.com" required="required">
+                                    <label class="form-label" for="exampleFormControlInput1">Alamat</label>
+                                    <input class="form-control" id="alamat" name="alamat" type="text" placeholder="Alamat" required="required">
                                 </div>
                             </div>
                         </div>
@@ -40,12 +40,20 @@
                         <div class="row">
                             <div class="col">
                                 <div class="mb-3">
-                                    <label class="form-label" for="exampleFormControlInput1">Alamat</label>
-                                    <input class="form-control" name="alamat" id="alamat" type="text" placeholder="Alamat" required="required">
+                                    <label class="form-label" for="exampleFormControlInput1">Longitude</label>
+                                    <input class="form-control" name="longitude" id="longitude" type="text" placeholder="Longitude" required="required">
                                 </div>
                             </div>
                         </div>
 
+                        <div class="row">
+                            <div class="col">
+                                <div class="mb-3">
+                                    <label class="form-label" for="exampleFormControlInput1">Latitude</label>
+                                    <input class="form-control" name="latitude" id="latitude" type="text" placeholder="Latitude" required="required">
+                                </div>
+                            </div>
+                        </div>
 
                         </div>
 
