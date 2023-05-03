@@ -2,9 +2,57 @@
 @include('layout.navbar')
 @include('layout.sidebar')
 
-<div class="page-body">
-    <!-- Container-fluid starts-->
+<style>
+    #map-canvas {
+        width: 100%;
+        height: 500px;
+    }
+</style>
 
+<script type="text/javascript">
+    var marker;
+    var locations
+    function initialize() {
+        var mapCanvas = document.getElementById('map-canvas');
+        var mapOptions = {
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        }
+        var map = new google.maps.Map(mapCanvas, mapOptions);
+        var infoWindow = new google.maps.InfoWindow;
+        var bounds = new google.maps.LatLngBounds();
+        function bindInfoWindow(marker, map, infoWindow, html) {
+            google.maps.event.addListener(marker, 'click', function() {
+                infoWindow.setContent(html);
+                infoWindow.open(map, marker);
+            });
+        }
+        function addMarker(lat, lng, info) {
+            var pt = new google.maps.LatLng(lat, lng);
+            bounds.extend(pt);
+            var marker = new google.maps.Marker({
+                map: map,
+                position: pt
+            });
+            map.fitBounds(bounds);
+            bindInfoWindow(marker, map, infoWindow, info);
+        }
+
+        const items = @json($locations);
+
+        items.forEach(item => {
+            addMarker(
+                item.lat,
+                item.lng,
+                "<b>Nama Lokasi : </b>" + item.name +
+                "<br> <b>Latitude : </b> " + item.lat +
+                "<br> <b>Longtitude : </b>" + item.lng,);
+        })
+
+    }
+    google.maps.event.addDomListener(window, 'load', initialize);
+</script>
+
+<div class="page-body">
     <div class="container-fluid">
         <div class="row">
             <div class="col-xl-6">
@@ -14,37 +62,16 @@
                         <span>Display a map at a specified location and zoom level.</span>
                     </div>
                     <div class="card-body">
-                        <div class="map-js-height" id="map">
-                            <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBmBL3_MRsk7qiOqSXgNr-x59cz_vXU9Fg"></script>
-                            <script>
-                                function initMap() {
-                                    var map = new google.maps.Map(document.getElementById('map'), {
-                                        center: {lat: -6.327583, lng: 108.324936},
-                                        zoom: 12
-                                    });
-                                }
-                            </script>
-                            <script async defer
-                            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB2Xd4GJtDxGPUI7nlMV-I99x5EQqYqhGc&callback=initMap">
-                        </script>
+                        <div id="map-canvas"></div>
                     </div>
                 </div>
             </div>
         </div>
-        {{-- <div id="map"></div>
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBmBL3_MRsk7qiOqSXgNr-x59cz_vXU9Fg"></script>
-        <script>
-            function initMap() {
-                var map = new google.maps.Map(document.getElementById('map'), {
-                    center: {lat: -6.175392, lng: 106.827153},
-                    zoom: 12
-                });
-            }
-        </script>
-        <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBmBL3_MRsk7qiOqSXgNr-x59cz_vXU9Fg&callback=initMap">
-    </script> --}}
+    </div>
+</div>
 
-</div></div></div></div></div></div></div>
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB2Xd4GJtDxGPUI7nlMV-I99x5EQqYqhGc&callback=initialize"></script>
+
 @include('layout.footer')
 @include('layout.js')

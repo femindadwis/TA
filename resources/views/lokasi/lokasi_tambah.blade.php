@@ -41,7 +41,7 @@
                             <div class="col">
                                 <div class="mb-3">
                                     <label class="form-label" for="exampleFormControlInput1">Longitude</label>
-                                    <input class="form-control" name="longitude" id="longitude" type="text" placeholder="Longitude" required="required">
+                                    <input class="form-control" name="lng" id="lng" type="text" placeholder="lng" required="required">
                                 </div>
                             </div>
                         </div>
@@ -50,7 +50,7 @@
                             <div class="col">
                                 <div class="mb-3">
                                     <label class="form-label" for="exampleFormControlInput1">Latitude</label>
-                                    <input class="form-control" name="latitude" id="latitude" type="text" placeholder="Latitude" required="required">
+                                    <input class="form-control" name="lat" id="lat" type="text" placeholder="lat" required="required">
                                 </div>
                             </div>
                         </div>

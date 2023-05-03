@@ -17,8 +17,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('alamat');
-            $table->string('longitude');
-            $table->string('latitude');
+            $table->string('lng');
+            $table->string('lat');
             $table->timestamps();
         });
     }

@@ -33,8 +33,8 @@ class LokasiController extends Controller
         DB::table('lokasi')->insert([
             'name' => $request->name,
             'alamat' => $request->alamat,
-            'longitude' => $request->longitude,
-            'latitude' => $request->latitude,
+            'lng' => $request->lng,
+            'lat' => $request->lat,
         ]);
         // alihkan halaman lokasi
         return redirect('/lokasi/lokasi');
@@ -57,8 +57,8 @@ class LokasiController extends Controller
         DB::table('lokasi')->where('id',$request->id)->update([
             'name' => $request->name,
             'alamat' => $request->alamat,
-            'longitude' => $request->longitude,
-            'latitude' => $request->latitude,
+            'lng' => $request->lng,
+            'lat' => $request->lat,
         ]);
         // alihkan halaman ke halaman lokasi
         return redirect('/lokasi/lokasi')->with('success', 'lokasi Telah di Ubah!');
