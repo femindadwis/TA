@@ -6,6 +6,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\LokasiController;
 use App\Http\Controllers\MapsController;
+use App\Http\Controllers\ProfilController;
+use App\Http\Controllers\JarakController;
 use App\Http\Controllers\Autentikasi\AutentikasiController;
 /*
 |--------------------------------------------------------------------------
@@ -32,6 +34,7 @@ Route::group(["middleware" => ["guest"]], function() {
 });
 
 Route::group(['middleware' => 'auth'], function(){
+    Route::post('/logout', [AutentikasiController::class, 'logout'])->name('logout');
     Route::get('/dashboard', function(){return view('dashboard');});
     Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
 
@@ -52,22 +55,33 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/driver/hapus/{id}', [DriverController::class, 'hapus']);
 
     // ROUTE CRUD LOKASI
+
     Route::get('/lokasi/lokasi', [LokasiController::class, 'index'])->name('lokasi');
     Route::get('/lokasi/tambah', [LokasiController::class, 'tambah']);
     Route::post('/lokasi/store', [LokasiController::class, 'store']);
-    Route::get('/lokasi/edit/{id}', [LokasiController::class, 'edit']);
+    Route::get('/lokasi/edit/{id}', [LokasiController::class, 'edit'])->name('lokasi.edit');
     Route::post('/lokasi/update', [LokasiController::class, 'update']);
     Route::get('/lokasi/hapus/{id}', [LokasiController::class, 'hapus']);
 
     // ROUTE MAPS
     Route::get('/maps/maps', [MapsController::class, 'index'])->name('maps');
+
+    // ROUTE CRUD PROFIL
+    Route::get('/profil/profil', [ProfilController::class, 'index'])->name('profil');
+
+     // ROUTE JARAK
+    Route::get('/jarak/jarak', [JarakController::class, 'index'])->name('jarak');
+    Route::post('/jarak/create', [JarakController::class, 'create'])->name('jarak.create');
+
+
+
 });
 
 
 // Auth::routes();
 
-Route::group(["middleware" => ["cek_login"]], function() {
-    Route::get('/dashboard', [App\Http\Controllers\HomeController::class, 'index']);
+// Route::group(["middleware" => ["cek_login"]], function() {
+//     Route::get('/dashboard', [App\Http\Controllers\HomeController::class, 'index']);
 
-    Route::post("/logout", [AutentikasiController::class, "logout"]);
-});
+//     Route::post("/logout", [AutentikasiController::class, "logout"]);
+// });

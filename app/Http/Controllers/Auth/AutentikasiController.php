@@ -8,4 +8,8 @@ use Illuminate\Http\Request;
 class AutentikasiController extends Controller
 {
     //
+
+    public function logout(){
+
+    }
 }
