@@ -16,3 +16,9 @@ use App\Http\Controllers;
 //Auth
 Route::post('/login', [Controllers\Api\AuthApiController::class, 'login']);
 Route::post('/logout', [Controllers\Api\AuthApiController::class, 'logout'])->middleware('auth:sanctum');
+
+//Lokasi
+Route::get('/get-lokasi', [Controllers\Api\LokasiApiController::class, 'index'])->middleware('auth:sanctum');
+Route::post('/add-lokasi', [Controllers\Api\LokasiApiController::class, 'store'])->middleware('auth:sanctum');
+Route::put('/update-lokasi', [Controllers\Api\LokasiApiController::class, 'update'])->middleware('auth:sanctum');
+Route::delete('/delete-lokasi', [Controllers\Api\LokasiApiController::class, 'destroy'])->middleware('auth:sanctum');
