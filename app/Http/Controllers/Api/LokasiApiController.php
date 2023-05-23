@@ -19,6 +19,7 @@ class LokasiApiController extends Controller
     {
         $user = Auth::user();
         $lokasi = Lokasi::where('user_id', $user->id)->get();
+        // $lokasi = Lokasi::all();
         return response()->json(['lokasi' => $lokasi]);
     }
 
@@ -36,13 +37,13 @@ class LokasiApiController extends Controller
             return response()->json(['error' => $validator->errors()]);
         }
 
-        $user = Auth::user();
         $lokasi = new Lokasi();
-        $lokasi->user_id = $user->id;
+        $lokasi->user_id = Auth::user()->id;
         $lokasi->name = $request->name;
         $lokasi->alamat = $request->alamat;
         $lokasi->lng = $request->long;
         $lokasi->lat = $request->lat;
+        $lokasi->foto = $request->foto;
         $lokasi->save();
         return response()->json(['message' => 'Lokasi created!']);
     }
@@ -57,8 +58,10 @@ class LokasiApiController extends Controller
         }
         //validasi data masuk
         $validator = Validator::make($request->all(), [
-            'title' => 'required',
-            'description' => 'required',
+            'name' => 'required',
+            'alamat' => 'required',
+            'lng' => 'required',
+            'lat' => 'required',
         ]);
         //bila gagal validasi
         if ($validator->fails()) {

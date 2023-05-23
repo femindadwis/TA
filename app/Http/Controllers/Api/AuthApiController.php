@@ -10,26 +10,24 @@ class AuthApiController extends Controller
 {
     public function login(Request $request)
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
+        $credentials = $request->only('email', 'password');
 
-        if (!Auth::attempt($credentials)) {
-            return response()->json(['message' => 'Unauthorized']);
+        if (Auth::attempt($credentials)) {
+            // Jika autentikasi berhasil
+            $user = Auth::user();
+            $user->tokens()->delete(); //jika pernah login hapus token lama
+            $token = $user->createToken('auth_token')->plainTextToken; //ignore error
+
+            return response()->json([
+                'message' => 'Login successful',
+                'access_token' => $token,
+            ]);
+        } else {
+            // Jika autentikasi gagal
+            return response()->json([
+                'message' => 'Invalid email or password',
+            ], 401);
         }
-
-        $user = $request->user();
-        // Hapus token lama
-        $user->tokens()->delete();
-        // Generate token baru
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        return response()->json([
-            'access_token' => $token,
-            'status' => 'success',
-            'message' => 'Login successful',
-        ]);
     }
 
     public function logout(Request $request)
