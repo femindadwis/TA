@@ -17,5 +17,6 @@ class Lokasi extends Model
         'alamat',
         'lng',
         'lat',
+        'foto',
     ];
 }

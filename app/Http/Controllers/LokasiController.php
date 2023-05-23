@@ -29,12 +29,16 @@ class LokasiController extends Controller
 
     public function store(Request $request)
     {
+        if($request->hasFile('foto')){
+            $foto = $request->file('foto')->store('Lokasi');
+        }
         // insert data ke table lokasi
         DB::table('lokasi')->insert([
             'name' => $request->name,
             'alamat' => $request->alamat,
             'lng' => $request->lng,
             'lat' => $request->lat,
+            'foto' => $foto,
         ]);
         // alihkan halaman lokasi
         return redirect('/lokasi/lokasi');
@@ -53,12 +57,15 @@ class LokasiController extends Controller
     public function update(Request $request)
     {
         // update data lokasi
-
+        if($request->hasFile('foto')){
+            $foto = $request->file('foto')->store('Lokasi');
+        }
         DB::table('lokasi')->where('id',$request->id)->update([
             'name' => $request->name,
             'alamat' => $request->alamat,
             'lng' => $request->lng,
             'lat' => $request->lat,
+            'foto' => $foto,
         ]);
         // alihkan halaman ke halaman lokasi
         return redirect('/lokasi/lokasi')->with('success', 'lokasi Telah di Ubah!');

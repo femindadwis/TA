@@ -12,7 +12,7 @@
             <div class="col-xl-4">
                 <div class="card">
                     <div class="card-header pb-0">
-                        <h4 class="card-title mb-0">My Profile</h4>
+                        <h4 class="card-title mb-0">Edit Profile</h4>
                         <div class="card-options">
                             <a class="card-options-collapse" href="#" data-bs-toggle="card-collapse"><i class="fe fe-chevron-up"></i></a><a class="card-options-remove" href="#" data-bs-toggle="card-remove"><i class="fe fe-x"></i></a>
                         </div>
@@ -22,7 +22,7 @@
                             <div class="row mb-2">
                                 <div class="profile-title">
                                     <div class="media">
-                                        <img class="img-70 rounded-circle" alt="" src="https://laravel.pixelstrap.com/viho/assets/images/user/7.jpg" />
+                                        <img class="img-70 rounded-circle" alt="" src="{{ asset('template_dashboard/assets/images/user/7.jpg') }}">
                                         <div class="media-body">
                                             <h3 class="mb-1 f-20 txt-primary">MARK JECNO</h3>
                                             <p class="f-12">DESIGNER</p>
@@ -30,22 +30,26 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="mb-3">
-                                <h6 class="form-label">Bio</h6>
-                                <textarea class="form-control" rows="5">On the other hand, we denounce with righteous indignation</textarea>
-                            </div>
+                            {{-- <div class="mb-3">
+                                <label class="form-label">Nama</label>
+                                <input class="form-control" placeholder="" />
+                            </div> --}}
                             <div class="mb-3">
                                 <label class="form-label">Email-Address</label>
-                                <input class="form-control" placeholder="your-email@domain.com" />
+                                <input class="form-control" placeholder="" />
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Password</label>
                                 <input class="form-control" type="password" value="password" />
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Website</label>
-                                <input class="form-control" placeholder="http://Uplor .com" />
+                                <label class="form-label">Konfirmasi Password</label>
+                                <input class="form-control" type="password" value="password" />
                             </div>
+                            <div class="mb-3">
+                                <label class="form-label">Foto Profile</label>
+                                <input class="form-control" type="file" value="" />
+                            </div><br>
                             <div class="form-footer">
                                 <button class="btn btn-primary btn-block">Save</button>
                             </div>
@@ -56,17 +60,41 @@
             <div class="col-xl-8">
                 <form class="card">
                     <div class="card-header pb-0">
-                        <h4 class="card-title mb-0">Edit Profile</h4>
+
                         <div class="card-options">
                             <a class="card-options-collapse" href="#" data-bs-toggle="card-collapse"><i class="fe fe-chevron-up"></i></a><a class="card-options-remove" href="#" data-bs-toggle="card-remove"><i class="fe fe-x"></i></a>
                         </div>
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-5">
+                            <div class="col-md-12">
                                 <div class="mb-3">
-                                    <label class="form-label">Company</label>
-                                    <input class="form-control" type="text" placeholder="Company" />
+                                    <label class="form-label">Nama Lengkap</label>
+                                    <input class="form-control" type="text" placeholder="" />
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label class="form-label">Jabatan</label>
+                                    <input class="form-control" type="text" placeholder="" />
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label class="form-label">Nomor Telepon</label>
+                                    <input class="form-control" type="text" placeholder="" />
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label class="form-label">Jenis Kelamin</label>
+                                    <input class="form-control" type="text" placeholder="" />
+                                </div>
+                            </div>
+                            {{-- <div class="col-md-5"> --}}
+                                {{-- <div class="mb-3">
+                                    <label class="form-label">Alamat</label>
+                                    <input class="form-control" type="textarea" placeholder="" />
                                 </div>
                             </div>
                             <div class="col-sm-6 col-md-3">
@@ -122,17 +150,17 @@
                                         <option value="4">Aus</option>
                                     </select>
                                 </div>
-                            </div>
+                            </div> --}}
                             <div class="col-md-12">
                                 <div>
-                                    <label class="form-label">About Me</label>
-                                    <textarea class="form-control" rows="5" placeholder="Enter About your description"></textarea>
+                                    <label class="form-label">Alamat</label>
+                                    <textarea class="form-control" rows="5" placeholder="Enter About your description"></textarea><br><br>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="card-footer text-end">
-                        <button class="btn btn-primary" type="submit">Update Profile</button>
+                    {{-- <div class="card-footer text-end"> --}}
+                        {{-- <button class="btn btn-primary" type="submit">Update Profile</button> --}}
                     </div>
                 </form>
             </div></div></div></div></div></div></div></div>

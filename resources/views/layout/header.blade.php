@@ -10,8 +10,8 @@
     <meta name="keywords"
         content="admin template, viho admin template, dashboard template, flat admin template, responsive admin template, web app">
     <meta name="author" content="pixelstrap">
-    <link rel="icon" href="https://laravel.pixelstrap.com/viho/assets/images/favicon.png" type="image/x-icon">
-    <link rel="shortcut icon" href="https://laravel.pixelstrap.com/viho/assets/images/favicon.png" type="image/x-icon">
+    <link rel="icon" href="{{ asset('template_dashboard/assets/images/favicon.png') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('template_dashboard/assets/images/favicon.png ') }}" type="image/x-icon">
     <title>DASHBOARD
 </title>
     <!-- Google font-->
@@ -27,28 +27,28 @@
         rel="stylesheet">
     <!-- Font Awesome-->
     <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="https://laravel.pixelstrap.com/viho/assets/css/fontawesome.css">
+    <link rel="stylesheet" type="text/css" href="{{ asset('template_dashboard/assets/css/fontawesome.css') }}">
 <!-- ico-font-->
-<link rel="stylesheet" type="text/css" href="https://laravel.pixelstrap.com/viho/assets/css/icofont.css">
+<link rel="stylesheet" type="text/css" href="{{ asset('template_dashboard/assets/css/icofont.css') }}">
 <!-- Themify icon-->
-<link rel="stylesheet" type="text/css" href="https://laravel.pixelstrap.com/viho/assets/css/themify.css">
+<link rel="stylesheet" type="text/css" href="{{ asset('template_dashboard/assets/css/themify.css') }}">
 <!-- Flag icon-->
-<link rel="stylesheet" type="text/css" href="https://laravel.pixelstrap.com/viho/assets/css/flag-icon.css">
+<link rel="stylesheet" type="text/css" href="{{ asset('template_dashboard/assets/css/flag-icon.css') }}">
 <!-- Feather icon-->
-<link rel="stylesheet" type="text/css" href="https://laravel.pixelstrap.com/viho/assets/css/feather-icon.css">
+<link rel="stylesheet" type="text/css" href="{{ asset('template_dashboard/assets/css/feather-icon.css') }}">
 <!-- Plugins css start-->
-<link rel="stylesheet" type="text/css" href="https://laravel.pixelstrap.com/viho/assets/css/mapsjs-ui.css">
-<link rel="stylesheet" type="text/css" href="https://laravel.pixelstrap.com/viho/assets/css/datatables.css">
-<link rel="stylesheet" type="text/css" href="https://laravel.pixelstrap.com/viho/assets/css/date-picker.css">
+<link rel="stylesheet" type="text/css" href="{{ asset('template_dashboard/assets/css/mapsjs-ui.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ asset('template_dashboard/assets/css/datatables.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ asset('template_dashboard/assets/css/date-picker.css') }}">
 <!-- Plugins css Ends-->
 <!-- Bootstrap css-->
-<link rel="stylesheet" type="text/css" href="https://laravel.pixelstrap.com/viho/assets/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="{{ asset('template_dashboard/assets/css/bootstrap.css') }}">
 <!-- App css-->
 
 <link rel="preload" as="style" href="https://laravel.pixelstrap.com/viho/build/assets/style-48b1edf8.css" /><link rel="modulepreload" href="https://laravel.pixelstrap.com/viho/build/assets/app-e4a857d6.js" /><link rel="stylesheet" href="https://laravel.pixelstrap.com/viho/build/assets/style-48b1edf8.css" /><script type="module" src="https://laravel.pixelstrap.com/viho/build/assets/app-e4a857d6.js"></script>
-<link id="color" rel="stylesheet" href="https://laravel.pixelstrap.com/viho/assets/css/color-1.css" media="screen">
+<link id="color" rel="stylesheet" href="{{ asset('template_dashboard/assets/css/color-1.css') }}" media="screen">
 <!-- Responsive css-->
-<link rel="stylesheet" type="text/css" href="https://laravel.pixelstrap.com/viho/assets/css/responsive.css"></head>
+<link rel="stylesheet" type="text/css" href="{{ asset('template_dashboard/assets/css/responsive.css') }}"></head>
 
 
                     <body>

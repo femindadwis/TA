@@ -52,7 +52,9 @@
                                 <div class="mb-3">
                                     <label class="form-label" for="exampleFormControlSelect9">Role</label>
                                     <select class="form-select digits" name="level" id="level" value="{{ $u->level }}" placeholder="Role" required="required">
+                                        @if (Auth::user()->level == 1)
                                         <option value="1" >Super Admin </option>
+                                        @endif
                                         <option value="2" >Admin </option>
                                         <option value="3" >Driver </option>
 

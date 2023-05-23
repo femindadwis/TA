@@ -8,6 +8,7 @@ use App\Http\Controllers\LokasiController;
 use App\Http\Controllers\MapsController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\JarakController;
+use App\Http\Controllers\DriverLokasiController;
 use App\Http\Controllers\Autentikasi\AutentikasiController;
 /*
 |--------------------------------------------------------------------------
@@ -55,7 +56,6 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/driver/hapus/{id}', [DriverController::class, 'hapus']);
 
     // ROUTE CRUD LOKASI
-
     Route::get('/lokasi/lokasi', [LokasiController::class, 'index'])->name('lokasi');
     Route::get('/lokasi/tambah', [LokasiController::class, 'tambah']);
     Route::post('/lokasi/store', [LokasiController::class, 'store']);
@@ -73,8 +73,13 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/jarak/jarak', [JarakController::class, 'index'])->name('jarak');
     Route::post('/jarak/create', [JarakController::class, 'create'])->name('jarak.create');
 
-
-
+    // driver_lokasi
+    Route::get('/driver_lokasi/driver_lokasi', [DriverLokasiController::class, 'index'])->name('driver_lokasi');
+    Route::get('/driver_lokasi/tambah', [DriverLokasiController::class, 'tambah']);
+    Route::post('/driver_lokasi/store', [DriverLokasiController::class, 'store']);
+    Route::get('/driver_lokasi/edit/{id}', [DriverLokasiController::class, 'edit']);
+    Route::post('/driver_lokasi/update', [DriverLokasiController::class, 'update']);
+    Route::get('/driver_lokasi/hapus/{id}', [DriverLokasiController::class, 'hapus']);
 });
 
 

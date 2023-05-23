@@ -15,7 +15,7 @@
                 <div class="card-header pb-0">
                     <h5>Tambah Lokasi</h5>
                 </div>
-                <form class="form theme-form" action="/lokasi/store" method="post">
+                <form class="form theme-form" action="/lokasi/store" method="post" enctype="multipart/form-data">
                     @csrf
                     <div class="card-body">
 
@@ -41,7 +41,7 @@
                             <div class="col">
                                 <div class="mb-3">
                                     <label class="form-label" for="exampleFormControlInput1">Longitude</label>
-                                    <input class="form-control" name="lng" id="lng" type="text" placeholder="lng" required="required">
+                                    <input class="form-control" name="lng" id="lng" type="text" placeholder="Longitude" required="required">
                                 </div>
                             </div>
                         </div>
@@ -50,7 +50,16 @@
                             <div class="col">
                                 <div class="mb-3">
                                     <label class="form-label" for="exampleFormControlInput1">Latitude</label>
-                                    <input class="form-control" name="lat" id="lat" type="text" placeholder="lat" required="required">
+                                    <input class="form-control" name="lat" id="lat" type="text" placeholder="Latitude" required="required">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col">
+                                <div class="mb-3">
+                                    <label class="form-label" for="exampleFormControlInput1">Foto</label>
+                                    <input class="form-control" name="foto" id="foto" type="file" placeholder="Foto" required="required">
                                 </div>
                             </div>
                         </div>

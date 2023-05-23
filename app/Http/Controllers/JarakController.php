@@ -21,33 +21,47 @@ class JarakController extends Controller
         return view('jarak.jarak', $data);
     }
 
-    public function form()
-    {
-        return view('jarak.jarak_tambah');
-    }
+    // public function form()
+    // {
+    //     return view('jarak.jarak_tambah');
+    // }
 
-    public function create(Request $request)
+    public function create()
     {
         $data = $this->logic();
         $locations = $data['location'];
-        $distances = $data['distance']; 
+        $distances = $data['distance'];
 
-        // Memasukkan data ke dalam model Jarak
+        $jarak = Jarak::whereIn('loc_1', $locations->pluck('name')->toArray())->count();
         foreach ($distances as $index => $distance) {
             $loc_1 = $locations->where('id', $index + 1)->first();
             foreach ($distance as $locationId => $value) {
                 $loc_2 = $locations->where('id', $locationId)->first();
 
-                Jarak::create([
-                    'loc_1' => $loc_1['name'],
-                    'loc_2' => $loc_2['name'],
+                $loc1Name = $loc_1 ? $loc_1['name'] : "";
+                $loc2Name = $loc_2 ? $loc_2['name'] : "";
+                $create = [
+                    'loc_1' => $loc1Name,
+                    'loc_2' => $loc2Name,
                     'distance' => $value
-                ]);
+                ];
+
+                // Cek apakah data sudah ada dalam database
+                $existingData = Jarak::where('loc_1', $loc1Name)
+                    ->where('loc_2', $loc2Name)
+                    ->where('distance', $value)
+                    ->first();
+
+                if (!$existingData) {
+                    Jarak::create($create);
+                }
             }
         }
 
-        return redirect('jarak/jarak'); // Perbaikan: gunakan 'redirect' untuk mengarahkan ke URL tertentu
+        return redirect('jarak/jarak');
     }
+
+
 
     private function logic()
     {

@@ -8,7 +8,7 @@
 <div class="page-header">
 <div class="row">
 
- <!-- Feature Unable /Disable Order Starts-->
+ <!-- Tabel-->
  <div class="col-sm-12">
     <div class="card">
         <div class="card-header">
@@ -25,6 +25,9 @@
                             <th>No</th>
                             <th>Nama</th>
                             <th>Alamat</th>
+                            <th>Latitude</th>
+                            <th>Longitude</th>
+                            <th>Foto</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -34,6 +37,9 @@
                             <td>{{ $no++ }}</td>
                             <td>{{ $l->name }} </td>
                             <td>{{ $l->alamat }} </td>
+                            <td>{{ $l->lat }} </td>
+                            <td>{{ $l->lng }} </td>
+                            <td><img src="{{ asset('storage/'.$l->foto) }}" alt="" height="100px" width="100px"> </td>
 
 
                             <td>

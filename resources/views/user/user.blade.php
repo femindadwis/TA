@@ -31,6 +31,7 @@
                     </thead>
                     <tbody>
                         @foreach($user as $u)
+                        @if ($u->level != 1 && !(Auth::user()->level == 2 && $u->level == 1))
                         <tr>
                             <td>{{ $no++ }}</td>
                             <td>{{ $u->name }} </td>
@@ -58,6 +59,7 @@
                               </td>
                         </tr>
                     </tbody>
+                    @endif
                     @endforeach
                     </table>
                 </div>

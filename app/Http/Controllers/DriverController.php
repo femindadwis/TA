@@ -6,31 +6,34 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use App\Models\User;
 
 class DriverController extends Controller
 {
     public function index()
     {
         $driver = DB::table('driver')->get();
-
+        $user = DB::table('users')->get();
         // mengirim data pegawai ke view index
         // return view('driver/driver',['driver' => $driver]);
-        return view ('driver/driver', ['driver' => $driver]);
+        return view ('driver/driver', ['driver' => $driver], ['user' => $user]);
     }
 
     public function tambah()
     {
-
+        $user = DB::table('users')->where('level', '3')->get();
         // memanggil view tambah
-        return view('driver/driver_tambah');
+        return view('driver/driver_tambah', ['user' => $user]);
 
     }
 
     public function store(Request $request)
     {
+        $user = User::findOrFail($request->user_id);
         // insert data ke table driver
         DB::table('driver')->insert([
-            'name' => $request->name,
+            'user_id' => $request->user_id,
+            'name' => $user['name'],
             'email' => $request->email,
             'alamat' => $request->alamat,
         ]);
@@ -53,6 +56,7 @@ class DriverController extends Controller
         // update data driver
 
         DB::table('driver')->where('id',$request->id)->update([
+            'user_id' => $request->user_id,
             'name' => $request->name,
             'email' => $request->email,
             'alamat' => $request->alamat,

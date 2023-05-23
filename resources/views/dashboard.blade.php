@@ -17,16 +17,17 @@
         </div>
     </div>
     <div class="container-fluid">
-        <div class="row">
+        <div class="row">@if (Auth::user()->level == 1 || Auth::user()->level == 2 )
             <div class="col-sm-6 col-xl-3 col-lg-6">
                 <div class="card o-hidden border-0">
                     <div class="bg-primary b-r-4 card-body">
                         <div class="media static-top-widget">
-                            <div class="align-self-center text-center"><i data-feather="database"></i></div>
+
+                            <div class="align-self-center text-center"><i data-feather="truck"></i></div>
                             <div class="media-body">
-                                <span class="m-0">Earnings</span>
-                                <h4 class="mb-0 counter">6659</h4>
-                                <i class="icon-bg" data-feather="database"></i>
+                                <span class="m-0">Driver</span>
+                                <h4 class="mb-0 counter">{{$driver}}</h4>
+                                <i class="icon-bg" data-feather="truck"></i>
                             </div>
                         </div>
                     </div>
@@ -36,11 +37,11 @@
                 <div class="card o-hidden border-0">
                     <div class="bg-secondary b-r-4 card-body">
                         <div class="media static-top-widget">
-                            <div class="align-self-center text-center"><i data-feather="shopping-bag"></i></div>
+                            <div class="align-self-center text-center"><i data-feather="map-pin"></i></div>
                             <div class="media-body">
-                                <span class="m-0">Products</span>
-                                <h4 class="mb-0 counter">9856</h4>
-                                <i class="icon-bg" data-feather="shopping-bag"></i>
+                                <span class="m-0">Lokasi</span>
+                                <h4 class="mb-0 counter">{{$lokasi}}</h4>
+                                <i class="icon-bg" data-feather="map-pin"></i>
                             </div>
                         </div>
                     </div>
@@ -66,14 +67,15 @@
                         <div class="media static-top-widget">
                             <div class="align-self-center text-center"><i data-feather="user-plus"></i></div>
                             <div class="media-body">
-                                <span class="m-0">New Use</span>
-                                <h4 class="mb-0 counter">4531</h4>
+                                <span class="m-0">Data Pengguna</span>
+                                <h4 class="mb-0 counter">{{$user}}</h4>
                                 <i class="icon-bg" data-feather="user-plus"></i>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            @endif
             <div class="col-xl-6 xl-100 box-col-12">
                 <div class="card">
                     <div class="cal-date-widget card-body">
@@ -82,8 +84,8 @@
                                 <div class="cal-info text-center">
                                     <div>
                                         <h2>HELLO!</h2>
-                                        <div class="d-inline-block"><span class="b-r-dark pe-3">Welcome</span><span class="ps-3">Admin</span></div>
-                                        <p class="f-16 justify-allign-center">Halo Admin, Ini adalah halaman dashboard. Selamat Bekerja!</p>
+                                        <div class="d-inline-block"><span class="b-r-dark pe-3">Welcome</span><span class="ps-3">{{ Auth::user()->level == 1 ? 'Super Admin' : (Auth::user()->level == 2 ? 'Admin' : (Auth::user()->level == 3 ? 'Driver' : 'Unknown')) }}</span></div>
+                                        <p class="f-16 justify-allign-center">Halo {{ Auth::user()->name }}, Ini adalah halaman dashboard. Selamat Bekerja!</p>
                                     </div>
                                 </div>
                             </div>

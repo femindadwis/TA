@@ -9,6 +9,7 @@
         <p class="mb-0 font-roboto">{{ Auth::user()->email }}</p>
 
     </div>
+    
     <nav>
         <div class="main-navbar">
             <div class="left-arrow" id="left-arrow"><i data-feather="arrow-left"></i></div>
@@ -28,30 +29,20 @@
                     <li class="dropdown">
                         <a class="nav-link menu-title link-nav" href="/maps/maps"><i data-feather="map"></i><span>Maps</span></a>
                     </li>
+                    @if (Auth::user()->level == 1 || Auth::user()->level == 2 )
                     <li class="dropdown">
                         <a class="nav-link menu-title " href="javascript:void(0)"><i data-feather="airplay"></i><span>Data</span></a>
                         <ul class="nav-submenu menu-content"  style="display: none;">
-                            @if (Auth::user()->level == 1 )
+
                             <li><a href="/user/user" class="">Data User</a></li>
-                             @endif
                             <li><a href="/driver/driver" class="">Data Driver</a></li>
                             <li><a href="/lokasi/lokasi" class="">Data Lokasi</a></li>
+                            <li><a href="/driver_lokasi/driver_lokasi" class="">Data Lokasi Driver</a></li>
                         </ul>
-                    </li>
+                    </li>@endif
                     <li class="dropdown">
                         <a class="nav-link menu-title link-nav" href="/jarak/jarak"><i data-feather="map"></i><span>Jarak</span></a>
                     </li>
-                    {{-- <li class="dropdown">
-                        <a class="nav-link menu-title " href="javascript:void(0)"><i data-feather="layout"></i><span>Page layout</span></a>
-                        <ul class="nav-submenu menu-content"  style="display: none;">
-                            <li><a href="https://laravel.pixelstrap.com/viho/page-layout/boxed-layout" class="">Boxed</a></li>
-                            <li><a href="https://laravel.pixelstrap.com/viho/page-layout/layout-rtl" class="">RTL</a></li>
-                            <li><a href="https://laravel.pixelstrap.com/viho/page-layout/layout-dark" class="">Dark</a></li>
-                            <li><a href="https://laravel.pixelstrap.com/viho/page-layout/footer-light" class="">Footer Light</a></li>
-                            <li><a href="https://laravel.pixelstrap.com/viho/page-layout/footer-dark" class="">Footer Dark</a></li>
-                            <li><a href="https://laravel.pixelstrap.com/viho/page-layout/footer-fixed" class="">Footer Fixed</a></li>
-                        </ul>
-                    </li> --}}
 
 
 

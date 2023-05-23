@@ -22,8 +22,12 @@
                         <div class="row">
                             <div class="col">
                                 <div class="mb-3">
-                                    <label class="form-label" for="exampleFormControlInput1">Nama</label>
-                                    <input class="form-control" name="name" id="name" type="text" placeholder="Nama" required="required">
+                                    <label class="form-label" for="exampleFormControlSelect9">Nama</label>
+                                    <select class="form-select digits" name="user_id" id="user_id" placeholder="Nama" required="required" onchange="populateEmail()">
+                                        @foreach ($user as $u)
+                                        <option value="{{$u->id}}" data-email="{{$u->email}}">{{$u->name}}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -37,6 +41,14 @@
                             </div>
                         </div>
 
+                        <script>
+                            function populateEmail() {
+                                var selectElement = document.getElementById("user_id");
+                                var selectedOption = selectElement.options[selectElement.selectedIndex];
+                                var emailInput = document.getElementById("email");
+                                emailInput.value = selectedOption.getAttribute("data-email");
+                            }
+                        </script>
                         <div class="row">
                             <div class="col">
                                 <div class="mb-3">
