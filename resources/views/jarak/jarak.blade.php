@@ -16,36 +16,44 @@
             <h5>Tabel Jarak           </h5>
             <span>Disabling features that you don't wish to use for a particular table is easily done by setting a variable in the initialisation object</span>
             <span>In the following example only the search feature is left enabled (which it is by default).</span><br>
-        <form class="form theme-form" action="{{ route('jarak.create') }}" method="post">
-            @csrf
+        {{-- <form class="form theme-form" action="{{ route('jarak.create') }}" method="post"> --}}
+            {{-- @csrf --}}
 
-                <button class="btn btn-primary text-white btn-sm btn-outline-dark" type="submit">
+                {{-- <button class="btn btn-primary text-white btn-sm btn-outline-dark" type="submit">
                     submit
-                </button>
-        </form></div>
+                </button> --}}
+        {{-- </form></div> --}}
         <div class="card-body">
             <div class="table-responsive">
                 <table class="display" id="basic-2">
                     <thead>
                         <tr>
-                            <th>From / To</th>
+                            <th>Lokasi</th>
                             @foreach ($locations as $location)
-                            <th>{{ $location['name'] }}</th>
+                                <th>{{ $location->name }}</th>
                             @endforeach
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($locations as $key => $location)
-                        <tr>
-                            <th>{{ $location['name'] }}</th>
-                            @foreach ($distances[$key] as $distance)
-                            <td>{{ $distance }}</td>
-                            @endforeach
-
-                        </tr>
+                        @foreach ($locations as $location)
+                            <tr>
+                                <td>{{ $location->name }}</td>
+                                @foreach ($locations as $destLocation)
+                                    <td>
+                                        @if ($location->id === $destLocation->id)
+                                            -
+                                        @elseif (isset($distances[$location->id][$destLocation->id]))
+                                            {{ $distances[$location->id][$destLocation->id] }} km
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
+                                @endforeach
+                            </tr>
                         @endforeach
                     </tbody>
                 </table>
+
             </div>
 
 

@@ -29,14 +29,14 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($driver_lokasi as $dl)
+                            @foreach($driver_lokasi as $key => $dl)
                             <tr>
                                 <td>{{ $no++ }}</td>
-                                <td>{{ $dl->user_id }} </td>
-                                <td>{{ $dl->lokasi_id }} </td>
+                                <td>{{ $dl->users->name }} </td>
+                                <td>{{ $dl->lokasi->name }} </td>
                                 <td>
-                                    <a class="fa fa-edit" href="" title="Edit"></span></a>
-                                    <a class="btn btn-sm btn-success-outline" href="" title="Hapus"><span class="fa fa-trash-o"></span></a>
+                                    <a class="fa fa-edit" href="{{route('driver_lokasi.edit', $dl->id)}}" title="Edit"></span></a>
+                                    <a class="btn btn-sm btn-success-outline" href="/driver_lokasi/hapus/{{ $dl->id }}" title="Hapus"><span class="fa fa-trash-o"></span></a>
                                   </td>
                             </tr>
                         </tbody>

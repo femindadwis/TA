@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -11,7 +12,11 @@ class UserController extends Controller
 {
     public function index()
     {
-        $user = DB::table('users')->get();
+        $user = User::all();
+
+        if (auth()->user()->level == 2) {
+           $user = User::whereIn('level', [2, 3])->get();
+        }
 
         // mengirim data pegawai ke view index
         // return view('user/user',['user' => $user]);

@@ -18,6 +18,8 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(User::class);
             $table->foreignIdFor(Lokasi::class);
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('lokasi_id')->references('id')->on('lokasi')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -30,5 +32,6 @@ return new class extends Migration
     public function down()
     {
         Schema::dropIfExists('driver_lokasis');
+
     }
 };

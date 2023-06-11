@@ -15,7 +15,7 @@
                 <div class="card-header pb-0">
                     <h5>Edit Data Lokasi</h5>
                 </div>@foreach($lokasi as $l)
-                <form class="form theme-form" action="/lokasi/update " method="post">
+                <form class="form theme-form" action="/lokasi/update " method="post" enctype="multipart/form-data">
                     @csrf
                     <div class="card-body">
 
@@ -56,6 +56,14 @@
                             </div>
                         </div>
 
+                        <div class="row">
+                            <div class="col">
+                                <div class="mb-3">
+                                    <label class="form-label" for="exampleFormControlInput1">Foto</label>
+                                    <input class="form-control" name="foto" id="foto" type="file" placeholder="foto" value="{{ $l->foto }}" required="required">
+                                </div>
+                            </div>
+                        </div>
                         </div>
 
                     <div class="card-footer text-end">

@@ -14,7 +14,9 @@ class DriverLokasiController extends Controller
     public function index()
     {
         $data = [
-            "driver_lokasi" => Driver_lokasi::all()
+            "driver_lokasi" => Driver_lokasi::all(),
+            "user" => User::where('level', '3')->get(),
+            "lokasi" => Lokasi::all()
         ];
         return view('driver_lokasi.driver_lokasi', $data);
     }
@@ -53,22 +55,30 @@ class DriverLokasiController extends Controller
     public function edit($id)
     {
 
-        $driver_lokasi = DB::table('driver_lokasis')->where('id', $id)->get();
-
-        return view('driver_lokasi/driver_lokasi_edit', ['driver_lokasi' => $driver_lokasi]);
+        $data = [
+            "driver_lokasi" => Driver_lokasi::where('id',$id)->get(),
+            "user" => User::where('level', '3')->get(),
+            "lokasi" => Lokasi::all()
+        ];
+        return view('driver_lokasi/driver_lokasi_edit', $data);
     }
 
 
     public function update(Request $request)
     {
-        // update data driver
 
-        // DB::table('driver')->where('id',$request->id)->update([
-        //     'user_id' => $request->user_id,
-        //     'name' => $request->name,
-        //     'email' => $request->email,
-        //     'alamat' => $request->alamat,
-        // ]);
+            $id = $request->input('id');
+            $user_id = $request->input('user_id');
+            $lokasi_ids = $request->input('lokasi_id');
+
+            // Convert the array of lokasi_ids to a comma-separated string
+            $lokasi_id = implode(',', $lokasi_ids);
+
+            $driverLokasi = Driver_lokasi::find($id);
+            $driverLokasi->user_id = $user_id;
+            $driverLokasi->lokasi_id = $lokasi_id;
+            $driverLokasi->save();
+
         // alihkan halaman ke halaman driver
         return redirect('/driver_lokasi/driver_lokasi')->with('success', 'driver Telah di Ubah!');
     }
@@ -76,7 +86,7 @@ class DriverLokasiController extends Controller
     public function hapus($id)
     {
         // menghapus data driver berdasarkan id yang dipilih
-        DB::table('driver_lokasi')->where('id', $id)->delete();
+        DB::table('driver_lokasis')->where('id', $id)->delete();
 
         // alihkan halaman ke halaman driver
         return redirect('/driver_lokasi/driver_lokasi');

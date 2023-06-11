@@ -15,10 +15,13 @@ return new class extends Migration
     {
         Schema::create('jaraks', function (Blueprint $table) {
             $table->id();
-            $table->string('loc_1');
-            $table->string('loc_2');
+            $table->unsignedBigInteger('loc_1');
+            $table->unsignedBigInteger('loc_2');
             $table->string('distance');
             $table->timestamps();
+
+            $table->foreign('loc_1')->references('id')->on('lokasi')->onDelete('cascade');
+            $table->foreign('loc_2')->references('id')->on('lokasi')->onDelete('cascade');
         });
     }
 

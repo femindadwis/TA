@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-
+use App\Models\Lokasi;
+use App\Models\Driver_lokasi;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -24,7 +25,10 @@ class User extends Authenticatable
         'level',
 
     ];
-
+    public function driver_lokasis()
+    {
+        return $this->hasMany(Driver_lokasi::class);
+    }
     /**
      * The attributes that should be hidden for serialization.
      *

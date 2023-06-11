@@ -31,24 +31,24 @@
                     </thead>
                     <tbody>
                         @foreach($user as $u)
-                        @if ($u->level != 1 && !(Auth::user()->level == 2 && $u->level == 1))
+                        {{-- @if ($u->level != 1 && !(Auth::user()->level == 2 && $u->level == 1)) --}}
                         <tr>
                             <td>{{ $no++ }}</td>
                             <td>{{ $u->name }} </td>
                             <td>{{ $u->email }} </td>
                             <td>
-                            @php
+                                @php
                             if($u->level==1)
                             {
-                             echo 'Super Admin';
+                                echo 'Super Admin';
                             }
                             if($u->level==2)
                             {
-                             echo 'Admin';
+                                echo 'Admin';
                             }
                             if($u->level==3)
                             {
-                             echo 'Driver';
+                                echo 'Driver';
                             }
                             @endphp
                             </td>
@@ -56,10 +56,10 @@
                             <td>
                                 <a class="fa fa-edit" href="/user/edit/{{ $u->id }}" title="Edit"></span></a>
                                 <a class="btn btn-sm btn-success-outline" href="/user/hapus/{{ $u->id }}" title="Hapus"><span class="fa fa-trash-o"></span></a>
-                              </td>
+                            </td>
                         </tr>
                     </tbody>
-                    @endif
+                    {{-- @endif --}}
                     @endforeach
                     </table>
                 </div>

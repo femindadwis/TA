@@ -9,7 +9,7 @@
         <p class="mb-0 font-roboto">{{ Auth::user()->email }}</p>
 
     </div>
-    
+
     <nav>
         <div class="main-navbar">
             <div class="left-arrow" id="left-arrow"><i data-feather="arrow-left"></i></div>
@@ -41,7 +41,16 @@
                         </ul>
                     </li>@endif
                     <li class="dropdown">
-                        <a class="nav-link menu-title link-nav" href="/jarak/jarak"><i data-feather="map"></i><span>Jarak</span></a>
+                        <a class="nav-link menu-title link-nav" href="{{ route('jarak') }}"><i data-feather="map"></i><span>Jarak</span></a>
+                    </li>
+                    <li class="dropdown">
+                        <a class="nav-link menu-title " href="javascript:void(0)"><i data-feather="navigation"></i><span>Rute</span></a>
+                        <ul class="nav-submenu menu-content"  style="display: none;">
+
+                            <li><a href="/rute/rute_gmaps" class="">Rute Google Optimizer</a></li>
+                            <li><a href="/driver/driver" class="">Rute </a></li>
+
+                        </ul>
                     </li>
 
 
