@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+
 use App\Models\Lokasi;
 
 class LokasiApiController extends Controller
@@ -20,7 +21,7 @@ class LokasiApiController extends Controller
         $user = Auth::user();
         $lokasi = Lokasi::where('user_id', $user->id)->get();
         // $lokasi = Lokasi::all();
-        return response()->json(['lokasi' => $lokasi]);
+        return response()->json($lokasi);
     }
 
     public function store(Request $request)
@@ -30,11 +31,20 @@ class LokasiApiController extends Controller
             'alamat' => 'required',
             'long' => 'required',
             'lat' => 'required',
-
+            'fotoName' => 'required',
+            'foto' => 'required|image|mimes:jpeg,png,jpg',
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()]);
+            return response()->json(['error' => $validator->errors()], 500);
+        }
+
+        if ($request->hasFile('foto')) {
+            $foto = $request->file('foto');
+            // Nama file yang disimpan sesuai dengan fotoName
+            $filename = $request->fotoName;
+            // Menyimpan foto dengan nama file yang telah ditentukan
+            $foto->storeAs('foto_tps', $filename, 'public');
         }
 
         $lokasi = new Lokasi();
@@ -43,7 +53,7 @@ class LokasiApiController extends Controller
         $lokasi->alamat = $request->alamat;
         $lokasi->lng = $request->long;
         $lokasi->lat = $request->lat;
-        $lokasi->foto = $request->foto;
+        $lokasi->foto = $request->fotoName;
         $lokasi->save();
         return response()->json(['message' => 'Lokasi created!']);
     }
@@ -83,5 +93,11 @@ class LokasiApiController extends Controller
         }
         Lokasi::where('id', $request->id)->delete();
         return response()->json(['message' => 'Lokasi deleted!']);
+    }
+
+    public function getImage($id)
+    {
+        $data = Lokasi::find($id);
+        return response()->file(public_path("storage/foto_tps/$data->foto"));
     }
 }

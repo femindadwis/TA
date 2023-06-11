@@ -1,7 +1,9 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers;
+use App\Models\Lokasi;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -22,3 +24,4 @@ Route::get('/get-lokasi', [Controllers\Api\LokasiApiController::class, 'index'])
 Route::post('/add-lokasi', [Controllers\Api\LokasiApiController::class, 'store'])->middleware('auth:sanctum');
 Route::put('/update-lokasi', [Controllers\Api\LokasiApiController::class, 'update'])->middleware('auth:sanctum');
 Route::delete('/delete-lokasi', [Controllers\Api\LokasiApiController::class, 'destroy'])->middleware('auth:sanctum');
+Route::get('/image/{id}', [Controllers\Api\LokasiApiController::class, 'getImage'])->middleware('auth:sanctum');
