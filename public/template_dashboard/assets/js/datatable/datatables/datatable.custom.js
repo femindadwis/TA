@@ -1,6 +1,6 @@
 $(document).ready(function() {
     $('product-list').DataTable();
-    // Basic table example 
+    // Basic table example
     $('#basic-1').DataTable();
     $('#basic-2').DataTable({
         "paging":   true,
@@ -389,7 +389,7 @@ $(document).ready(function() {
         alert(srow.rows('.selected').data().length + ' row(s) selected');
     });
     //row select multiple data table end here
-    //single row delete data table start here        
+    //single row delete data table start here
     var deleterow = $('#row-select-delete').DataTable();
     $('#row-select-delete tbody').on('click', 'tr', function() {
         if ($(this).hasClass('selected')) {
@@ -402,7 +402,7 @@ $(document).ready(function() {
     $('#single-row-delete-btn').on('click', function() {
         deleterow.row('.selected').remove().draw(!1);
     });
-    //single row delete data table end here        
+    //single row delete data table end here
     //form input submit start here
     var table = $('#form-input-datatable').DataTable();
     $('#form-input-datatable-submit').on('click', function() {
@@ -432,12 +432,12 @@ $(document).ready(function() {
         filterColumn($(this).parents('tr').attr('data-column'));
     });
     //seach API regular expression start
-    //Ajax Data Source (Arrays) start 
+    //Ajax Data Source (Arrays) start
     $('#ajax-data-array').DataTable({
         "ajax": "../assets/ajax/arrays.txt",
     });
-    //Ajax Data Source (Arrays) start 
-    //Ajax Data Source (object) start             
+    //Ajax Data Source (Arrays) start
+    //Ajax Data Source (object) start
     $('#ajax-data-object').DataTable({
         "ajax": "../assets/ajax/object.txt",
         "columns": [{
@@ -454,8 +454,8 @@ $(document).ready(function() {
             "data": "salary"
         }]
     });
-    //Ajax Data Source (object) end 
-    //Ajax nested object data start 
+    //Ajax Data Source (object) end
+    //Ajax nested object data start
     $('#ajax-data-nested-object').DataTable({
         "processing": true,
         "ajax": "../assets/ajax/object_nested.txt",
@@ -473,7 +473,7 @@ $(document).ready(function() {
                 "data": "hr.salary"
         }]
     });
-    //Ajax nested object data start 
+    //Ajax nested object data start
     //Ajax orthogonal data start here
     $('#orthogonal-data').DataTable({
         ajax: "../assets/ajax/orthogonal.txt",
@@ -521,7 +521,7 @@ $(document).ready(function() {
         "serverSide": true,
         "ajax": "../assets/ajax/server-processing.php"
     });
-    //http server side datatable start   
+    //http server side datatable start
     $('#datatable-http').DataTable({
         "processing": true,
         "serverSide": true,
@@ -530,15 +530,15 @@ $(document).ready(function() {
             data: function(d) {
                 d.myKey = "myValue";
             }
-        },  
+        },
         "columns": [{
             "data": "first_name"
         }, {
             "data": "last_name"
-        }, {    
+        }, {
             "data": "position"
         }, {
-            "data": "office"    
+            "data": "office"
         }, {
             "data": "start_date"
         }, {
@@ -610,7 +610,7 @@ $(document).ready(function() {
     $('#min, #max').keyup(function() {
         dtage.draw();
     });
-    //Range plugin datatable end here    
+    //Range plugin datatable end here
     //datatable dom ordering start here
     $.fn.dataTable.ext.order['dom-text'] = function(settings, col) {
         return this.api().column(col, {
@@ -632,7 +632,7 @@ $(document).ready(function() {
         }).nodes().map(function(td, i) {
             return $('select', td).val();
         });
-    }   
+    }
     $.fn.dataTable.ext.order['dom-checkbox'] = function(settings, col) {
         return this.api().column(col, {
             order: 'index'

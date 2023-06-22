@@ -6,17 +6,18 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Lokasi;
 
 
 class LokasiController extends Controller
 {
     public function index()
     {
-        $lokasi = DB::table('lokasi')->get();
+        $lokasi = Lokasi::all();
 
         // mengirim data pegawai ke view index
         // return view('lokasi/lokasi',['lokasi' => $lokasi]);
-        return view ('lokasi/lokasi', ['lokasi' => $lokasi]);
+        return view('lokasi.lokasi', compact('lokasi'));
     }
 
     public function tambah()

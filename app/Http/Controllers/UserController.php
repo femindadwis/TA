@@ -6,7 +6,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -36,7 +35,7 @@ class UserController extends Controller
         // insert data ke table user
         DB::table('users')->insert([
             'name' => $request->name,
-            'email' => $request->email,
+            'username' => $request->username,
             'password' => Hash::make($request->password),
             'level' => $request->level,
         ]);
@@ -60,7 +59,7 @@ class UserController extends Controller
 
         DB::table('users')->where('id',$request->id)->update([
             'name' => $request->name,
-            'email' => $request->email,
+            'username' => $request->username,
             'password' => Hash::make($request->password),
             'level' => $request->level,
         ]);

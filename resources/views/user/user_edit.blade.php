@@ -32,8 +32,8 @@
                         <div class="row">
                             <div class="col">
                                 <div class="mb-3">
-                                    <label class="form-label" for="exampleFormControlInput1">Email address</label>
-                                    <input class="form-control" id="email" name="email" type="email" placeholder="name@example.com" value="{{ $u->email }}" required="required">
+                                    <label class="form-label" for="exampleFormControlInput1">Username</label>
+                                    <input class="form-control" id="username" name="username" type="username" placeholder="name@example.com" value="{{ $u->username }}" required="required">
                                 </div>
                             </div>
                         </div>

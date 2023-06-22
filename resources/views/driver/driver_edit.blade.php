@@ -15,7 +15,7 @@
                 <div class="card-header pb-0">
                     <h5>Edit Data Driver</h5>
                 </div>@foreach($driver as $d)
-                <form class="form theme-form" action="/driver/update " method="post">
+                <form class="form theme-form" action="/driver/update" method="post"  enctype="multipart/form-data">
                     @csrf
                     <div class="card-body">
 
@@ -24,7 +24,11 @@
                                 <div class="mb-3">
                                     <input type="hidden" name="id" value="{{ $d->id }}">
                                     <label class="form-label" for="exampleFormControlInput1">Nama</label>
-                                    <input class="form-control" name="name" id="name" type="text" placeholder="Nama" value="{{ $d->name }}" required="required">
+                                    <select class="form-select digits" name="user_id" id="user_id" placeholder="Nama" required="required" onchange="populateusername()">
+                                        @foreach ($user as $u)
+                                        <option value="{{$u->id}}" {{ $d->user_id == $u->id ? 'selected' : '' }}>{{$u->name}}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -32,12 +36,19 @@
                         <div class="row">
                             <div class="col">
                                 <div class="mb-3">
-                                    <label class="form-label" for="exampleFormControlInput1">Email address</label>
-                                    <input class="form-control" id="email" name="email" type="email" placeholder="name@example.com" value="{{ $d->email }}" required="required">
+                                    <label class="form-label" for="exampleFormControlInput1">Username</label>
+                                    <input class="form-control" id="username" name="username" type="username" placeholder="name@example.com" value="{{ $d->username }}" required="required">
                                 </div>
                             </div>
                         </div>
-
+                        <script>
+                            function populateusername() {
+                                var selectElement = document.getElementById("user_id");
+                                var selectedOption = selectElement.options[selectElement.selectedIndex];
+                                var usernameInput = document.getElementById("username");
+                                usernameInput.value = selectedOption.getAttribute("data-username");
+                            }
+                        </script>
                         <div class="row">
                             <div class="col">
                                 <div class="mb-3">

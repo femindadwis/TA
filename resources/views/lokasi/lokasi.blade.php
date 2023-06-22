@@ -3,15 +3,15 @@
 @include('layout.sidebar')
 
 <div class="page-body">
-    <!-- Container-fluid starts-->
-        <div class="container-fluid">
+    <div class="container-fluid">
 <div class="page-header">
 <div class="row">
 
- <!-- Tabel-->
- <div class="col-sm-12">
-    <div class="card">
-        <div class="card-header">
+
+<!-- Feature Unable /Disable Order Starts-->
+<div class="col-sm-12">
+<div class="card">
+    <div class="card-header">
             <h5>Tabel Lokasi       <a class="fa fa-plus-square-o" href="/lokasi/tambah" title="Edit"></a>    </h5>
             <span>Disabling features that you don't wish to use for a particular table is easily done by setting a variable in the initialisation object</span>
             <span>In the following example only the search feature is left enabled (which it is by default).</span>
@@ -45,13 +45,19 @@
                             <td>
                                 <a class="fa fa-edit" href="{{route('lokasi.edit', $l->id)}}" title="Edit"></span></a>
                                 <a class="btn btn-sm btn-success-outline" href="/lokasi/hapus/{{ $l->id }}" title="Hapus"><span class="fa fa-trash-o"></span></a>
-                              </td>
+                            </td>
                         </tr>
-                    </tbody>
                     @endforeach
-                    </table>
-                </div>
-            </div>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 
 </div></div></div></div></div></div></div>
 @include('layout.footer')

@@ -24,7 +24,7 @@
                             <?php $no=1; ?>
                             <th>No</th>
                             <th>Nama</th>
-                            <th>Email</th>
+                            <th>Username</th>
                             <th>Role</th>
                             <th>Aksi</th>
                         </tr>
@@ -35,7 +35,7 @@
                         <tr>
                             <td>{{ $no++ }}</td>
                             <td>{{ $u->name }} </td>
-                            <td>{{ $u->email }} </td>
+                            <td>{{ $u->username }} </td>
                             <td>
                                 @php
                             if($u->level==1)

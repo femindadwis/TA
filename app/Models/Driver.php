@@ -12,10 +12,13 @@ class Driver extends Model
     protected $table = 'driver';
     protected $fillable = [
         'user_id',
-        'name',
-        'email',
+        'username',
         'alamat',
 
 
     ];
+    public function user()
+{
+    return $this->belongsTo(User::class);
+}
 }

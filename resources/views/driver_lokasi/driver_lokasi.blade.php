@@ -29,24 +29,32 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($driver_lokasi as $key => $dl)
-                            <tr>
-                                <td>{{ $no++ }}</td>
-                                <td>{{ $dl->users->name }} </td>
-                                <td>{{ $dl->lokasi->name }} </td>
-                                <td>
-                                    <a class="fa fa-edit" href="{{route('driver_lokasi.edit', $dl->id)}}" title="Edit"></span></a>
-                                    <a class="btn btn-sm btn-success-outline" href="/driver_lokasi/hapus/{{ $dl->id }}" title="Hapus"><span class="fa fa-trash-o"></span></a>
-                                  </td>
-                            </tr>
-                        </tbody>
-                        @endforeach
-
-                        </table>
+                                        <?php $no = 1; $prevUserId = null; ?>
+                                        @foreach($driver_lokasi as $key => $dl)
+                                        <tr>
+                                            @if ($prevUserId != $dl->users->id)
+                                                <td>{{ $no++ }}</td>
+                                                <td>{{ $dl->users->name }}</td>
+                                                <?php $prevUserId = $dl->users->id; ?>
+                                            @else
+                                                <td></td>
+                                                <td></td>
+                                            @endif
+                                            <td>{{ $dl->lokasi->name }}</td>
+                                            <td>
+                                                <a class="fa fa-edit" href="{{route('driver_lokasi.edit', $dl->id)}}" title="Edit"></a>
+                                                <a class="btn btn-sm btn-success-outline" href="/driver_lokasi/hapus/{{ $dl->id }}" title="Hapus"><span class="fa fa-trash-o"></span></a>
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
-
-
-</div></div></div></div></div></div></div>
+            </div>
+        </div>
+    </div></div>
 @include('layout.footer')
 @include('layout.js')

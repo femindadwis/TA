@@ -25,7 +25,7 @@
                             <th>No</th>
                             <th>Nama</th>
                             <th>Alamat</th>
-                            <th>Email</th>
+                            <th>Username</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -35,12 +35,13 @@
                             <td>{{ $no++ }}</td>
                             <td>{{ $d->name }} </td>
                             <td>{{ $d->alamat }} </td>
-                            <td>{{ $d->email }} </td>
+                            <td>{{ $d->username }} </td>
 
                             <td>
-                                <a class="fa fa-edit" href="/driver/edit/{{ $d->id }}" title="Edit"></span></a>
-                                <a class="btn btn-sm btn-success-outline" href="/driver/hapus/{{ $d->id }}" title="Hapus"><span class="fa fa-trash-o"></span></a>
-                              </td>
+                                <a class="fa fa-edit" href="/driver/edit/{{ $d->id }}" title="Edit"></a> &nbsp;&nbsp;
+                                <a class="fa fa-trash-o" href="/driver/hapus/{{ $d->id }}" title="Hapus"></a> &nbsp;&nbsp;
+                                <a class="fa fa-search" href="/driver/detail/{{ $d->id }}" title="Detail"></a>
+                            </td>
                         </tr>
                     </tbody>
                     @endforeach

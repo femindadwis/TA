@@ -63,12 +63,12 @@
 
 
 	                        <div class="form-group">
-	                            <label>Email Address</label>
+	                            <label>Username</label>
 	                            <div class="input-group">
 	                                <span class="input-group-text"><i class="fa fa-envelope-o"></i></span>
-	                                <input class="form-control form-control-lg @error('email') is-invalid @enderror" id="email" type="email" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus placeholder="Email" />
+	                                <input class="form-control form-control-lg @error('username') is-invalid @enderror" id="username" type="username" name="username" value="{{ old('username') }}" required autocomplete="username" autofocus placeholder="username" />
 
-                                    @error('email')
+                                    @error('username')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>

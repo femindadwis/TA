@@ -23,9 +23,9 @@
                             <div class="col">
                                 <div class="mb-3">
                                     <label class="form-label" for="exampleFormControlSelect9">Nama</label>
-                                    <select class="form-select digits" name="user_id" id="user_id" placeholder="Nama" required="required" onchange="populateEmail()">
+                                    <select class="form-select digits" name="user_id" id="user_id" placeholder="Nama" required="required" onchange="populateusername()">
                                         @foreach ($user as $u)
-                                        <option value="{{$u->id}}" data-email="{{$u->email}}">{{$u->name}}</option>
+                                        <option value="{{$u->id}}" data-username="{{$u->username}}">{{$u->name}}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -35,18 +35,18 @@
                         <div class="row">
                             <div class="col">
                                 <div class="mb-3">
-                                    <label class="form-label" for="exampleFormControlInput1">Email address</label>
-                                    <input class="form-control" id="email" name="email" type="email" placeholder="name@example.com" required="required">
+                                    <label class="form-label" for="exampleFormControlInput1">Username</label>
+                                    <input class="form-control" id="username" name="username" type="username" placeholder="Username" required="required">
                                 </div>
                             </div>
                         </div>
 
                         <script>
-                            function populateEmail() {
+                            function populateusername() {
                                 var selectElement = document.getElementById("user_id");
                                 var selectedOption = selectElement.options[selectElement.selectedIndex];
-                                var emailInput = document.getElementById("email");
-                                emailInput.value = selectedOption.getAttribute("data-email");
+                                var usernameInput = document.getElementById("username");
+                                usernameInput.value = selectedOption.getAttribute("data-username");
                             }
                         </script>
                         <div class="row">

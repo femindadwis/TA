@@ -10,6 +10,7 @@
   <script src="{{ asset('template_dashboard/assets/js/bootstrap/popper.min.js') }}"></script>
   <script src="{{ asset('template_dashboard/assets/js/bootstrap/bootstrap.min.js') }}"></script>
   <!-- Plugins JS start-->
+
   {{-- maps --}}
 	<script src="{{ asset('template_dashboard/assets/js/map-js/mapsjs-core.js') }}"></script>
     <script src="{{ asset('template_dashboard/assets/js/map-js/mapsjs-service.js') }}"></script>
@@ -18,6 +19,9 @@
     <script src="{{ asset('template_dashboard/assets/js/map-js/custom.js') }}"></script>
 <!-- Plugins JS Ends-->
  <!-- Plugins JS start-->
+ {{-- table --}}
+ {{-- <script src="{{ asset('template_dashboard/assets/js/datatable/datatables/jquery.dataTables.min.js') }}"></script>
+ <script src="{{ asset('template_dashboard/assets/js/datatable/datatables/datatable.custom.js') }}"></script> --}}
     {{-- date --}}
   <script src="{{ asset('template_dashboard/assets/js/datepicker/date-picker/datepicker.js') }}"></script>
   <script src="{{ asset('template_dashboard/assets/js/datepicker/date-picker/datepicker.en.js') }}"></script>

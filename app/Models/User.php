@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Lokasi;
+use App\Models\Driver;
 use App\Models\Driver_lokasi;
 class User extends Authenticatable
 {
@@ -20,7 +21,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
-        'email',
+        'username',
         'password',
         'level',
 
@@ -28,6 +29,11 @@ class User extends Authenticatable
     public function driver_lokasis()
     {
         return $this->hasMany(Driver_lokasi::class);
+    }
+
+    public function driver()
+    {
+        return $this->hasMany(Driver::class);
     }
     /**
      * The attributes that should be hidden for serialization.
@@ -44,7 +50,7 @@ class User extends Authenticatable
      *
      * @var array<string, string>
      */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+    // protected $casts = [
+    //     'username_verified_at' => 'datetime',
+    // ];
 }

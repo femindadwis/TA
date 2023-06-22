@@ -10,7 +10,9 @@ use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\JarakController;
 use App\Http\Controllers\DriverLokasiController;
 use App\Http\Controllers\RuteController;
+use App\Http\Controllers\PSOController;
 use App\Http\Controllers\Autentikasi\AutentikasiController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -52,9 +54,10 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/driver/driver', [DriverController::class, 'index'])->name('driver');
     Route::get('/driver/tambah', [DriverController::class, 'tambah']);
     Route::post('/driver/store', [DriverController::class, 'store']);
-    Route::get('/driver/edit/{id}', [DriverController::class, 'edit']);
+    Route::get('/driver/edit/{id}', [DriverController::class, 'edit'])->name('driver_edit');
     Route::post('/driver/update', [DriverController::class, 'update']);
     Route::get('/driver/hapus/{id}', [DriverController::class, 'hapus']);
+    Route::get('/driver/detail/{id}', [DriverController::class, 'detail'])->name('driver_detail');
 
     // ROUTE CRUD LOKASI
     Route::get('/lokasi/lokasi', [LokasiController::class, 'index'])->name('lokasi');
@@ -82,8 +85,12 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/driver_lokasi/update', [DriverLokasiController::class, 'update']);
     Route::get('/driver_lokasi/hapus/{id}', [DriverLokasiController::class, 'hapus']);
 
-    // ROUTE RUTE
+    // ROUTE RUTE GMAPS
     Route::get('/rute/rute_gmaps', [RuteController::class, 'index'])->name('rute');
+    // Route::post('/rute/rute_gmaps', [RuteController::class, 'calculateRoute'])->name('calculate-route');
+
+     // ROUTE RUTE PSO
+     Route::get('/rute/rute_pso', [PSOController::class, 'index'])->name('rute_pso');
 });
 
 
