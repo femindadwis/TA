@@ -76,56 +76,64 @@ class DriverController extends Controller
         return redirect('/driver/driver');
 
     }
-
     public function detail($id)
-{
-    $driver = Driver::where('id', $id)->first->toArray();
-    $user_id = $driver->user_id;
+    {
 
-    // Ambil semua lokasi dari tabel driver_lokasi berdasarkan user_id
-    $driverLocations = Driver_Lokasi::where('user_id', $user_id)->get();
+        $driver = Driver::where('id', $id)->first();
+        $user_id = $driver->user_id;
+        $driver_lokasi = Driver_lokasi::where('user_id', $user_id)->get();
+        // Ambil semua lokasi dari tabel driver_lokasi berdasarkan user_id
+        $driverLocations = Driver_Lokasi::where('user_id', $user_id)->get();
 
-    // Ambil seluruh data dari model Lokasi yang sesuai dengan lokasi_id pada driver_lokasi
-    $locationIds = $driverLocations->pluck('lokasi_id');
-    $locations = Lokasi::whereIn('id', $locationIds)->get();
+        // Ambil seluruh data dari model Lokasi yang sesuai dengan lokasi_id pada driver_lokasi
+        $locationIds = $driverLocations->pluck('lokasi_id');
+        $locations = Lokasi::whereIn('id', $locationIds)->get();
 
-    $distances = $this->calculateDistances($locations);
+        $distances = $this->calculateDistances($locations);
 
-    foreach ($distances as $loc1Id => $distancesToOther) {
-        foreach ($distancesToOther as $loc2Id => $distance) {
-            Jarak::updateOrCreate(
-                ['loc_1' => $loc1Id, 'loc_2' => $loc2Id],
-                ['distance' => $distance]  );
+        foreach ($distances as $loc1Id => $distancesToOther) {
+            foreach ($distancesToOther as $loc2Id => $distance) {
+                Jarak::updateOrCreate(
+                    ['loc_1' => $loc1Id, 'loc_2' => $loc2Id],
+                    ['distance' => $distance]  );
+                }
             }
-        }
 
-        // Mendapatkan data jarak dari database
-        $jarakData = Jarak::select('loc_1', 'loc_2', 'distance')->get()->toArray();
+            // Mendapatkan data jarak dari database
+            $jarakData = Jarak::select('loc_1', 'loc_2', 'distance')->get()->toArray();
 
-        // Mengonversi data jarak ke dalam bentuk matriks
-        $jarak = [];
-        foreach ($jarakData as $data) {
-            $jarak[$data['loc_1']][$data['loc_2']] = $data['distance'];
-        }
+            // Mengonversi data jarak ke dalam bentuk matriks
+            $jarak = [];
+            foreach ($jarakData as $data) {
+                $jarak[$data['loc_1']][$data['loc_2']] = $data['distance'];
+            }
+
+            $optimalRoute = $this->findOptimalRoute($locations, $jarak);
+            $optimalRoutePSO = $this->findOptimalRoutePSO($locations, $jarak);
 
 
-         $optimalRoute = $this->findOptimalRoute($locations, $jarak);
-         $optimalRoute[] = $optimalRoute[0];
+            //  $optimalRoute = $this->findOptimalRoute($locations, $jarak);
+            //  $optimalRoute[] = $optimalRoute[0];
 
-         // Menghitung total jarak tempuh
-         $totalDistance = $this->calculateTotalDistance($optimalRoute, $jarak);
+             // Menghitung total jarak tempuh
+             $totalDistance = $this->calculateTotalDistance($optimalRoute, $jarak);
+             $totaljarak = $this->calculateTotalDistance($optimalRoutePSO, $jarak);
+        $data = [
+            'driver' => $driver,
+            'user' => User::all(),
+            'locations' => $locations,
+            'distances' => $distances,
+            'driver_lokasi' => $driver_lokasi,
+            'optimalRoute' => $optimalRoute,
+            'optimalRoutePSO' => $optimalRoutePSO,
+            'totalDistance' =>  $totalDistance,
+            'totaljarak' => $totaljarak
+        ];
+// dd($totaljarak);
+        return view('driver.driver_detail', $data);
+    }
 
-    $data = [
-        'driver' => $driver,
-        'user' => User::all(),
-        'locations' => $locations,
-        'distances' => $distances,
-        'optimalRoute' => $optimalRoute
-    ];
-
-    return view('driver.driver_detail', $data);
-}
-
+// fungsi itung jarak
 private function calculateDistances($locations)
 {
     $apiKey = 'AIzaSyBmBL3_MRsk7qiOqSXgNr-x59cz_vXU9Fg';
@@ -160,8 +168,7 @@ private function calculateDistances($locations)
     }
 
     return $distances;
-}
-private function findOptimalRoute($locations, $jarak)
+}private function findOptimalRoute($locations, $jarak)
 {
     $numLocations = count($locations);
     $optimalRoute = [];
@@ -200,17 +207,16 @@ private function findOptimalRoute($locations, $jarak)
         }
     }
 
-    $startingIndex = $locations->search(function ($location) use ($startingLocation) {
-        return $location['id'] === $startingLocation['id'];
-    });
+    $startingIndex = array_search($startingLocation, $locations->toArray());
+    $remainingLocations = array_values(array_diff_key($locations->toArray(), [$startingIndex => $startingLocation]));
 
-    $remainingLocations = array_values(array_diff_key($locations, [$startingIndex => $startingLocation]));
 
     $findRoute([$startingLocation['id']], $remainingLocations, 0);
 
     return $optimalRoute;
 }
 
+// fungsi itung total jarak
 private function calculateTotalDistance($route, $jarak)
 {
      $totalDistance = 0;
@@ -220,8 +226,84 @@ private function calculateTotalDistance($route, $jarak)
         $loc2 = $route[$i];
         $totalDistance += $jarak[$loc1][$loc2];
     }
+  // Tambahkan jarak dari titik terakhir kembali ke TPA Pecuk
+  $lastLocation = $route[count($route) - 1];
+  $totalDistance += $jarak[$lastLocation][1]; // 1 adalah ID TPA Pecuk
 
     return $totalDistance;
 }
 
+
+private function findOptimalRoutePSO($locations, $jarak)
+{
+    mt_srand(42);
+    $numLocations = $locations->count();
+    $numParticles = 20;
+    $numIterations = 100;
+
+    // Inisialisasi partikel dan kecepatan
+    $particles = [];
+
+    $globalBest = [];
+    $globalBestFitness = INF;
+
+    // Inisialisasi partikel terbaik pada setiap partikel
+    $particleBest = [];
+    $particleBestFitness = [];
+
+    for ($i = 0; $i < $numParticles; $i++) {
+        $route = $locations->pluck('id')->toArray();
+        shuffle($route);
+        $particles[$i] = $route;
+
+        $distance = 0;
+        for ($j = 0; $j < $numLocations - 1; $j++) {
+            $distance += $jarak[$route[$j]][$route[$j + 1]];
+        }
+
+        // Mengupdate partikel terbaik
+        $particleBest[$i] = $route;
+        $particleBestFitness[$i] = $distance;
+
+        // Mengupdate nilai global terbaik
+        if ($distance < $globalBestFitness) {
+            $globalBest = $route;
+            $globalBestFitness = $distance;
+        }
+    }
+
+    // Iterasi PSO
+    for ($iter = 0; $iter < $numIterations; $iter++) {
+        for ($i = 0; $i < $numParticles; $i++) {
+            $route = $particles[$i];
+            $distance = 0;
+            for ($j = 0; $j < $numLocations - 1; $j++) {
+                $distance += $jarak[$route[$j]][$route[$j + 1]];
+            }
+
+            // Perbarui nilai kebugaran partikel terbaik dan nilai kebugaran global terbaik
+            if ($distance < $particleBestFitness[$i]) {
+                $particleBest[$i] = $route;
+                $particleBestFitness[$i] = $distance;
+            }
+            if ($distance < $globalBestFitness) {
+                $globalBest = $route;
+                $globalBestFitness = $distance;
+            }
+
+            // Perbarui partikel dan kecepatan
+            $particles[$i] = $route;
+        }
+    }
+
+    // Pastikan urutan lokasi dimulai dari lokasi dengan ID 1
+    $startIndex = array_search(1, $globalBest);
+    $optimalRoutePSO = array_merge(
+        array_slice($globalBest, $startIndex),
+        array_slice($globalBest, 0, $startIndex)
+    );
+    dd($particles);
+    return $optimalRoutePSO;
 }
+}
+

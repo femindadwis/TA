@@ -2,181 +2,199 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\PSO;
-use App\Models\Jarak;
 use App\Models\Lokasi;
+use App\Models\Driver;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
 
 class PSOController extends Controller
 {
-    public function index()
-    {
-        // Ambil data lokasi dari database
-        $locations = Lokasi::all();
+        public function index()
+        {
 
-        // Ambil data jarak antara lokasi dari database
-        $distances = $this->getDistanceMatrix();
+            return view('rute.rute_pso');
 
-        // Cari rute teroptimal menggunakan algoritma PSO
-        $optimalRoute = $this->findOptimalRoute($locations, $distances);
-
-        // Simpan hasil optimasi ke dalam database
-        $this->saveOptimalRoute($optimalRoute);
-
-        // Ambil data detail rute teroptimal
-        $routeDetails = $this->getRouteDetails($optimalRoute, $distances);
-
-        // Kirim data ke tampilan
-        return view('rute.rute_pso', compact('optimalRoute', 'locations', 'routeDetails'));
-    }
-
-    private function getDistanceMatrix()
-    {
-        // Ambil data jarak antara lokasi dari database
-        $distances = Jarak::select('loc_1', 'loc_2', 'distance')->get();
-
-        // Ubah format data jarak menjadi matriks
-        $matrix = [];
-        foreach ($distances as $distance) {
-            $matrix[$distance->loc_1][$distance->loc_2] = $distance->distance;
         }
 
-        return $matrix;
-    }
-    private function findOptimalRoute($locations, $distances)
-    {
-        // Inisialisasi parameter PSO
-        $particleCount = 20; // Jumlah partikel
-        $maxIteration = 100; // Jumlah iterasi
-        $c1 = 2; // Konstanta percepatan kognitif
-        $c2 = 2; // Konstanta percepatan sosial
-        $w = 0.9; // Inersia
 
-        $locCount = count($locations); // Jumlah lokasi
+        public function data(Request $request, $id)
+        {
+            //data preparation
+            $user = auth()->user()->level;
+            // data tambahan
+            $tpaPecuk = Lokasi::find(1)->toArray();
+            // dd($tpaPecuk['lat']);
 
-        // Inisialisasi partikel
-        $particles = [];
-        for ($i = 0; $i < $particleCount; $i++) {
-            $particle = [
-                'route' => range(2, $locCount), // Exclude location id = 1
-                'pBest' => [], // Rute terbaik partikel
-                'pBestCost' => INF, // Biaya terbaik partikel
-                'velocity' => [], // Kecepatan partikel
+            //data tambahan
+
+            $endLocation = Lokasi::where('id', '!=', 1)->get()->toArray();
+
+            $startLocations = [
+                [
+                    'name' => $tpaPecuk['name'],
+                    'lat' => $tpaPecuk['lat'],
+                    'lng' => $tpaPecuk['lng'],
+                ],
+
+                [
+                    'name' => $tpaPecuk['name'],
+                    'lat' => $tpaPecuk['lat'],
+                    'lng' => $tpaPecuk['lng'],
+                ],
+
+
+                [
+                    'name' => $tpaPecuk['name'],
+                    'lat' => $tpaPecuk['lat'],
+                    'lng' => $tpaPecuk['lng'],
+                ],
             ];
-            shuffle($particle['route']);
-            $particle['route'] = array_merge([1], $particle['route'], [1]); // Add location id = 1 at the beginning and end
-            $particles[] = $particle;
-        }
+            //data preparation
 
-        // Inisialisasi rute global terbaik
-        $gBest = $particles[0]['route'];
-        $gBestCost = $this->calculateRouteCost($gBest, $distances);
+            //pembagian data ke setiap driver
+            $totalEndLocations = count($endLocation); // Jumlah total lokasi yang akan dibagi
+            $totalDrivers = count($startLocations); // Jumlah total driver
 
-        // Iterasi PSO
-        for ($iter = 0; $iter < $maxIteration; $iter++) {
-            foreach ($particles as &$particle) {
-                // Evaluasi biaya rute partikel
-                $cost = $this->calculateRouteCost($particle['route'], $distances);
+            $locationsPerDriver = floor($totalEndLocations / $totalDrivers); // Jumlah lokasi per driver (pembulatan ke bawah)
 
-                // Memperbarui pBest partikel
-                if ($cost < $particle['pBestCost']) {
+            $remainingItems = $totalEndLocations % $totalDrivers; // Sisa lokasi setelah pembagian
 
-                    $particle['pBest'] = $particle['route'];
-                    $particle['pBestCost'] = $cost;
-                }
+            $itemCounts = array_fill(0, $totalDrivers, $locationsPerDriver);
 
-                // Memperbarui gBest jika diperlukan
-                if ($cost < $gBestCost) {
-                    $gBest = $particle['route'];
-                    $gBestCost = $cost;
-                }
-
-                // Menghitung kecepatan partikel
-                $newVelocity = [];
-                foreach ($particle['velocity'] as $index => $velocity) {
-                    $r1 = mt_rand() / mt_getrandmax();
-                    $r2 = mt_rand() / mt_getrandmax();
-                    $newVelocity[$index] = $w * $velocity
-                        + $c1 * $r1 * ($particle['pBest'][$index] - $particle['route'][$index])
-                        + $c2 * $r2 * ($gBest[$index] - $particle['route'][$index]);
-                }
-                $particle['velocity'] = $newVelocity;
-
-                // Memperbarui rute partikel berdasarkan kecepatan
-                $particle['route'] = $this->updateRouteByVelocity($particle['route'], $particle['velocity']);
+            // Memasukkan sisa lokasi ke driver pertama
+            for ($i = 0; $i < $remainingItems; $i++) {
+                $itemCounts[$i]++;
             }
+
+            // Menyusun hasil pembagian ke dalam array bertujuan untuk membagi lokasi terdekat ke setiap driver
+            for ($i = 0; $i < $totalDrivers; $i++) {
+                $outputArray[] = array(
+                    'driver' => ($i + 1),
+                    'itemCount' => $itemCounts[$i]
+                );
+            }
+            //pembagian data ke setiap driver
+
+
+            // dd($outputArray[1]['itemCount']);
+            // Iterasi PSO
+            $data = array();
+            for ($i = 0; $i < count($startLocations); $i++) {
+                // $data[$i][0] = $startLocations[$i]; //memasukan data driver
+                $data[$i][0] = $tpaPecuk; //memasukan lokasi awal tpa pecuk ke setiap driver
+
+                for ($j = 1; $j <= $outputArray[$i]['itemCount']; $j++) {
+                    // $data[$i][$j] = $startLocations[$i];
+
+                    // pbest di persingkat dengan menggunakan global best
+                    // ketika mendapatkan  global best data
+                    // dalam konteks ini mengambil global best langsung kita masukan ke dalam variable data berupa array
+                    // untuk mempersingkat update posisi partikel Global best
+                    $data[$i][$j] = $this->getGlobalBest($startLocations[$i]['lat'], $startLocations[$i]['lng'], $endLocation);
+                    // dd($data);
+
+
+                    // menghapus global best yang sudah di ambil agar bertujuan Global best yang sudah di masukan ke dalam array
+                    // berganti dengan global best selanjutnya
+                    $key = array_search($data[$i][$j], $endLocation);
+                    if ($key !== false) {
+                        unset($endLocation[$key]);
+                    }
+                }
+
+                // memasukan Tpa pecuk di akhir lokasi
+                $data[$i][$outputArray[$i]['itemCount']] = $tpaPecuk; //memasukan data tpa pecuk ke setiap driver
+
+            }
+
+            // dd($data);
+            // solusi optimal didapat
+
+
+            //solusi optimal dilakukan penyesuaian data agar bisa di tampilkan sebagai mark lokasi
+            $locations = [];
+
+            foreach ($data  as $key => $item) {
+                foreach ($item as $key2 => $location) {
+
+                    $locations[$key][$key2] = [
+
+                        $location["name"],
+                        (float)$location["lat"],
+                        (float)$location["lng"],
+                    ];
+                }
+            }
+            // dd($locations);
+            //solusi optimal dilakukan penyesuaian data agar bisa di tampilkan sebagai mark lokasi
+
+
+            //solusi optimal dilakukan penyesuaian data agar bisa di tampilkan sebagai line
+
+            $lines = [];
+            foreach ($data as $key => $item) {
+
+                foreach ($item as $key2 => $location) {
+                    $lines[$key][$key2] = [
+                        "lng" => (float)$location["lng"],
+                        "lat" => (float)$location["lat"],
+                    ];
+                }
+            }
+            //solusi optimal dilakukan penyesuaian  data agar bisa di tampilkan sebagai l
+            $driver = $id;
+
+            // return view('maps.maps', ['driver' => $driver, 'data' => $data, 'locations' => $locations, 'lines' => $lines]);
+            return response()->json(['driver' => $driver, 'data' => $data, 'locations' => $locations, 'lines' => $lines]);
         }
 
-        return $gBest;
+
+
+        function getGlobalBest($startLat, $startLng, $locations)
+        {
+            // Inisialisasi variabel untuk lokasi terdekat dan jarak terpendek atau globalbest
+            $bestLocation = null;
+            $bestDistance = null;
+
+            // Melakukan perulangan untuk setiap lokasi dalam array $locations
+            foreach ($locations as $location) {
+                $lat = $location['lat'];
+                $lng = $location['lng'];
+
+                // Menghitung jarak menggunakan fungsi haversineDistance
+                $distance = $this->haversineDistance($startLat, $startLng, $lat, $lng);
+
+                // Memeriksa apakah jarak terdekat belum diinisialisasi atau jarak saat ini lebih kecil
+                if ($bestDistance === null || $distance < $bestDistance) {
+                    // Memperbarui lokasi terdekat dan jarak terpendek /globalbest
+                    $bestLocation = $location;
+                    $bestDistance = $distance;
+                }
+            }
+            // Mengembalikan lokasi terdekat
+            return $bestLocation;
+        }
+
+
+        function haversineDistance($lat1, $lng1, $lat2, $lng2)
+        {
+            // penggunaan inisialisasi paramter pso
+            $earthRadius = 6371; // merupakan radius bumi dalam kilometer.
+
+
+            $deltaLat = deg2rad($lat2 - $lat1);
+            $deltaLng = deg2rad($lng2 - $lng1);
+
+            $a = sin($deltaLat / 2) * sin($deltaLat / 2) +
+                cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
+                sin($deltaLng / 2) * sin($deltaLng / 2);
+
+            $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
+            $distance = $earthRadius * $c;
+
+            return $distance;
+            // penggunaan inisialisasi paramter pso
+
+        }
     }
-
-    private function calculateRouteCost($route, $distances)
-    {
-        $cost = 0;
-        $locCount = count($route);
-        for ($i = 0; $i < $locCount - 1; $i++) {
-            $loc1 = $route[$i];
-            $loc2 = $route[$i + 1];
-            $cost += $distances[$loc1][$loc2];
-        }
-        return $cost;
-    }
-
-    private function updateRouteByVelocity($route, $velocity)
-    {
-        $newRoute = $route;
-        $locCount = count($route);
-        $velocityCount = count($velocity); // Get the length of the velocity array
-
-        // Adjust the velocity array length if necessary
-        if ($velocityCount < $locCount) {
-            $velocity = array_pad($velocity, $locCount, 0);
-        } elseif ($velocityCount > $locCount) {
-            $velocity = array_slice($velocity, 0, $locCount);
-        }
-
-        for ($i = 0; $i < $locCount; $i++) {
-            $newIndex = ($route[$i] - 1 + round($velocity[$i])) % $locCount;
-            $newRoute[$i] = $newIndex + 1;
-        }
-        return $newRoute;
-    }
-    private function saveOptimalRoute($route)
-    {
-        // Konversi array rute ke dalam format string
-        $routeString = implode(',', $route);
-
-        // Periksa apakah data rute sudah ada sebelumnya
-        $existingRoute = PSO::where('route', $routeString)->first();
-
-        // Jika data rute belum ada, simpan ke dalam database
-        if (!$existingRoute) {
-            PSO::create([
-                'route' => $routeString,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-        }
-    }
-
-
-    private function getRouteDetails($route, $distances)
-    {
-        $routeDetails = [];
-        $locCount = count($route);
-        for ($i = 0; $i < $locCount - 1; $i++) {
-            $loc1 = $route[$i];
-            $loc2 = $route[$i + 1];
-            $distance = $distances[$loc1][$loc2];
-            $routeDetails[] = [
-                'loc1' => $loc1,
-                'loc2' => $loc2,
-                'distance' => $distance,
-            ];
-        }
-        return $routeDetails;
-    }
-}

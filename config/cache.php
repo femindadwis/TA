@@ -17,6 +17,18 @@ return [
 
     'default' => env('CACHE_DRIVER', 'file'),
 
+'connections' => [
+    'file' => [
+        'driver' => 'file',
+        'path' => storage_path('framework/cache/data'),
+    ],
+
+    'redis' => [
+        'driver' => 'redis',
+        'connection' => 'cache',
+    ],
+],
+
     /*
     |--------------------------------------------------------------------------
     | Cache Stores

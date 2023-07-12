@@ -87,10 +87,14 @@ Route::group(['middleware' => 'auth'], function(){
 
     // ROUTE RUTE GMAPS
     Route::get('/rute/rute_gmaps', [RuteController::class, 'index'])->name('rute');
+    Route::get('/rute/rute_gmaps/perdriver/{id}', [RuteController::class, 'detail'])->name('rute_gmaps.detail');
     // Route::post('/rute/rute_gmaps', [RuteController::class, 'calculateRoute'])->name('calculate-route');
 
      // ROUTE RUTE PSO
      Route::get('/rute/rute_pso', [PSOController::class, 'index'])->name('rute_pso');
+     Route::get('/maps/data/{id}', [PSOController::class, 'data'])->name('maps.data');
+
+
 });
 
 

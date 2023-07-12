@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Rute;
 use App\Models\Jarak;
 use App\Models\Lokasi;
+use App\Models\Driver;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -14,88 +15,196 @@ class RuteController extends Controller
 {
     public function index()
     {
-        // Mendapatkan data lokasi dari database
-        $locations = Lokasi::select('id', 'name', 'lat', 'lng')->get()->toArray();
+         // Data tambahan
+         $tpaPecuk = Lokasi::find(1)->toArray();
+         // Data tambahan
+         $driver = Driver::all();
+         $endLocation = Lokasi::where('id', '!=', 1)->get()->toArray();
 
-        // Mendapatkan data jarak dari database
-        $jarakData = Jarak::select('loc_1', 'loc_2', 'distance')->get()->toArray();
+         $totalEndLocations = count($endLocation); // Jumlah total lokasi yang akan dibagi
+         $totalDrivers = Driver::count();
 
-        // Mengonversi data jarak ke dalam bentuk matriks
-        $jarak = [];
-        foreach ($jarakData as $data) {
-            $jarak[$data['loc_1']][$data['loc_2']] = $data['distance'];
-        }
+         $locationsPerDriver = floor($totalEndLocations / $totalDrivers); // Jumlah lokasi per driver (pembulatan ke bawah)
 
+         $remainingItems = $totalEndLocations % $totalDrivers; // Sisa lokasi setelah pembagian
 
-         $optimalRoute = $this->findOptimalRoute($locations, $jarak);
+         // Menginisialisasi array untuk menyimpan jumlah lokasi per driver
+         $itemCounts = array_fill(0, $totalDrivers, $locationsPerDriver);
 
-//  PRNYA MASIH BELUM ILANGIN ZOOM OTOMATIS
-         // Menambahkan lokasi awal (start location) pada akhir rute
-         $optimalRoute[] = $optimalRoute[0];
+         // Memasukkan sisa lokasi ke driver pertama
+         for ($i = 0; $i < $remainingItems; $i++) {
+             $itemCounts[$i]++;
+         }
 
-         // Menghitung total jarak tempuh
-         $totalDistance = $this->calculateTotalDistance($optimalRoute, $jarak);
+         $data = array();
+         $endLocationIndex = 0;
+         for ($i = 0; $i < $totalDrivers; $i++) {
+             $data[$i][0] = $tpaPecuk; // Memasukkan data TPA Pecuk ke setiap driver
 
-        return view('rute.rute_gmaps', compact('optimalRoute', 'locations', 'totalDistance'));
-    }
-    private function findOptimalRoute($locations, $jarak)
-    {
-        $numLocations = count($locations);
-        $optimalRoute = [];
-        $minDistance = INF;
+             for ($j = 1; $j <= $itemCounts[$i]; $j++) {
+                 $data[$i][$j] = $endLocation[$endLocationIndex];
+                 $endLocationIndex++;
+             }
 
-        // Fungsi rekursif untuk mencari rute terbaik secara berulang
-        $findRoute = function ($currentRoute, $remainingLocations, $currentDistance) use (
-            &$optimalRoute,
-            &$minDistance,
-            $jarak,
-            &$findRoute,
-        ) {
-            if (empty($remainingLocations)) {
-                // Jika tidak ada lokasi yang tersisa, periksa apakah rute ini lebih optimal
-                if ($currentDistance < $minDistance) {
-                    $minDistance = $currentDistance;
-                    $optimalRoute = $currentRoute;
-                }
-            } else {
-                foreach ($remainingLocations as $key => $location) {
-                    $newRoute = array_merge($currentRoute, [$location['id']]);
-                    $newRemainingLocations = array_values(array_diff_key($remainingLocations, [$key => $location]));
-                    $newDistance = $currentDistance + $jarak[$currentRoute[count($currentRoute) - 1]][$location['id']];
+        $locations = [];
 
-                    $findRoute($newRoute, $newRemainingLocations, $newDistance);
-                }
+        foreach ($data  as $key => $item) {
+            foreach ($item as $key2 => $location) {
+
+                $locations[$key][$key2] = [
+
+                    $location["name"],
+                    $location["lng"],
+                    $location["lat"],
+                ];
             }
-        };
+        }}
 
-        // Mulai pencarian rute terbaik dari setiap lokasi
-        $startingLocation = null;
-        foreach ($locations as $key => $location) {
-            if ($location['id'] == 1) {
-                $startingLocation = $location;
-                break;
+        $lines = [];
+        foreach ($data as $key => $item) {
+
+            foreach ($item as $key2 => $location) {
+                $lines[$key][$key2] = [
+                    "lng" => $location["lng"],
+                    "lat" => $location["lat"],
+                ];
             }
         }
-
-        $startingIndex = array_search($startingLocation, $locations);
-        $remainingLocations = array_values(array_diff_key($locations, [$startingIndex => $startingLocation]));
-
-        $findRoute([$startingLocation['id']], $remainingLocations, 0);
-
-        return $optimalRoute;
+        // dd($lines);
+        return view('rute.rute_gmaps', ['locations' => $locations, 'lines' => $lines, 'tpaPecuk' => $tpaPecuk, 'driver' => $driver]);
     }
 
-    private function calculateTotalDistance($route, $jarak)
+    function getNearestLocation($startLat, $startLng, $locations)
     {
-         $totalDistance = 0;
+        $nearestLocation = null;
+        $nearestDistance = null;
 
-        for ($i = 1; $i < count($route); $i++) {
-            $loc1 = $route[$i - 1];
-            $loc2 = $route[$i];
-            $totalDistance += $jarak[$loc1][$loc2];
+        foreach ($locations as $location) {
+            $lat = $location['lat'];
+            $lng = $location['lng'];
+
+            $distance = $this->haversineDistance($startLat, $startLng, $lat, $lng);
+
+            if ($nearestDistance === null || $distance < $nearestDistance) {
+                $nearestLocation = $location;
+                $nearestDistance = $distance;
+            }
         }
 
-        return $totalDistance;
+        return $nearestLocation;
     }
+
+    function haversineDistance($lat1, $lng1, $lat2, $lng2)
+    {
+        $earthRadius = 6371; // Radius of the earth in kilometers
+
+        $deltaLat = deg2rad($lat2 - $lat1);
+        $deltaLng = deg2rad(abs($lng2 - $lng1)); // Menggunakan nilai absolut delta longitude
+
+        $a = sin($deltaLat / 2) * sin($deltaLat / 2) +
+            cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
+            sin($deltaLng / 2) * sin($deltaLng / 2);
+
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
+        $distance = $earthRadius * $c;
+
+        return $distance;
+    }
+
+    public function detail($id)
+    {
+        $driver = Driver::where('id', $id)->first();
+        $tpaPecuk = Lokasi::find(1)->toArray();
+        // Retrieve the locations related to the driver
+        $endLocation = Lokasi::where('id', '!=', 1)->get()->toArray();
+
+        $totalEndLocations = count($endLocation); // Total number of locations to be divided
+        $totalDrivers = Driver::count();
+
+        $locationsPerDriver = floor($totalEndLocations / $totalDrivers); // Number of locations per driver (rounded down)
+        $remainingItems = $totalEndLocations % $totalDrivers; // Remaining locations after division
+
+        // Initialize an array to store the number of locations per driver
+        $itemCounts = array_fill(0, $totalDrivers, $locationsPerDriver);
+
+        // Assign the remaining locations to the first driver
+        for ($i = 0; $i < $remainingItems; $i++) {
+            $itemCounts[$i]++;
+        }
+
+        $data = [];
+        $endLocationIndex = 0;
+        for ($i = 0; $i < $totalDrivers; $i++) {
+            $data[$i][0] = $tpaPecuk; // Assign TPA Pecuk data to each driver
+
+            for ($j = 1; $j <= $itemCounts[$i]; $j++) {
+                $data[$i][$j] = $endLocation[$endLocationIndex];
+                $endLocationIndex++;
+            }
+        }
+
+        $locations = [];
+        $totalJarakPerDriver = [];
+
+        foreach ($data as $key => $item) {
+            $totalJarak = 0;
+            $totalLocations = count($item);
+
+            for ($key2 = 0; $key2 < $totalLocations; $key2++) {
+                $location = $item[$key2];
+
+                $locations[$key][$key2] = [
+                    'name' => $location['name'],
+                    'lng' => $location['lng'],
+                    'lat' => $location['lat'],
+                ];
+
+    // hitung jarak
+                if ($key2 > 0) {
+                    $jarakSebelumnya = $this->haversineDistance(
+                        $item[$key2 - 1]['lat'],
+                        $item[$key2 - 1]['lng'],
+                        $location['lat'],
+                        $location['lng']
+                    );
+                    $totalJarak += $jarakSebelumnya;
+                }
+            }
+
+            // Calculate distance from the last location back to the first location (TPA Pecuk)
+            $jarakTerakhir = $this->haversineDistance(
+                $item[$totalLocations - 1]['lat'],
+                $item[$totalLocations - 1]['lng'],
+                $data[$key][0]['lat'],
+                $data[$key][0]['lng']
+            );
+            $totalJarak += $jarakTerakhir;
+
+            $totalJarakPerDriver[$key] = number_format($totalJarak, 3);
+        }
+
+        // Calculate total distance including the return trip from the last location to the first location
+        $totalJarakKeseluruhan = array_sum($totalJarakPerDriver);
+
+        $lines = [];
+        foreach ($data as $key => $item) {
+            foreach ($item as $key2 => $location) {
+                $lines[$key][$key2] = [
+                    'lng' => $location['lng'],
+                    'lat' => $location['lat'],
+                ];
+            }
+        }
+// dd($totalJarakPerDriver);
+        return view('rute.perdriver', [
+            'locations' => $locations,
+            'lines' => $lines,
+            'tpaPecuk' => $tpaPecuk,
+            'driver' => $driver,
+            'totalJarakPerDriver' => $totalJarakPerDriver,
+        ]);
+    }
+
 
 }

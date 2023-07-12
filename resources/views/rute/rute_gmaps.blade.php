@@ -28,137 +28,84 @@
                             <div id="map-canvas"></div>
                         </div>
                     </div>
-                    <!-- Tampilkan urutan lokasi -->
-                    <div id="route-order" class="mt-3">
-                        @if (isset($optimalRoute))
-                            <p>Optimal Route:</p>
-                            <ol>
-                                @foreach ($optimalRoute as $key => $locationId)
-                                    <li>
-                                        {{ collect($locations)->where('id', $locationId)->first()['name'] }}
-                                    </li>
-                                @endforeach
-                                @if (end($optimalRoute) !== 1)
-                                    <li>
-                                        {{ collect($locations)->where('id', 1)->first()['name'] }}
-                                    </li>
-                                @endif
-                            </ol>
-                        @endif
-                    </div>
-                    <div lass="mt-3">
-                        @if (isset($totalDistance))
-                            Total Distance: {{ $totalDistance }} km<br>
-                        @endif
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <script>
-        // Membuat objek peta
-        function initMap() {
-            var map = new google.maps.Map(document.getElementById('map-canvas'), {
-                zoom: 12,
-                center: new google.maps.LatLng(-6.123456, 106.789012)
+<br>
+                    @foreach ( $driver as $d )
+                    <button><a href="/rute/rute_gmaps/perdriver/{{ $d->id }}">{{ $d->name }}</a></button>
+                    @endforeach
+                </div></div></div></div>
+                        <script>
+                            function initMap() {
+                                // Array of locations and lines
+                                var locations = @json($locations);
+                                var lines = @json($lines);
 
-            });
+                                // Create a map centered at TPA Pecuk
+                                var map = new google.maps.Map(document.getElementById('map-canvas'), {
+                                    center: { lat: {{ $tpaPecuk['lat'] }}, lng: {{ $tpaPecuk['lng'] }} },
+                                    zoom: 13
+                                });
 
-            var locations = [
-                @foreach ($optimalRoute as $locationId)
-                    {
-                        name: "{{ collect($locations)->where('id', $locationId)->first()['name'] }}",
-                        lat: {{ collect($locations)->where('id', $locationId)->first()['lat'] }},
-                        lng: {{ collect($locations)->where('id', $locationId)->first()['lng'] }}
-                    },
-                @endforeach
-            ];
+                                // Add markers for each location
+                                for (var i = 0; i < locations.length; i++) {
+                                    var driverLocations = locations[i];
+                                    var color = getRandomColor(); // Generate a random color for each driver
 
-            var markers = [];
-            for (var i = 0; i < locations.length; i++) {
-                var location = locations[i];
-                var marker = new google.maps.Marker({
-                    position: {
-                        lat: location.lat,
-                        lng: location.lng
-                    },
-                    map: map,
-                    // label: (i + 1).toString()
-                });
-                markers.push(marker);
-            }
+                                    for (var j = 0; j < driverLocations.length; j++) {
+                                        var location = driverLocations[j];
 
-            var directionsService = new google.maps.DirectionsService();
-            var directionsRenderer = new google.maps.DirectionsRenderer({
-                suppressMarkers: true,
-                polylineOptions: {
-                    strokeColor: '#FF0000',
-                    strokeOpacity: 1.0,
-                    strokeWeight: 2
-                },
-                map: map
-            });
+                                        var marker = new google.maps.Marker({
+                                            position: { lat: parseFloat(location[2]), lng: parseFloat(location[1]) },
+                                            map: map,
+                                            title: location[0],
+                                            icon: {
+                                                path: google.maps.SymbolPath.CIRCLE,
+                                                fillColor: color,
+                                                fillOpacity: 0.5, // Set the fill opacity to a low value
+                                                strokeWeight: 0,
+                                                scale: 6
+                                            }
+                                        });
 
-            var waypoints = locations.slice(1, -1).map(function(location) {
-                return {
-                    location: new google.maps.LatLng(location.lat, location.lng),
-                    stopover: true
-                };
-            });
-            var request = {
-                origin: new google.maps.LatLng(locations[0].lat, locations[0].lng),
-                destination: new google.maps.LatLng(locations[locations.length - 1].lat, locations[locations.length - 1].lng),
-                waypoints: waypoints,
-                optimizeWaypoints: true,
-                travelMode: google.maps.TravelMode.DRIVING
-            };
-            directionsService.route(request, function(response, status) {
-                if (status == google.maps.DirectionsStatus.OK) {
-                    directionsRenderer.setDirections(response);
-                    var route = response.routes[0];
-                    var legs = route.legs;
-                    var lastLeg = legs[legs.length - 1];
-                    var lastLocation = lastLeg.end_location;
+                                        // Add an event listener to display the location name when marker is clicked
+                                        marker.addListener('click', function() {
+                                            var infoWindow = new google.maps.InfoWindow({
+                                                content: this.getTitle()
+                                            });
+                                            infoWindow.open(map, this);
+                                        });
+                                    }
 
-                    // Menambahkan marker lokasi mulai sebagai waypoint terakhir
-                    var startMarker = new google.maps.Marker({
-                        position: request.origin,
-                        map: map
-                        // label: 'A'  // Label marker untuk lokasi mulai
-                    });
-                    // Menghubungkan lokasi terakhir ke lokasi mulai
-                    var routeToStart = new google.maps.DirectionsRenderer({
-                        suppressMarkers: true,
-                        polylineOptions: {
-                            strokeColor: '#FF0000',
-                            strokeOpacity: 1.0,
-                            strokeWeight: 2
-                        },
-                        map: map
-                    });
+                                    // Add a polyline to connect the locations and return to TPA Pecuk
+                                    var driverLine = lines[i];
+                                    var lineCoordinates = [];
+                                    for (var k = 0; k < driverLine.length; k++) {
+                                        var line = driverLine[k];
+                                        lineCoordinates.push({ lat: parseFloat(line.lat), lng: parseFloat(line.lng) });
+                                    }
 
-                    var routeRequestToStart = {
-                        origin: lastLocation,
-                        destination: request.origin,
-                        travelMode: google.maps.TravelMode.DRIVING
-                    };
+                                    lineCoordinates.push({ lat: {{ $tpaPecuk['lat'] }}, lng: {{ $tpaPecuk['lng'] }} }); // Add TPA Pecuk as the last point
 
-                    directionsService.route(routeRequestToStart, function(response, status) {
-                        if (status == google.maps.DirectionsStatus.OK) {
-                            routeToStart.setDirections(response);
-                        }
-                    });
-                }
-            });
+                                    var polyline = new google.maps.Polyline({
+                                        path: lineCoordinates,
+                                        geodesic: true,
+                                        strokeColor: color,
+                                        strokeOpacity: 1.0,
+                                        strokeWeight: 2,
+                                        map: map
+                                    });
+                                }
+                            }
 
-            // batas pandang peta agar semua marker terlihat
-            var bounds = new google.maps.LatLngBounds();
-            for (var i = 0; i < markers.length; i++) {
-                bounds.extend(markers[i].getPosition());
-            }
-            map.fitBounds(bounds);
-        }
-    </script>
+                            // Generate a random color
+                            function getRandomColor() {
+                                var letters = '0123456789ABCDEF';
+                                var color = '#';
+                                for (var i = 0; i < 6; i++) {
+                                    color += letters[Math.floor(Math.random() * 16)];
+                                }
+                                return color;
+                            }
+                        </script>
     @include('layout.footer')
     @include('layout.js')

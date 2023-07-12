@@ -48,7 +48,7 @@
                         <ul class="nav-submenu menu-content"  style="display: none;">
 
                             <li><a href="/rute/rute_gmaps" class="">Rute Google Optimizer</a></li>
-                            <li><a href="/rute/backup_rute_gmaps" class="">BACKUP GMAPS</a></li>
+                            {{-- <li><a href="/rute/backup_rute_gmaps" class="">BACKUP GMAPS</a></li> --}}
                             <li><a href="/rute/rute_pso" class="">Rute PSO </a></li>
 
                         </ul>
