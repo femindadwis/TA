@@ -1,5 +1,6 @@
 <?php
 
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
@@ -10,7 +11,9 @@ use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\JarakController;
 use App\Http\Controllers\DriverLokasiController;
 use App\Http\Controllers\RuteController;
+use App\Http\Controllers\JenisKendaraanController;
 use App\Http\Controllers\PSOController;
+
 use App\Http\Controllers\Autentikasi\AutentikasiController;
 
 /*
@@ -29,7 +32,7 @@ Route::get('/', function () {
 });
 
 
-Route::group(["middleware" => ["guest"]], function() {
+Route::group(["middleware" => ["guest"]], function () {
     Route::get("/login", [AutentikasiController::class, "login"]);
     Route::post("/login", [AutentikasiController::class, "post_login"]);
     Route::get("/register", [AutentikasiController::class, "register"]);
@@ -37,9 +40,10 @@ Route::group(["middleware" => ["guest"]], function() {
 
 });
 
-Route::group(['middleware' => 'auth'], function(){
+Route::group(['middleware' => 'auth'], function () {
     Route::post('/logout', [AutentikasiController::class, 'logout'])->name('logout');
-    Route::get('/dashboard', function(){return view('dashboard');});
+    Route::get('/dashboard', function () {
+        return view('dashboard'); });
     Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
 
     // ROUTE USER
@@ -50,7 +54,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/user/update', [UserController::class, 'update'])->name('user_edit');
     Route::get('/user/hapus/{id}', [UserController::class, 'hapus'])->name('user');
 
-     // ROUTE DRIVER
+    // ROUTE DRIVER
     Route::get('/driver/driver', [DriverController::class, 'index'])->name('driver');
     Route::get('/driver/tambah', [DriverController::class, 'tambah']);
     Route::post('/driver/store', [DriverController::class, 'store']);
@@ -73,8 +77,9 @@ Route::group(['middleware' => 'auth'], function(){
     // ROUTE CRUD PROFIL
     Route::get('/profil/profil', [ProfilController::class, 'index'])->name('profil');
 
-     // ROUTE JARAK
-     Route::get('/jarak/jarak', [JarakController::class, 'index'])->name('jarak');
+    // ROUTE JARAK
+    Route::get('/jarak/jarak', [JarakController::class, 'index'])->name('jarak');
+    Route::get('/jarak/detail/{id}', [JarakController::class, 'detail'])->name('jarak_detail');
     // Route::post('/jarak/create', [JarakController::class, 'create'])->name('jarak.create');
 
     // driver_lokasi
@@ -85,14 +90,25 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/driver_lokasi/update', [DriverLokasiController::class, 'update']);
     Route::get('/driver_lokasi/hapus/{id}', [DriverLokasiController::class, 'hapus']);
 
-    // ROUTE RUTE GMAPS
-    Route::get('/rute/rute_gmaps', [RuteController::class, 'index'])->name('rute');
-    Route::get('/rute/rute_gmaps/perdriver/{id}', [RuteController::class, 'detail'])->name('rute_gmaps.detail');
+    // JENIS KENDARAAN
+    Route::get('/jenis_kendaraan/jenis_kendaraan', [JenisKendaraanController::class, 'index'])->name('jenis_kendaraan');
+    Route::get('/jenis_kendaraan/tambah', [JenisKendaraanController::class, 'tambah']);
+    Route::post('/jenis_kendaraan/store', [JenisKendaraanController::class, 'store']);
+    Route::get('/jenis_kendaraan/edit/{id}', [JenisKendaraanController::class, 'edit'])->name('jenis_kendaraan.edit');
+    Route::post('/jenis_kendaraan/update', [JenisKendaraanController::class, 'update']);
+    Route::get('/jenis_kendaraan/hapus/{id}', [JenisKendaraanController::class, 'hapus']);
+
+    // ROUTE RUTE
+
+    Route::get('/rute/rute', [RuteController::class, 'index'])->name('rute');
+    Route::get('/rute/detail/{id}', [RuteController::class, 'detail'])->name('rute_detail');
+    // Route::get('/rute/rute_gmaps', [RuteController::class, 'index'])->name('rute');
+    // Route::get('/rute/rute_gmaps/perdriver/{id}', [RuteController::class, 'detail'])->name('rute_gmaps.detail');
     // Route::post('/rute/rute_gmaps', [RuteController::class, 'calculateRoute'])->name('calculate-route');
 
-     // ROUTE RUTE PSO
-     Route::get('/rute/rute_pso', [PSOController::class, 'index'])->name('rute_pso');
-     Route::get('/maps/data/{id}', [PSOController::class, 'data'])->name('maps.data');
+    // ROUTE RUTE PSO
+    Route::get('/rute/rute_pso', [PSOController::class, 'index'])->name('rute_pso');
+    Route::get('/maps/data/{id}', [PSOController::class, 'data'])->name('maps.data');
 
 
 });

@@ -8,24 +8,29 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Models\{Driver, User, Driver_lokasi, Lokasi, Jarak};
 use Illuminate\Support\Facades\Http;
+use App\Models\Jeniskendaraan;
 
 
 class DriverController extends Controller
 {
     public function index()
     {
-        $driver = DB::table('driver')->get();
-        $user = DB::table('users')->get();
-        // mengirim data pegawai ke view index
-        // return view('driver/driver',['driver' => $driver]);
-        return view ('driver/driver', ['driver' => $driver], ['user' => $user]);
+        $data = [
+            "driver" => Driver::all(),
+            "user" => User::all(),
+            "jeniskendaraan" => Jeniskendaraan::all()
+        ];
+        // dd($data);
+        return view('driver.driver', $data);
+
     }
 
     public function tambah()
     {
         $user = DB::table('users')->where('level', '3')->get();
+        $jenis_kendaraan = DB::table('jeniskendaraan')->get();
         // memanggil view tambah
-        return view('driver/driver_tambah', ['user' => $user]);
+        return view('driver/driver_tambah', ['user' => $user], ['jenis_kendaraan' => $jenis_kendaraan]);
 
     }
 
@@ -38,6 +43,9 @@ class DriverController extends Controller
             'name' => $user['name'],
             'username' => $request->username,
             'alamat' => $request->alamat,
+            'no_polisi' => $request->no_polisi,
+            'no_telepon' => $request->no_telepon,
+            'jeniskendaraan_id' => $request->jeniskendaraan_id,
         ]);
         // alihkan halaman driver
         return redirect('/driver/driver');
@@ -48,8 +56,8 @@ class DriverController extends Controller
     {
         $driver = DB::table('driver')->where('id', $id)->get();
         $user = DB::table('users')->get();
-
-        return view('driver/driver_edit',['driver' => $driver], ['user' => $user]);
+        $jenis_kendaraan = DB::table('jeniskendaraan')->get();
+        return view('driver/driver_edit',['driver' => $driver], ['user' => $user], ['jenis_kendaraan' => $jenis_kendaraan]);
     }
 
 
@@ -62,6 +70,9 @@ class DriverController extends Controller
             'name' => $request->name,
             'username' => $request->username,
             'alamat' => $request->alamat,
+            'no_polisi' => $request->no_polisi,
+            'no_telepon' => $request->no_telepon,
+            'jeniskendaraan_id' => $request->jeniskendaraan_id,
         ]);
         // alihkan halaman ke halaman driver
         return redirect('/driver/driver')->with('success', 'driver Telah di Ubah!');
@@ -107,6 +118,10 @@ class DriverController extends Controller
             foreach ($jarakData as $data) {
                 $jarak[$data['loc_1']][$data['loc_2']] = $data['distance'];
             }
+            ksort($jarak);
+foreach ($jarak as &$row) {
+    ksort($row);
+}
 
             $optimalRoute = $this->findOptimalRoute($locations, $jarak);
             $optimalRoutePSO = $this->findOptimalRoutePSO($locations, $jarak);
@@ -116,8 +131,8 @@ class DriverController extends Controller
             //  $optimalRoute[] = $optimalRoute[0];
 
              // Menghitung total jarak tempuh
-             $totalDistance = $this->calculateTotalDistance($optimalRoute, $jarak);
-             $totaljarak = $this->calculateTotalDistance($optimalRoutePSO, $jarak);
+             $totalDistance = $this->calculateTotalDistances($optimalRoute, $jarak);
+             $totaljarak = $this->calculateTotalDistances($optimalRoutePSO, $jarak);
         $data = [
             'driver' => $driver,
             'user' => User::all(),
@@ -217,93 +232,205 @@ private function calculateDistances($locations)
 }
 
 // fungsi itung total jarak
-private function calculateTotalDistance($route, $jarak)
+// private function calculateTotalDistance($route, $jarak)
+// {
+//     $totalDistance = 0;
+
+//     if (empty($route)) {
+//         return $totalDistance;
+//     }
+
+//     for ($i = 1; $i < count($route); $i++) {
+//         $loc1 = $route[$i - 1];
+//         $loc2 = $route[$i];
+//         $totalDistance += $jarak[$loc1][$loc2];
+//     }
+
+//     // Tambahkan jarak dari titik terakhir kembali ke TPA Pecuk
+//     $lastLocation = $route[count($route) - 1];
+//     $totalDistance += $jarak[$lastLocation][1];
+// // dd($jarak);
+//     return $totalDistance;
+// }
+
+
+function findOptimalRoutePSO($locations, $jarak)
 {
-     $totalDistance = 0;
+    $numLokasi = count($locations);
+    $numParticles = $this->factorial($numLokasi - 1);
+    $maxIterations = 100;
 
-    for ($i = 1; $i < count($route); $i++) {
-        $loc1 = $route[$i - 1];
-        $loc2 = $route[$i];
-        $totalDistance += $jarak[$loc1][$loc2];
-    }
-  // Tambahkan jarak dari titik terakhir kembali ke TPA Pecuk
-  $lastLocation = $route[count($route) - 1];
-  $totalDistance += $jarak[$lastLocation][1]; // 1 adalah ID TPA Pecuk
-
-    return $totalDistance;
-}
-
-
-private function findOptimalRoutePSO($locations, $jarak)
-{
-    mt_srand(42);
-    $numLocations = $locations->count();
-    $numParticles = 20;
-    $numIterations = 100;
-
-    // Inisialisasi partikel dan kecepatan
+    // Initialize particles
     $particles = [];
+    $bestGlobalPosition = [];
+    $bestGlobalFitness = PHP_INT_MAX;
 
-    $globalBest = [];
-    $globalBestFitness = INF;
-
-    // Inisialisasi partikel terbaik pada setiap partikel
-    $particleBest = [];
-    $particleBestFitness = [];
-
+    // Generate unique random positions for particles
     for ($i = 0; $i < $numParticles; $i++) {
-        $route = $locations->pluck('id')->toArray();
-        shuffle($route);
-        $particles[$i] = $route;
+        $position = [1]; // Dimulai dari lokasi dengan id = 1
+        $velocity = array_fill(0, $numLokasi, 0);
+        $bestPosition = null;
+        $bestFitness = PHP_INT_MAX;
 
-        $distance = 0;
-        for ($j = 0; $j < $numLocations - 1; $j++) {
-            $distance += $jarak[$route[$j]][$route[$j + 1]];
+        $lokasiIndices = range(0, $numLokasi - 1);
+        shuffle($lokasiIndices);
+
+        // Menambahkan lokasi yang dipilih ke dalam posisi partikel
+        foreach ($lokasiIndices as $index) {
+            $lokasiId = $locations[$index]['id'];
+
+            if (!in_array($lokasiId, $position)) {
+                $position[] = $lokasiId;
+            }
         }
 
-        // Mengupdate partikel terbaik
-        $particleBest[$i] = $route;
-        $particleBestFitness[$i] = $distance;
+        // Cek apakah posisi partikel sudah ada sebelumnya
+        $isDuplicate = false;
+        foreach ($particles as $particle) {
+            if ($particle['position'] == $position) {
+                $isDuplicate = true;
+                break;
+            }
+        }
 
-        // Mengupdate nilai global terbaik
-        if ($distance < $globalBestFitness) {
-            $globalBest = $route;
-            $globalBestFitness = $distance;
+        // Jika posisi partikel sudah ada sebelumnya, lakukan generate ulang posisi
+        while ($isDuplicate) {
+            shuffle($lokasiIndices);
+
+            $position = [1];
+            foreach ($lokasiIndices as $index) {
+                $lokasiId = $locations[$index]['id'];
+
+                if (!in_array($lokasiId, $position)) {
+                    $position[] = $lokasiId;
+                }
+            }
+
+            $isDuplicate = false;
+            foreach ($particles as $particle) {
+                if ($particle['position'] == $position) {
+                    $isDuplicate = true;
+                    break;
+                }
+            }
+        }
+
+        // Calculate total distance for the current particle
+        $totalJarak = $this->calculateTotalDistances($position, $jarak);
+
+        // Update best position and best fitness
+        if ($totalJarak < $bestFitness) {
+            $bestFitness = $totalJarak;
+            $bestPosition = $position;
+        }
+
+        $particles[] = compact('position', 'velocity', 'bestPosition', 'bestFitness');
+    }
+// dd($particles);
+    $bestGlobalPosition = $particles[0]['position'];
+    for ($iteration = 0; $iteration < $maxIterations; $iteration++) {
+        foreach ($particles as &$particle) {
+            // Update velocity
+            $cognitiveWeight = 1.0;
+            $socialWeight = 1.0;
+            $inertiaWeight = 0.8;
+
+            for ($i = 1; $i < $numLokasi; $i++) {
+                $r1 = mt_rand() / mt_getrandmax();
+                $r2 = mt_rand() / mt_getrandmax();
+
+                $cognitiveComponent = $cognitiveWeight * $r1 * ($particle['bestPosition'][$i] - $particle['position'][$i]);
+                $socialComponent = $socialWeight * $r2 * ($bestGlobalPosition[$i] - $particle['position'][$i]);
+
+                $particle['velocity'][$i] = $inertiaWeight * $particle['velocity'][$i] + $cognitiveComponent + $socialComponent;
+            }
+
+            // Update position
+            $position = $particle['position'];
+            $velocity = $particle['velocity'];
+
+            // urutkan lokasi dari kecepatan
+            array_multisort($velocity, $position);
+
+            // Reconstruct the route based on the sorted positions
+            $route = array_map(function($index) use ($position) {
+                return $position[$index];
+            }, array_keys($position));
+
+            // Evaluate fitness for the new position
+            $totalJarak = $this->calculateTotalDistances($route, $jarak);
+
+            // Update best position and best fitness for the particle
+            if ($totalJarak < $particle['bestFitness']) {
+                $particle['bestFitness'] = $totalJarak;
+                $particle['bestPosition'] = $route;
+            }
+
+            // Update best global position and best global fitness
+            if ($totalJarak < $bestGlobalFitness) {
+                $bestGlobalFitness = $totalJarak;
+                $bestGlobalPosition = $route;
+            }
+        }
+
+    }
+    // dd($route);
+
+        // Filter best global position to start from location with id = 1
+        $index = array_search(1, $bestGlobalPosition);
+        $bestGlobalPosition = array_merge(array_slice($bestGlobalPosition, $index), array_slice($bestGlobalPosition, 0, $index));
+    // dd($bestGlobalFitness);
+
+return $bestGlobalPosition;
+}
+// Fungsi untuk menghitung faktorial
+function factorial($n)
+{
+    if ($n <= 1) {
+        return 1;
+    } else {
+        return $n * $this->factorial($n - 1);
+    }
+}
+
+// Fungsi untuk menghitung total jarak
+function calculateTotalDistances($rute, $jarak)
+{
+    $totalJarak = 0;
+    $jumlahTitik = count($rute);
+
+    for ($i = 0; $i < $jumlahTitik - 1; $i++) {
+        if (isset($rute[$i]) && isset($rute[$i + 1])) {
+            $titik1 = $rute[$i];
+            $titik2 = $rute[$i + 1];
+
+            if (isset($jarak[$titik1][$titik2])) {
+                $totalJarak += $jarak[$titik1][$titik2];
+            } else {
+                // Handle ketika $jarak[$titik1][$titik2] tidak ada
+                // Misalnya, lakukan penanganan kesalahan atau berikan nilai default
+                $totalJarak += 0; // Nilai default jika elemen tidak ada
+            }
+        } else {
+            // Handle ketika $rute[$i] atau $rute[$i + 1] tidak ada
+            // Misalnya, lakukan penanganan kesalahan atau berikan nilai default
+            $totalJarak += 0; // Nilai default jika elemen tidak ada
         }
     }
 
-    // Iterasi PSO
-    for ($iter = 0; $iter < $numIterations; $iter++) {
-        for ($i = 0; $i < $numParticles; $i++) {
-            $route = $particles[$i];
-            $distance = 0;
-            for ($j = 0; $j < $numLocations - 1; $j++) {
-                $distance += $jarak[$route[$j]][$route[$j + 1]];
-            }
-
-            // Perbarui nilai kebugaran partikel terbaik dan nilai kebugaran global terbaik
-            if ($distance < $particleBestFitness[$i]) {
-                $particleBest[$i] = $route;
-                $particleBestFitness[$i] = $distance;
-            }
-            if ($distance < $globalBestFitness) {
-                $globalBest = $route;
-                $globalBestFitness = $distance;
-            }
-
-            // Perbarui partikel dan kecepatan
-            $particles[$i] = $route;
-        }
+    // Tambahkan jarak kembali ke titik awal
+    $titikAwal = $rute[0];
+    $titikAkhir = $rute[$jumlahTitik - 1];
+    if (isset($jarak[$titikAkhir][$titikAwal])) {
+        $totalJarak += $jarak[$titikAkhir][$titikAwal];
+    } else {
+        // Handle ketika $jarak[$titikAkhir][$titikAwal] tidak ada
+        // Misalnya, lakukan penanganan kesalahan atau berikan nilai default
+        $totalJarak += 0; // Nilai default jika elemen tidak ada
     }
 
-    // Pastikan urutan lokasi dimulai dari lokasi dengan ID 1
-    $startIndex = array_search(1, $globalBest);
-    $optimalRoutePSO = array_merge(
-        array_slice($globalBest, $startIndex),
-        array_slice($globalBest, 0, $startIndex)
-    );
-    dd($particles);
-    return $optimalRoutePSO;
-}
+    return $totalJarak;
 }
 
+
+}

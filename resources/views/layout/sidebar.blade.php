@@ -35,24 +35,30 @@
                         <ul class="nav-submenu menu-content"  style="display: none;">
 
                             <li><a href="/user/user" class="">Data User</a></li>
+                            <li><a href="/jenis_kendaraan/jenis_kendaraan" class="">Data Jenis Kendaraan</a></li>
                             <li><a href="/driver/driver" class="">Data Driver</a></li>
                             <li><a href="/lokasi/lokasi" class="">Data Lokasi</a></li>
                             <li><a href="/driver_lokasi/driver_lokasi" class="">Data Lokasi Driver</a></li>
                         </ul>
                     </li>@endif
-                    {{-- <li class="dropdown">
-                        <a class="nav-link menu-title link-nav" href="{{ route('jarak') }}"><i data-feather="map"></i><span>Jarak</span></a>
-                    </li> --}}
+
                     <li class="dropdown">
+                        <a class="nav-link menu-title link-nav" href="/rute/rute"><i data-feather="navigation"></i><span>Rute</span></a>
+                    </li>
+
+                    <li class="dropdown">
+                        <a class="nav-link menu-title link-nav" href="{{ route('jarak') }}"><i data-feather="git-pull-reqi"></i><span>Jarak</span></a>
+                    </li>
+                    {{-- <li class="dropdown">
                         <a class="nav-link menu-title " href="javascript:void(0)"><i data-feather="navigation"></i><span>Rute</span></a>
                         <ul class="nav-submenu menu-content"  style="display: none;">
 
                             <li><a href="/rute/rute_gmaps" class="">Rute Google Optimizer</a></li>
                             {{-- <li><a href="/rute/backup_rute_gmaps" class="">BACKUP GMAPS</a></li> --}}
-                            <li><a href="/rute/rute_pso" class="">Rute PSO </a></li>
+                            {{-- <li><a href="/rute/rute_pso" class="">Rute PSO </a></li> --}}
 
-                        </ul>
-                    </li>
+                        {{-- </ul>
+                    </li> --}}
 
 
 

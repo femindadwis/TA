@@ -15,7 +15,7 @@
                 <div class="card-header pb-0">
                     <h5>Edit Data Driver</h5>
                 </div>@foreach($driver as $d)
-                <form class="form theme-form" action="/driver/update" method="post"  enctype="multipart/form-data">
+                <form class="form theme-form" action="/driver/update" method="post" enctype="multipart/form-data">
                     @csrf
                     <div class="card-body">
 
@@ -49,6 +49,39 @@
                                 usernameInput.value = selectedOption.getAttribute("data-username");
                             }
                         </script>
+
+<div class="row">
+    <div class="col">
+        <div class="mb-3">
+            <label class="form-label" for="exampleFormControlInput1">Jenis Kendaraan</label>
+            <select class="form-select digits" name="jeniskendaraan_id" id="jeniskendaraan_id" placeholder="Nama" required="required">
+                @foreach ($jenis_kendaraan as $jk)
+                <option value="{{$jk->id}}" {{ $d->jeniskendaraan_id == $jk->id ? 'selected' : '' }}>{{$jk->jenis_kendaraan}}</option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col">
+        <div class="mb-3">
+            <label class="form-label" for="exampleFormControlInput1">No. Polisi</label>
+            <input class="form-control" name="no_polisi" id="no_polisi" type="name" placeholder="No. Polisi" value="{{ $d->no_polisi }}" required="required">
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col">
+        <div class="mb-3">
+            <label class="form-label" for="exampleFormControlInput1">No. Telepon</label>
+            <input class="form-control" name="no_telepon" id="no_telepon" type="number" placeholder="No. Telepon" value="{{ $d->no_telepon }}" required="required">
+        </div>
+    </div>
+</div>
+
                         <div class="row">
                             <div class="col">
                                 <div class="mb-3">

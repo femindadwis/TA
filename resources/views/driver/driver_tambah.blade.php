@@ -49,6 +49,37 @@
                                 usernameInput.value = selectedOption.getAttribute("data-username");
                             }
                         </script>
+
+<div class="row">
+    <div class="col">
+        <div class="mb-3">
+            <label class="form-label" for="exampleFormControlSelect9">Jenis Kendaraan</label>
+            <select class="form-select digits" name="jeniskendaraan_id" id="jeniskendaraan_id" placeholder="Jenis Kendaraan" required="required">
+                @foreach ($jenis_kendaraan as $jk)
+                <option value="{{$jk->id}}" >{{$jk->jenis_kendaraan}}</option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col">
+        <div class="mb-3">
+            <label class="form-label" for="exampleFormControlInput1">No. Polisi</label>
+            <input class="form-control" name="no_polisi" id="no_polisi" type="name" placeholder="No. Polisi" required="required">
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col">
+        <div class="mb-3">
+            <label class="form-label" for="exampleFormControlInput1">No. Telepon</label>
+            <input class="form-control" name="no_telepon" id="no_telepon" type="number" placeholder="No. Telepon" required="required">
+        </div>
+    </div>
+</div>
                         <div class="row">
                             <div class="col">
                                 <div class="mb-3">

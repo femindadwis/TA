@@ -34,7 +34,7 @@
                             <td>{{ $d->name }} </td>
 
                             <td>
-                                <a class="fa fa-code-fork" href="/jarak/detail/{{ $d->id }}" title="Detail"></a>
+                                <a class="fa fa-location-arrow" href="/rute/detail/{{ $d->id }}" title="Detail"></a>
                             </td>
                         </tr>
                         @endforeach
@@ -44,7 +44,6 @@
                 </div>
             </div>
 
-
-        </div></div></div></div></div></div></div>
-        @include('layout.footer')
-        @include('layout.js')
+</div></div></div></div></div></div></div>
+@include('layout.footer')
+@include('layout.js')

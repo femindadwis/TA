@@ -1,6 +1,7 @@
   <!-- latest jquery-->
   <script src="{{ asset('template_dashboard/assets/js/jquery-3.5.1.min.js') }}"></script>
   <!-- feather icon js-->
+  {{-- <script src="https://unpkg.com/feather-icons"></script> --}}
   <script src="{{ asset('template_dashboard/assets/js/icons/feather-icon/feather.min.js') }}"></script>
   <script src="{{ asset('template_dashboard/assets/js/icons/feather-icon/feather-icon.js') }}"></script>
   <!-- Sidebar jquery-->
