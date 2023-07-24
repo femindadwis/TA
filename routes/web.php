@@ -73,6 +73,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     // ROUTE MAPS
     Route::get('/maps/maps', [MapsController::class, 'index'])->name('maps');
+    // ROUTE MAPS DRIVER
+    // Route::get('/maps/maps', [MapsController::class, 'index'])->name('maps');
 
     // ROUTE CRUD PROFIL
     Route::get('/profil/profil', [ProfilController::class, 'index'])->name('profil');
@@ -80,6 +82,7 @@ Route::group(['middleware' => 'auth'], function () {
     // ROUTE JARAK
     Route::get('/jarak/jarak', [JarakController::class, 'index'])->name('jarak');
     Route::get('/jarak/detail/{id}', [JarakController::class, 'detail'])->name('jarak_detail');
+    Route::get('/jarak/jarak_driver', [JarakController::class, 'jarak'])->name('jarak_driver');
     // Route::post('/jarak/create', [JarakController::class, 'create'])->name('jarak.create');
 
     // driver_lokasi
@@ -89,6 +92,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/driver_lokasi/edit/{id}', [DriverLokasiController::class, 'edit'])->name('driver_lokasi.edit');
     Route::post('/driver_lokasi/update', [DriverLokasiController::class, 'update']);
     Route::get('/driver_lokasi/hapus/{id}', [DriverLokasiController::class, 'hapus']);
+
+   Route::get('/driver_lokasi/lokasi', [DriverLokasiController::class, 'lokasi'])->name('lokasi');
 
     // JENIS KENDARAAN
     Route::get('/jenis_kendaraan/jenis_kendaraan', [JenisKendaraanController::class, 'index'])->name('jenis_kendaraan');
@@ -105,6 +110,9 @@ Route::group(['middleware' => 'auth'], function () {
     // Route::get('/rute/rute_gmaps', [RuteController::class, 'index'])->name('rute');
     // Route::get('/rute/rute_gmaps/perdriver/{id}', [RuteController::class, 'detail'])->name('rute_gmaps.detail');
     // Route::post('/rute/rute_gmaps', [RuteController::class, 'calculateRoute'])->name('calculate-route');
+
+    Route::get('/rute/rute_driver', [RuteController::class, 'rute'])->name('rute_driver');
+
 
     // ROUTE RUTE PSO
     Route::get('/rute/rute_pso', [PSOController::class, 'index'])->name('rute_pso');

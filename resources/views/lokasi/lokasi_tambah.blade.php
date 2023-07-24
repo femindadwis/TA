@@ -59,7 +59,7 @@
                             <div class="col">
                                 <div class="mb-3">
                                     <label class="form-label" for="exampleFormControlInput1">Foto</label>
-                                    <input class="form-control" name="foto" id="foto" type="file" placeholder="Foto" required="required">
+                                    <input class="form-control" name="foto" id="foto" type="file" placeholder="Foto">
                                 </div>
                             </div>
                         </div>

@@ -26,29 +26,45 @@
                     <li class="dropdown">
                         <a class="nav-link menu-title link-nav" href="/dashboard"><i data-feather="home"></i><span>Dashboard</span></a>
                     </li>
+                    @if (Auth::user()->level == 3 )
+                    <li class="dropdown">
+                        <a class="nav-link menu-title link-nav" href="/driver_lokasi/lokasi"><i data-feather="map"></i><span>Lokasi</span></a>
+                    </li>
+                    <li class="dropdown">
+                        <a class="nav-link menu-title link-nav" href="/jarak/jarak_driver"><i data-feather="git-pull-request"></i><span>Jarak</span></a>
+                    </li>
+                    <li class="dropdown">
+                        <a class="nav-link menu-title link-nav" href="/rute/rute_driver"><i data-feather="navigation"></i><span>Rute</span></a>
+                    </li>
+                    @endif
+                    @if (Auth::user()->level == 1 || Auth::user()->level == 2 )
                     <li class="dropdown">
                         <a class="nav-link menu-title link-nav" href="/maps/maps"><i data-feather="map"></i><span>Maps</span></a>
                     </li>
-                    @if (Auth::user()->level == 1 || Auth::user()->level == 2 )
                     <li class="dropdown">
                         <a class="nav-link menu-title " href="javascript:void(0)"><i data-feather="airplay"></i><span>Data</span></a>
                         <ul class="nav-submenu menu-content"  style="display: none;">
-
+                            @if (Auth::user()->level == 1 )
                             <li><a href="/user/user" class="">Data User</a></li>
+                            @endif
                             <li><a href="/jenis_kendaraan/jenis_kendaraan" class="">Data Jenis Kendaraan</a></li>
                             <li><a href="/driver/driver" class="">Data Driver</a></li>
                             <li><a href="/lokasi/lokasi" class="">Data Lokasi</a></li>
                             <li><a href="/driver_lokasi/driver_lokasi" class="">Data Lokasi Driver</a></li>
                         </ul>
-                    </li>@endif
-
+                    </li>
+                    <li class="dropdown">
+                        <a class="nav-link menu-title link-nav" href="{{ route('jarak') }}"><i data-feather="git-pull-request"></i><span>Jarak</span></a>
+                    </li>
                     <li class="dropdown">
                         <a class="nav-link menu-title link-nav" href="/rute/rute"><i data-feather="navigation"></i><span>Rute</span></a>
                     </li>
+@endif
 
-                    <li class="dropdown">
-                        <a class="nav-link menu-title link-nav" href="{{ route('jarak') }}"><i data-feather="git-pull-reqi"></i><span>Jarak</span></a>
-                    </li>
+
+
+
+
                     {{-- <li class="dropdown">
                         <a class="nav-link menu-title " href="javascript:void(0)"><i data-feather="navigation"></i><span>Rute</span></a>
                         <ul class="nav-submenu menu-content"  style="display: none;">

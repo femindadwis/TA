@@ -22,9 +22,10 @@ class JarakController extends Controller
         return view('jarak.jarak', $data);
     }
 
-    public function detail($id)
+    public function jarak()
     {
-        $driver = Driver::where('id', $id)->first();
+        $user = auth()->user()->id;
+        $driver = Driver::where('user_id', $user)->first();
         $user_id = $driver->user_id;
         $driver_lokasi = Driver_lokasi::where('user_id', $user_id)->get();
         // Ambil semua lokasi dari tabel driver_lokasi berdasarkan user_id
@@ -63,6 +64,57 @@ class JarakController extends Controller
             'user' => User::all(),
             'locations' => $locations,
             'distances' => $distances,
+            'driver_lokasi' => $driver_lokasi,
+
+        ];
+        // dd($totaljarak);
+        return view('jarak.jarak_driver', $data);
+    }
+
+
+    public function detail($id)
+    {
+        $driver = Driver::where('id', $id)->first();
+        $user_id = $driver->user_id;
+        $driver_lokasi = Driver_lokasi::where('user_id', $user_id)->get();
+        // Ambil semua lokasi dari tabel driver_lokasi berdasarkan user_id
+        $driverLocations = Driver_Lokasi::where('user_id', $user_id)->get();
+
+        // Ambil seluruh data dari model Lokasi yang sesuai dengan lokasi_id pada driver_lokasi
+        $locationIds = $driverLocations->pluck('lokasi_id');
+        $locations = Lokasi::whereIn('id', $locationIds)->get();
+
+        $distances = $this->calculateDistances($locations);
+
+        foreach ($distances as $loc1Id => $distancesToOther) {
+            foreach ($distancesToOther as $loc2Id => $distance) {
+                Jarak::updateOrCreate(
+                    ['loc_1' => $loc1Id, 'loc_2' => $loc2Id],
+                    ['distance' => $distance]
+                );
+            }
+        }
+
+        // Mendapatkan data jarak dari database
+        $jarakData = Jarak::select('loc_1', 'loc_2', 'distance')->get()->toArray();
+
+        // Mengonversi data jarak ke dalam bentuk matriks
+        $jarak = [];
+        foreach ($jarakData as $data) {
+            $jarak[$data['loc_1']][$data['loc_2']] = $data['distance'];
+        }
+
+        ksort($jarak);
+        foreach ($jarak as &$row) {
+            ksort($row);
+        }
+
+        $data = [
+            'driver' => $driver,
+            'user' => User::all(),
+            'locations' => $locations,
+            'distances' => $distances,
+            'jarak'=> $jarak,
             'driver_lokasi' => $driver_lokasi,
 
         ];

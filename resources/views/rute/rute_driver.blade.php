@@ -38,7 +38,7 @@
 						<div class="tabbed-card">
 							<ul class="pull-right nav nav-pills nav-primary" id="pills-clrtab1" role="tablist">
 								<li class="nav-item"><a class="nav-link active" id="pills-clrhome-tab1" data-bs-toggle="pill" href="#pills-clrhome1" role="tab" aria-controls="pills-clrhome1" aria-selected="true">PSO</a></li>
-								<li class="nav-item"><a class="nav-link" id="pills-clrprofile-tab1" data-bs-toggle="pill" href="#pills-clrprofile1" role="tab" aria-controls="pills-clrprofile1" aria-selected="false">KNN</a></li>
+								<li class="nav-item"><a class="nav-link" id="pills-clrprofile-tab1" data-bs-toggle="pill" href="#pills-clrprofile1" role="tab" aria-controls="pills-clrprofile1" aria-selected="false">Brute Force</a></li>
 							</ul>
 							<div class="tab-content" id="pills-clrtabContent1">
 								<div class="tab-pane fade show active" id="pills-clrhome1" role="tabpanel" aria-labelledby="pills-clrhome-tab1">

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 class DriverLokasiController extends Controller
 {
@@ -92,4 +93,19 @@ class DriverLokasiController extends Controller
         return redirect('/driver_lokasi/driver_lokasi');
 
     }
+
+    public function lokasi()
+{
+    $user = auth()->user()->id;
+
+    $data = [
+        "driver_lokasi" => Driver_lokasi::where('user_id', $user)->get(),
+        "user" => User::where('level', '3')->get(),
+        "lokasi" => Lokasi::all()
+    ];
+
+    return view('driver_lokasi.lokasi', $data);
+}
+
+
 }

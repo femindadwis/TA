@@ -27,6 +27,6 @@ class Driver extends Model
 }
 public function jeniskendaraan()
 {
-    return $this->belongsTo("App\Models\Jeniskendaraan", "jeniskendaraan_id", "id");
+    return $this->belongsTo(Jeniskendaraan::class);
 }
 }

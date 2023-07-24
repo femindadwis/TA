@@ -25,7 +25,7 @@
 <!-- Themify icon-->
 <link rel="stylesheet" type="text/css" href="https://laravel.pixelstrap.com/viho/assets/css/themify.css" />
 <!-- Flag icon-->
-<link rel="stylesheet" type="text/css" href="https://laravel.pixelstrap.com/viho/assets/css/flag-icon.css" />
+<link rel="stylesheet" type="text/css" href="{{ asset('https://laravel.pixelstrap.com/viho/assets/css/flag-icon.css') }}" />
 <!-- Feather icon-->
 <link rel="stylesheet" type="text/css" href="https://laravel.pixelstrap.com/viho/assets/css/feather-icon.css" />
 <!-- Plugins css start-->

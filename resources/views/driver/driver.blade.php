@@ -46,7 +46,7 @@
                             <td>
                                 <a class="fa fa-edit" href="/driver/edit/{{ $d->id }}" title="Edit"></a> &nbsp;&nbsp;
                                 <a class="fa fa-trash-o" href="/driver/hapus/{{ $d->id }}" title="Hapus"></a> &nbsp;&nbsp;
-                                {{-- <a class="fa fa-search" href="/driver/detail/{{ $d->id }}" title="Detail"></a> --}}
+                                <a class="fa fa-search" href="/driver/detail/{{ $d->id }}" title="Detail"></a>
                             </td>
                         </tr>
                         @endforeach
