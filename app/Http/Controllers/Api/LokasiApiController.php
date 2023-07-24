@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Driver_lokasi;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
+
 
 use App\Models\Lokasi;
 
@@ -19,9 +22,21 @@ class LokasiApiController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $lokasi = Lokasi::where('user_id', $user->id)->get();
-        // $lokasi = Lokasi::all();
-        return response()->json($lokasi);
+        $driverLokasi = Driver_lokasi::where('user_id', $user->id)->get();
+        $lokasis = [];
+
+        foreach ($driverLokasi as $dl) {
+            $lokasi = Lokasi::find($dl->lokasi_id);
+            $foto = null;
+            if ($lokasi->foto) {
+                $foto = Storage::disk('public')->get("foto_tps/{$lokasi->foto}");
+                $foto = base64_encode($foto);
+            }
+            $lokasi->foto = $foto;
+            $lokasi->fotoName = $lokasi->foto;
+            $lokasis[] = $lokasi;
+        }
+        return response()->json($lokasis);
     }
 
     public function store(Request $request)
@@ -48,13 +63,18 @@ class LokasiApiController extends Controller
         }
 
         $lokasi = new Lokasi();
-        $lokasi->user_id = Auth::user()->id;
         $lokasi->name = $request->name;
         $lokasi->alamat = $request->alamat;
         $lokasi->lng = $request->long;
         $lokasi->lat = $request->lat;
         $lokasi->foto = $request->fotoName;
         $lokasi->save();
+
+        $driverLokasi = new Driver_lokasi();
+        $driverLokasi->user_id = Auth()->user()->id;
+        $driverLokasi->lokasi_id = $lokasi->id;
+        $driverLokasi->save();
+
         return response()->json(['message' => 'Lokasi created!']);
     }
 
@@ -88,7 +108,7 @@ class LokasiApiController extends Controller
         $user = Auth::user();
         $lokasi = Lokasi::find($request->id);
         // cek user
-        if ($user->id != $lokasi->user_id) {
+        if ($user->id == null) {
             return response()->json(['error' => 'Unauthorized']);
         }
         Lokasi::where('id', $request->id)->delete();

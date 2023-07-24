@@ -10,7 +10,7 @@ class AuthApiController extends Controller
 {
     public function login(Request $request)
     {
-        $credentials = $request->only('email', 'password');
+        $credentials = $request->only('username', 'password');
 
         if (Auth::attempt($credentials)) {
             // Jika autentikasi berhasil
@@ -25,7 +25,7 @@ class AuthApiController extends Controller
         } else {
             // Jika autentikasi gagal
             return response()->json([
-                'message' => 'Invalid email or password',
+                'message' => 'Invalid username or password',
             ], 401);
         }
     }

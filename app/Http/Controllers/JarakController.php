@@ -114,7 +114,7 @@ class JarakController extends Controller
             'user' => User::all(),
             'locations' => $locations,
             'distances' => $distances,
-            'jarak'=> $jarak,
+            'jarak' => $jarak,
             'driver_lokasi' => $driver_lokasi,
 
         ];
@@ -123,39 +123,64 @@ class JarakController extends Controller
     }
 
     // fungsi itung jarak
+    // private function calculateDistances($locations)
+    // {
+    //     $apiKey = 'AIzaSyBmBL3_MRsk7qiOqSXgNr-x59cz_vXU9Fg';
+    //     $distances = [];
+
+    //     foreach ($locations as $location) {
+    //         $origins = $destinations = [];
+
+    //         foreach ($locations as $otherLocation) {
+    //             $origins[] = $location->lat . ',' . $location->lng;
+    //             $destinations[] = $otherLocation->lat . ',' . $otherLocation->lng;
+    //         }
+
+    //         $origins = implode('|', $origins);
+    //         $destinations = implode('|', $destinations);
+
+    //         $url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins={$origins}&destinations={$destinations}&key={$apiKey}";
+
+    //         $response = Http::get($url);
+
+    //         if ($response->ok()) {
+    //             $data = $response->json();
+
+    //             foreach ($data['rows'] as $i => $row) {
+    //                 foreach ($row['elements'] as $j => $element) {
+    //                     if ($element['status'] == 'OK' && isset($element['distance']['value'])) {
+    //                         $distances[$location->id][$locations[$j]->id] = $element['distance']['value'] / 1000;
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+
+    //     return $distances;
+    // }
+
     private function calculateDistances($locations)
     {
-        $apiKey = 'AIzaSyBmBL3_MRsk7qiOqSXgNr-x59cz_vXU9Fg';
-        $distances = [];
-
+        $apiKey = 'pk.eyJ1Ijoicnl0b2RldiIsImEiOiJjbGtncDB3a3YwMXV3M2VvOHFqdmd2NWY4In0.pag9rpV51QYupsyPdSFfOw';
         foreach ($locations as $location) {
-            $origins = $destinations = [];
+            $coordinates[] = $location->lng . ',' . $location->lat;
+        }
+        $coordinates = implode(';', $coordinates);
 
-            foreach ($locations as $otherLocation) {
-                $origins[] = $location->lat . ',' . $location->lng;
-                $destinations[] = $otherLocation->lat . ',' . $otherLocation->lng;
-            }
+        $url = "https://api.mapbox.com/directions-matrix/v1/mapbox/driving/{$coordinates}?access_token={$apiKey}&annotations=distance";
+        $response = Http::get($url);
+        if ($response->ok()) {
+            $data = $response['distances'];
 
-            $origins = implode('|', $origins);
-            $destinations = implode('|', $destinations);
+            // Transform the data to a nested associative array
+            $locationsCount = count($data);
 
-            $url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins={$origins}&destinations={$destinations}&key={$apiKey}";
-
-            $response = Http::get($url);
-
-            if ($response->ok()) {
-                $data = $response->json();
-
-                foreach ($data['rows'] as $i => $row) {
-                    foreach ($row['elements'] as $j => $element) {
-                        if ($element['status'] == 'OK' && isset($element['distance']['value'])) {
-                            $distances[$location->id][$locations[$j]->id] = $element['distance']['value'] / 1000;
-                        }
-                    }
+            for ($i = 0; $i < $locationsCount; $i++) {
+                for ($j = 0; $j < $locationsCount; $j++) {
+                    $distances[$i + 1][$j + 1] = number_format($data[$i][$j] / 1000, 2);
                 }
             }
         }
-
         return $distances;
     }
     // Fungsi untuk menghitung total jarak
@@ -190,6 +215,4 @@ class JarakController extends Controller
 
         return $totalJarak;
     }
-
-
 }
