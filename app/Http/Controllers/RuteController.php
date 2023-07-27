@@ -140,38 +140,28 @@ class RuteController extends Controller
     // fungsi itung jarak
     private function calculateDistances($locations)
     {
-        $apiKey = 'AIzaSyBmBL3_MRsk7qiOqSXgNr-x59cz_vXU9Fg';
-        $distances = [];
-
+        $apiKey = 'pk.eyJ1Ijoicnl0b2RldiIsImEiOiJjbGtncDB3a3YwMXV3M2VvOHFqdmd2NWY4In0.pag9rpV51QYupsyPdSFfOw';
         foreach ($locations as $location) {
-            $origins = $destinations = [];
+            $coordinates[] = $location->lng . ',' . $location->lat;
+        }
+        $coordinates = implode(';', $coordinates);
 
-            foreach ($locations as $otherLocation) {
-                $origins[] = $location->lat . ',' . $location->lng;
-                $destinations[] = $otherLocation->lat . ',' . $otherLocation->lng;
-            }
+        $url = "https://api.mapbox.com/directions-matrix/v1/mapbox/driving/{$coordinates}?access_token={$apiKey}&annotations=distance";
+        $response = Http::get($url);
+        if ($response->ok()) {
+            $data = $response['distances'];
 
-            $origins = implode('|', $origins);
-            $destinations = implode('|', $destinations);
+            // Transform the data to a nested associative array
+            $locationsCount = count($data);
 
-            $url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins={$origins}&destinations={$destinations}&key={$apiKey}";
-
-            $response = Http::get($url);
-
-            if ($response->ok()) {
-                $data = $response->json();
-
-                foreach ($data['rows'] as $i => $row) {
-                    foreach ($row['elements'] as $j => $element) {
-                        if ($element['status'] == 'OK' && isset($element['distance']['value'])) {
-                            $distances[$location->id][$locations[$j]->id] = $element['distance']['value'] / 1000;
-                        }
-                    }
+            for ($i = 0; $i < $locationsCount; $i++) {
+                for ($j = 0; $j < $locationsCount; $j++) {
+                    $distances[$i + 1][$j + 1] = number_format($data[$i][$j] / 1000, 2);
                 }
             }
         }
-
         return $distances;
+
     }
 
     public function findOptimalRoute($locations, $jarak)
@@ -235,17 +225,15 @@ class RuteController extends Controller
         $numLokasi = count($locations);
         $numParticles = $this->factorial($numLokasi - 1);
 
-        // Batasan maksimum iterasi dan waktu eksekusi
-        $maxIterations = 500; // Tingkatkan jumlah iterasi
-        $maxExecutionTime = 2; // Misalnya, batasan waktu eksekusi dalam detik
+        $maxIterations = 500;
+        $maxExecutionTime = 2;
 
-        // Inisialisasi particles
+
         $particles = [];
         $bestGlobalPosition = [];
         $bestGlobalFitness = PHP_INT_MAX;
 
-        // Inisialisasi posisi awal terbaik
-        $bestInitialPosition = [1]; // Dimulai dari lokasi dengan id = 1
+        $bestInitialPosition = [1];
         foreach ($locations as $location) {
             if ($location['id'] != 1) {
                 $bestInitialPosition[] = $location['id'];
@@ -254,13 +242,9 @@ class RuteController extends Controller
         $bestGlobalPosition = $bestInitialPosition;
         $bestGlobalFitness = $this->calculateTotalDistances($bestInitialPosition, $jarak);
 
-        // Generate unique positions for particles based on the best initial position
         for ($i = 0; $i < $numParticles; $i++) {
-            // Copy the best initial position for each particle
             $position = $bestInitialPosition;
-            shuffle($position); // Shuffle the positions to introduce some randomness
-
-            // Initialize velocity and best position and best fitness for each particle
+            shuffle($position);
             $velocity = array_fill(0, $numLokasi - 1, 0);
             $bestPosition = $position;
             $bestFitness = $this->calculateTotalDistances($position, $jarak);
@@ -268,51 +252,41 @@ class RuteController extends Controller
             $particles[] = compact('position', 'velocity', 'bestPosition', 'bestFitness');
         }
 
-        // Waktu awal eksekusi
         $startTime = microtime(true);
 
-        // Looping iterasi PSO
         for ($iteration = 0; $iteration < $maxIterations; $iteration++) {
-            // Periksa batasan waktu eksekusi
             $currentTime = microtime(true);
             if ($currentTime - $startTime >= $maxExecutionTime) {
                 break;
             }
 
             foreach ($particles as &$particle) {
-                // Update velocity
+
                 $cognitiveWeight = 1.0;
                 $socialWeight = 1.0;
-                $inertiaWeight = 0.6; // Kurangi inersia awal
+                $inertiaWeight = 0.6;
 
                 for ($i = 1; $i < $numLokasi; $i++) {
                     $r1 = mt_rand() / mt_getrandmax();
                     $r2 = mt_rand() / mt_getrandmax();
 
-                    // Cognitive component (PBest - X)
+
                     $cognitiveComponent = $cognitiveWeight * $r1 * ($particle['bestPosition'][$i - 1] - $particle['position'][$i]);
-
-                    // Social component (GBest - X)
                     $socialComponent = $socialWeight * $r2 * ($bestGlobalPosition[$i - 1] - $particle['position'][$i]);
-
-                    // Update velocity using the formula
                     $particle['velocity'][$i - 1] = $inertiaWeight * $particle['velocity'][$i - 1] + $cognitiveComponent + $socialComponent;
                 }
 
-                // Convert the continuous velocity to binary by checking if it's greater than or equal to 0.5
                 for ($i = 0; $i < $numLokasi - 1; $i++) {
                     $particle['velocity'][$i] = ($particle['velocity'][$i] >= 0.5) ? 1 : 0;
                 }
 
-                // Update position
                 $position = $particle['position'];
                 $velocity = $particle['velocity'];
 
-                // Perform the city swaps based on the binary velocity vector
                 $newPosition = $position;
 
                 for ($i = 0; $i < $numLokasi - 1; $i++) {
-                    // If the corresponding element in the velocity is 1, perform city swap
+
                     if ($velocity[$i] === 1) {
                         $temp = $newPosition[$i];
                         $newPosition[$i] = $newPosition[$i + 1];
@@ -320,28 +294,25 @@ class RuteController extends Controller
                     }
                 }
 
-            //    evaluasi fitness
-                $totalJarak = $this->calculateTotalDistances($newPosition, $jarak);
 
-                // Update the particle's best position and fitness based on fitness comparison
-                         // Update the particle's best position and fitness based on fitness comparison
+                $totalJarak = $this->calculateTotalDistances($newPosition, $jarak);
                 if ($totalJarak < $particle['bestFitness']) {
                     $particle['bestFitness'] = $totalJarak;
                     $particle['bestPosition'] = $newPosition;
                 }
 
-                // Update the best global position and best global fitness
+
                 if ($totalJarak < $bestGlobalFitness) {
                     $bestGlobalFitness = $totalJarak;
                     $bestGlobalPosition = $newPosition;
                 }
 
-                // Assign the updated velocity back to the particle
+
                 $particle['velocity'] = $velocity;
             }
         }
 
-        // Find the best particle
+
         $bestParticleIndex = 0;
         for ($i = 1; $i < $numParticles; $i++) {
             if ($particles[$i]['bestFitness'] < $particles[$bestParticleIndex]['bestFitness']) {
@@ -349,21 +320,15 @@ class RuteController extends Controller
             }
         }
 
-        // Get the best route from the best particle
         $bestRoute = $particles[$bestParticleIndex]['bestPosition'];
-// dd($particles);
-        // Filter the best route to start from location with id = 1
+
         $index = array_search(1, $bestRoute);
         $finalRoute = array_merge(array_slice($bestRoute, $index), array_slice($bestRoute, 0, $index));
-        dd($particles);
+        // dd($bestFitness);
         return $finalRoute;
     }
 
-
-
-
-
-    // Fungsi untuk menghitung faktorial
+    
     function factorial($n)
     {
         if ($n <= 1) {
