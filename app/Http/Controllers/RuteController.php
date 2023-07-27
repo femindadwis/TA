@@ -17,7 +17,6 @@ class RuteController extends Controller
     {
         $data = [
             "driver" => Driver::all(),
-
         ];
         return view('rute.rute', $data);
     }
@@ -75,7 +74,7 @@ class RuteController extends Controller
             'totalDistance' => $totalDistance,
             'totaljarak' => $totaljarak
         ];
-        // dd($totaljarak);
+        // dd($totaljarak); 
         return view('rute.rute_detail', $data);
     }
 
@@ -137,33 +136,83 @@ class RuteController extends Controller
         return view('rute.rute_driver', $data);
     }
 
-    // fungsi itung jarak
+    // fungsi itung jarak mapbox api
     private function calculateDistances($locations)
     {
         $apiKey = 'pk.eyJ1Ijoicnl0b2RldiIsImEiOiJjbGtncDB3a3YwMXV3M2VvOHFqdmd2NWY4In0.pag9rpV51QYupsyPdSFfOw';
+        $coordinates = [];
+
         foreach ($locations as $location) {
             $coordinates[] = $location->lng . ',' . $location->lat;
         }
+
         $coordinates = implode(';', $coordinates);
 
         $url = "https://api.mapbox.com/directions-matrix/v1/mapbox/driving/{$coordinates}?access_token={$apiKey}&annotations=distance";
         $response = Http::get($url);
+
         if ($response->ok()) {
-            $data = $response['distances'];
+            $data = $response->json();
 
-            // Transform the data to a nested associative array
-            $locationsCount = count($data);
+            // Initialize the distances array as an empty array
+            $distances = [];
 
-            for ($i = 0; $i < $locationsCount; $i++) {
-                for ($j = 0; $j < $locationsCount; $j++) {
-                    $distances[$i + 1][$j + 1] = number_format($data[$i][$j] / 1000, 2);
+            foreach ($data['distances'] as $i => $row) {
+                // $i corresponds to the index of the origin location in the locations array
+                $originId = $locations[$i]->id;
+
+                foreach ($row as $j => $distance) {
+                    // $j corresponds to the index of the destination location in the locations array
+                    $destinationId = $locations[$j]->id;
+
+                    // Convert the distance from meters to kilometers and format it with two decimal places
+                    $distances[$originId][$destinationId] = number_format($distance / 1000, 2);
                 }
             }
-        }
-        return $distances;
 
+            return $distances;
+        }
+
+        // Return an empty array if the API request fails or no data is available
+        return [];
     }
 
+    // fungsi itung jarak google maps api
+    // private function calculateDistances($locations)
+    // {
+    //     $apiKey = 'AIzaSyBmBL3_MRsk7qiOqSXgNr-x59cz_vXU9Fg';
+    //     $distances = [];
+
+    //     foreach ($locations as $location) {
+    //         $origins = $destinations = [];
+
+    //         foreach ($locations as $otherLocation) {
+    //             $origins[] = $location->lat . ',' . $location->lng;
+    //             $destinations[] = $otherLocation->lat . ',' . $otherLocation->lng;
+    //         }
+
+    //         $origins = implode('|', $origins);
+    //         $destinations = implode('|', $destinations);
+
+    //         $url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins={$origins}&destinations={$destinations}&key={$apiKey}";
+
+    //         $response = Http::get($url);
+
+    //         if ($response->ok()) {
+    //             $data = $response->json();
+
+    //             foreach ($data['rows'] as $i => $row) {
+    //                 foreach ($row['elements'] as $j => $element) {
+    //                     if ($element['status'] == 'OK' && isset($element['distance']['value'])) {
+    //                         $distances[$location->id][$locations[$j]->id] = $element['distance']['value'] / 1000;
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+
+    //     return $distances;
+    // }
     public function findOptimalRoute($locations, $jarak)
 
     {
@@ -328,7 +377,7 @@ class RuteController extends Controller
         return $finalRoute;
     }
 
-    
+
     function factorial($n)
     {
         if ($n <= 1) {
@@ -370,6 +419,4 @@ class RuteController extends Controller
 
         return $totalJarak;
     }
-
 }
-
