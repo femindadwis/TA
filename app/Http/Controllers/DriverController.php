@@ -27,10 +27,13 @@ class DriverController extends Controller
 
     public function tambah()
     {
-        $user = DB::table('users')->where('level', '3')->get();
-        $jenis_kendaraan = DB::table('jeniskendaraan')->get();
+        $data = [
+
+            "user" =>  User::where('level', '3')->get(),
+            "jenis_kendaraan" => Jeniskendaraan::all()
+        ];
         // memanggil view tambah
-        return view('driver/driver_tambah', ['user' => $user], ['jenis_kendaraan' => $jenis_kendaraan]);
+        return view('driver/driver_tambah', $data);
 
     }
 
@@ -54,20 +57,23 @@ class DriverController extends Controller
 
     public function edit($id)
     {
-        $driver = DB::table('driver')->where('id', $id)->get();
-        $user = DB::table('users')->get();
-        $jenis_kendaraan = DB::table('jeniskendaraan')->get();
-        return view('driver/driver_edit',['driver' => $driver], ['user' => $user], ['jenis_kendaraan' => $jenis_kendaraan]);
+        $data = [
+
+            "driver" =>  Driver::where('id', $id)->get(),
+            "user" => User::all(),
+            "jenis_kendaraan" => Jeniskendaraan::all()
+        ];
+        return view('driver/driver_edit', $data);
     }
 
 
     public function update(Request $request)
     {
         // update data driver
-
+        $user = User::findOrFail($request->user_id);
         DB::table('driver')->where('id',$request->id)->update([
             'user_id' => $request->user_id,
-            'name' => $request->name,
+            'name' => $user['name'],
             'username' => $request->username,
             'alamat' => $request->alamat,
             'no_polisi' => $request->no_polisi,

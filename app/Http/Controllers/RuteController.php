@@ -74,7 +74,7 @@ class RuteController extends Controller
             'totalDistance' => $totalDistance,
             'totaljarak' => $totaljarak
         ];
-        // dd($totaljarak); 
+        // dd($totaljarak);
         return view('rute.rute_detail', $data);
     }
 
@@ -268,123 +268,137 @@ class RuteController extends Controller
 
 
 
-
     public function findOptimalRoutePSO($locations, $jarak)
     {
-        $numLokasi = count($locations);
-        $numParticles = $this->factorial($numLokasi - 1);
+        mt_srand(42);
+        $numLocations = count($locations);
+        $swarmSize = $numLocations * 100;
+        $maxIterations = 200;
 
-        $maxIterations = 500;
+        $wMin = 0.4;
+        $wMax = 0.9;
+        $c1 = 1.0;
+        $c2 = 1.0;
+        $maxVelocity = 0.2;
         $maxExecutionTime = 2;
+        // Convert Eloquent collection $locations into an array to get location IDs
+        $locationsArray = $locations->pluck('id')->toArray();
 
+        // Find the index of location ID = 1
+        $startIndex = array_search(1, $locationsArray);
 
+        // Initialize particles and random initial positions
         $particles = [];
-        $bestGlobalPosition = [];
-        $bestGlobalFitness = PHP_INT_MAX;
+        for ($i = 0; $i < $swarmSize; $i++) {
+            // Generate random initial position (route) for each particle (excluding ID = 1)
+            $particle = [];
+            for ($j = 0; $j < $numLocations - 1; $j++) {
+                if ($j < $startIndex) {
+                    $particle[] = (float) number_format(mt_rand() / mt_getrandmax(), 4);
+                } else {
+                    $particle[] = (float) number_format(mt_rand() / mt_getrandmax(), 4);
+                }
+            }
 
-        $bestInitialPosition = [1];
-        foreach ($locations as $location) {
-            if ($location['id'] != 1) {
-                $bestInitialPosition[] = $location['id'];
+            $velocity = array_fill(0, $numLocations - 1, 0);
+
+            $particles[] = [
+                'particle' => $particle,
+                'velocity' => $velocity,
+                'personal_best' => $particle,
+                'personal_best_fitness' => $this->calculateTotalDistances($this->convertPositionToLocationIDs($particle, $locationsArray, $startIndex), $jarak),
+            ];
+        }
+// dd($particles);
+
+        $globalBestParticleIndex = 0;
+        $globalBestFitness = $particles[0]['personal_best_fitness'];
+        for ($i = 1; $i < $swarmSize; $i++) {
+            if ($particles[$i]['personal_best_fitness'] < $globalBestFitness) {
+                $globalBestParticleIndex = $i;
+                $globalBestFitness = $particles[$i]['personal_best_fitness'];
             }
         }
-        $bestGlobalPosition = $bestInitialPosition;
-        $bestGlobalFitness = $this->calculateTotalDistances($bestInitialPosition, $jarak);
 
-        for ($i = 0; $i < $numParticles; $i++) {
-            $position = $bestInitialPosition;
-            shuffle($position);
-            $velocity = array_fill(0, $numLokasi - 1, 0);
-            $bestPosition = $position;
-            $bestFitness = $this->calculateTotalDistances($position, $jarak);
-
-            $particles[] = compact('position', 'velocity', 'bestPosition', 'bestFitness');
-        }
-
+        // PSO Iterations
+        $bestRouteWithoutID1 = $this->convertPositionToLocationIDs($particles[$globalBestParticleIndex]['personal_best'], $locationsArray, $startIndex);
         $startTime = microtime(true);
-
+        
         for ($iteration = 0; $iteration < $maxIterations; $iteration++) {
             $currentTime = microtime(true);
             if ($currentTime - $startTime >= $maxExecutionTime) {
                 break;
             }
-
-            foreach ($particles as &$particle) {
-
-                $cognitiveWeight = 1.0;
-                $socialWeight = 1.0;
-                $inertiaWeight = 0.6;
-
-                for ($i = 1; $i < $numLokasi; $i++) {
+            $w = $wMax - (($wMax - $wMin) * $iteration) / $maxIterations;
+            for ($i = 0; $i < $swarmSize; $i++) {
+                mt_srand();
+                for ($j = 0; $j < $numLocations - 1; $j++) {
                     $r1 = mt_rand() / mt_getrandmax();
                     $r2 = mt_rand() / mt_getrandmax();
+                    $particles[$i]['velocity'][$j] =
+                        $w * $particles[$i]['velocity'][$j] +
+                        $c1 * $r1 * ($particles[$i]['personal_best'][$j] - $particles[$i]['particle'][$j]) +
+                        $c2 * $r2 * ($particles[$globalBestParticleIndex]['personal_best'][$j] - $particles[$i]['particle'][$j]);
 
-
-                    $cognitiveComponent = $cognitiveWeight * $r1 * ($particle['bestPosition'][$i - 1] - $particle['position'][$i]);
-                    $socialComponent = $socialWeight * $r2 * ($bestGlobalPosition[$i - 1] - $particle['position'][$i]);
-                    $particle['velocity'][$i - 1] = $inertiaWeight * $particle['velocity'][$i - 1] + $cognitiveComponent + $socialComponent;
-                }
-
-                for ($i = 0; $i < $numLokasi - 1; $i++) {
-                    $particle['velocity'][$i] = ($particle['velocity'][$i] >= 0.5) ? 1 : 0;
-                }
-
-                $position = $particle['position'];
-                $velocity = $particle['velocity'];
-
-                $newPosition = $position;
-
-                for ($i = 0; $i < $numLokasi - 1; $i++) {
-
-                    if ($velocity[$i] === 1) {
-                        $temp = $newPosition[$i];
-                        $newPosition[$i] = $newPosition[$i + 1];
-                        $newPosition[$i + 1] = $temp;
+                    // Velocity clamping
+                    if ($particles[$i]['velocity'][$j] > $maxVelocity) {
+                        $particles[$i]['velocity'][$j] = $maxVelocity;
+                    } elseif ($particles[$i]['velocity'][$j] < -$maxVelocity) {
+                        $particles[$i]['velocity'][$j] = -$maxVelocity;
                     }
                 }
 
+                // Update each element of the position (route) based on velocity
+                for ($j = 0; $j < $numLocations - 1; $j++) {
+                    $particles[$i]['particle'][$j] += $particles[$i]['velocity'][$j];
 
-                $totalJarak = $this->calculateTotalDistances($newPosition, $jarak);
-                if ($totalJarak < $particle['bestFitness']) {
-                    $particle['bestFitness'] = $totalJarak;
-                    $particle['bestPosition'] = $newPosition;
+                    if ($particles[$i]['particle'][$j] < 0) {
+                        $particles[$i]['particle'][$j] = 0;
+                    } elseif ($particles[$i]['particle'][$j] > 1) {
+                        $particles[$i]['particle'][$j] = 1;
+                    }
                 }
 
+                $newRoute = $this->convertPositionToLocationIDs($particles[$i]['particle'], $locationsArray, $startIndex);
+                array_unshift($newRoute, 1);
 
-                if ($totalJarak < $bestGlobalFitness) {
-                    $bestGlobalFitness = $totalJarak;
-                    $bestGlobalPosition = $newPosition;
+                // Ignore the first location with ID = 1 in fitness calculation
+                $newFitness = $this->calculateTotalDistances(array_slice($newRoute, 1), $jarak);
+
+                // Update personal best of the particle if the new fitness is better
+                if ($newFitness < $particles[$i]['personal_best_fitness']) {
+                    $particles[$i]['personal_best'] = $particles[$i]['particle'];
+                    $particles[$i]['personal_best_fitness'] = $newFitness;
+
+                    // Update global best (gbest) if a better solution is found
+                    if ($newFitness < $globalBestFitness) { // Use "<" for updating global best
+                        $globalBestParticleIndex = $i;
+                        $globalBestFitness = $newFitness;
+
+                        // Update the best route without location ID = 1 found so far
+                        $bestRouteWithoutID1 = $this->convertPositionToLocationIDs($particles[$i]['particle'], $locationsArray, $startIndex);
+                    }
                 }
-
-
-                $particle['velocity'] = $velocity;
             }
         }
 
 
-        $bestParticleIndex = 0;
-        for ($i = 1; $i < $numParticles; $i++) {
-            if ($particles[$i]['bestFitness'] < $particles[$bestParticleIndex]['bestFitness']) {
-                $bestParticleIndex = $i;
-            }
-        }
+        $bestRouteWithID1 = array_merge($bestRouteWithoutID1);
 
-        $bestRoute = $particles[$bestParticleIndex]['bestPosition'];
-
-        $index = array_search(1, $bestRoute);
-        $finalRoute = array_merge(array_slice($bestRoute, $index), array_slice($bestRoute, 0, $index));
-        // dd($bestFitness);
-        return $finalRoute;
+        return $bestRouteWithID1;
     }
 
-
-    function factorial($n)
+    function convertPositionToLocationIDs($particle, $locationsArray, $startIndex)
     {
-        if ($n <= 1) {
-            return 1;
-        } else {
-            return $n * $this->factorial($n - 1);
-        }
+        $sortedParticle = array_combine(array_filter($locationsArray, function ($id) use ($locationsArray, $startIndex) {
+            return $id !== 1 && array_search($id, $locationsArray) >= $startIndex;
+        }), $particle);
+        asort($sortedParticle); // Sort the particle based on the random values (from low to high)
+
+        // Ensure the final route starts with location ID = 1
+        $sortedParticleWithID1 = array_merge([1], array_keys($sortedParticle));
+// dd($sortedParticleWithID1);
+        return $sortedParticleWithID1;
     }
 
     // Fungsi untuk menghitung total jarak

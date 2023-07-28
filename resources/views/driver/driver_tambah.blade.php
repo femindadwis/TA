@@ -36,7 +36,7 @@
                             <div class="col">
                                 <div class="mb-3">
                                     <label class="form-label" for="exampleFormControlInput1">Username</label>
-                                    <input class="form-control" id="username" name="username" type="username" placeholder="Username" required="required">
+                                    <input class="form-control" id="username" name="username" type="username" placeholder="Username" required="required" disabled>
                                 </div>
                             </div>
                         </div>

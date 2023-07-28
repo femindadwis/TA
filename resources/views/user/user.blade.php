@@ -13,8 +13,6 @@
     <div class="card">
         <div class="card-header">
             <h5>Tabel User       <a class="fa fa-plus-square-o" href="/user/tambah" title="Edit"></a>    </h5>
-            <span>Disabling features that you don't wish to use for a particular table is easily done by setting a variable in the initialisation object</span>
-            <span>In the following example only the search feature is left enabled (which it is by default).</span>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -58,9 +56,10 @@
                                 <a class="btn btn-sm btn-success-outline" href="/user/hapus/{{ $u->id }}" title="Hapus"><span class="fa fa-trash-o"></span></a>
                             </td>
                         </tr>
+                        @endforeach
                     </tbody>
-                    {{-- @endif --}}
-                    @endforeach
+
+
                     </table>
                 </div>
             </div>

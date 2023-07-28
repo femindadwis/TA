@@ -13,8 +13,6 @@
 <div class="card">
     <div class="card-header">
             <h5>Tabel Lokasi       <a class="fa fa-plus-square-o" href="/lokasi/tambah" title="Edit"></a>    </h5>
-            <span>Disabling features that you don't wish to use for a particular table is easily done by setting a variable in the initialisation object</span>
-            <span>In the following example only the search feature is left enabled (which it is by default).</span>
         </div>
         <div class="card-body">
             <div class="table-responsive">

@@ -53,8 +53,8 @@
                         <div class="media static-top-widget">
                             <div class="align-self-center text-center"><i data-feather="message-circle"></i></div>
                             <div class="media-body">
-                                <span class="m-0">Messages</span>
-                                <h4 class="mb-0 counter">893</h4>
+                                <span class="m-0">Jenis Kendaraan</span>
+                                <h4 class="mb-0 counter">{{$jeniskendaraan}}</h4>
                                 <i class="icon-bg" data-feather="message-circle"></i>
                             </div>
                         </div>
