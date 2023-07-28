@@ -280,7 +280,7 @@ class RuteController extends Controller
         $c1 = 1.0;
         $c2 = 1.0;
         $maxVelocity = 0.2;
-        $maxExecutionTime = 2;
+        $maxExecutionTime = 5;
         // Convert Eloquent collection $locations into an array to get location IDs
         $locationsArray = $locations->pluck('id')->toArray();
 
@@ -323,7 +323,7 @@ class RuteController extends Controller
         // PSO Iterations
         $bestRouteWithoutID1 = $this->convertPositionToLocationIDs($particles[$globalBestParticleIndex]['personal_best'], $locationsArray, $startIndex);
         $startTime = microtime(true);
-        
+
         for ($iteration = 0; $iteration < $maxIterations; $iteration++) {
             $currentTime = microtime(true);
             if ($currentTime - $startTime >= $maxExecutionTime) {

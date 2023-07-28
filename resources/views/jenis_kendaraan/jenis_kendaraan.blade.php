@@ -10,13 +10,13 @@
 
 <!-- Feature Unable /Disable Order Starts-->
 <div class="col-sm-12">
-<div class="card">
-    <div class="card-header">
-            <h5>Tabel Jenis Kendaraan       <a class="fa fa-plus-square-o" href="/jenis_kendaraan/tambah" title="Edit"></a>    </h5>
-            <span>Disabling features that you don't wish to use for a particular table is easily done by setting a variable in the initialisation object</span>
-            <span>In the following example only the search feature is left enabled (which it is by default).</span>
+    <div class="card">
+        <div class="card-header">
+            <h5>Tabel Jenis Kendaraan <a class="fa fa-plus-square-o" href="/driver_lokasi/tambah"
+                    title="Edit"></a> </h5>
+
         </div>
-        <div class="card-body">
+        <div class="card-body"  style="padding-top: 5px;">
             <div class="table-responsive">
                 <table class="display" id="basic-2">
                     <thead>
@@ -24,7 +24,7 @@
                             <?php $no=1; ?>
                             <th>No</th>
                             <th>Jenis Kendaraan</th>
-
+                            <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -49,7 +49,7 @@
 </div>
 </div>
 </div>
-</div>
+
 
 </div></div></div></div></div></div></div>
 @include('layout.footer')

@@ -35,12 +35,13 @@
                                             <tr>
                                                 @if ($prevUserId != $dl->users->id)
                                                     <td>{{ $no++ }}</td>
-                                                    <td>{{ $dl->users->name }}</td>
+
                                                     <?php $prevUserId = $dl->users->id; ?>
                                                 @else
-                                                    <td></td>
+
                                                     <td></td>
                                                 @endif
+                                                <td>{{ $dl->users->name }}</td>
                                                 <td>{{ $dl->lokasi->name }}</td>
                                                 <td>
                                                     <a class="fa fa-edit"

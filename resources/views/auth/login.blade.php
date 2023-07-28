@@ -52,7 +52,7 @@
 
 	    <div class="container-fluid">
 	        <div class="row">
-	            <div class="col-xl-5"><img class="bg-img-cover bg-center" src="{{ asset('template_dashboard/assets/images/login/1.jpg') }}" alt="looginpage" /></div>
+	            <div class="col-xl-5"><img class="bg-img-cover bg-center" src="{{ asset('template_dashboard/assets/images/login/indramayu.jpg') }}" alt="looginpage" /></div>
 	            <div class="col-xl-7 p-0">
 	                <div class="login-card">
 	                    <form class="theme-form login-form" method="POST" action="{{ url('login') }}">
@@ -99,8 +99,8 @@
 	                        </div><br>
 	                        <button class="btn btn-primary btn-block" type="submit">Login</button><br>
 
-	                        <p>Don't have account?<a class="ms-2" href="/register">Create Account</a></p>
-</div>
+	                        {{-- <p>Don't have account?<a class="ms-2" href="/register">Create Account</a></p> --}}
+{{-- </div> --}}
 	                </div>
 	            </div> </form>
 	        </div>

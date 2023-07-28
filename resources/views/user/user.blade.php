@@ -14,7 +14,7 @@
         <div class="card-header">
             <h5>Tabel User       <a class="fa fa-plus-square-o" href="/user/tambah" title="Edit"></a>    </h5>
         </div>
-        <div class="card-body">
+        <div class="card-body"style="padding-top: 5px;">
             <div class="table-responsive">
                 <table class="display" id="basic-2">
                     <thead>

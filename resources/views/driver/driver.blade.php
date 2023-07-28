@@ -15,7 +15,7 @@
             <h5>Tabel Driver       <a class="fa fa-plus-square-o" href="/driver/tambah" title="Edit"></a>    </h5>
         </div>
         <div class="card-body" style="padding-top: 5px;">
-       
+
             <div class="table-responsive">
                 <table class="display" id="basic-2">
                     <thead>
@@ -39,8 +39,9 @@
                             <td>{{ $d->jeniskendaraan->jenis_kendaraan}} </td>
                             <td>{{ $d->no_polisi }} </td>
                             <td>{{ $d->alamat }} </td>
-                            <td>{{ $d->no_telepon }} </td>
                             <td>{{ $d->username }} </td>
+                            <td>{{ $d->no_telepon }} </td>
+
 
                             <td>
                                 <a class="fa fa-edit" href="/driver/edit/{{ $d->id }}" title="Edit"></a> &nbsp;&nbsp;

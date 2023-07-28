@@ -16,7 +16,7 @@
             <span>Data Jarak</span>
 
         </div>
-        <div class="card-body">
+        <div class="card-body" style="padding-top: 5px;">
             <div class="table-responsive">
                 <table class="display" id="basic-2">
                     <thead>
