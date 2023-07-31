@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Lokasi;
 use App\Models\Driver;
+use App\Models\Admin;
 use App\Models\Driver_lokasi;
 class User extends Authenticatable
 {
@@ -34,6 +35,11 @@ class User extends Authenticatable
     public function driver()
     {
         return $this->hasMany(Driver::class);
+    }
+
+    public function admins()
+    {
+        return $this->hasMany(Admin::class, 'user_id');
     }
     /**
      * The attributes that should be hidden for serialization.

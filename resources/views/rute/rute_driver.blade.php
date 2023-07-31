@@ -23,8 +23,8 @@
 </style>
 <script src="https://code.jquery.com/jquery-3.6.1.min.js"
     integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
-<script src="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js"></script>
-<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.js"></script>
+{{-- <script src="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js"></script>
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.js"></script> --}}
 
 </head>
 <div class="page-body">
@@ -45,7 +45,7 @@
                                         aria-controls="pills-clrhome1" aria-selected="true">PSO</a></li>
                                 <li class="nav-item"><a class="nav-link" id="pills-clrprofile-tab1"
                                         data-bs-toggle="pill" href="#pills-clrprofile1" role="tab"
-                                        aria-controls="pills-clrprofile1" aria-selected="false">KNN</a></li>
+                                        aria-controls="pills-clrprofile1" aria-selected="false">Nearest Neighbor</a></li>
                             </ul>
                             <div class="tab-content" id="pills-clrtabContent1">
                                 <div class="tab-pane fade show active" id="pills-clrhome1" role="tabpanel"

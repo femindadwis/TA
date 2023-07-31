@@ -45,7 +45,7 @@
                                         aria-controls="pills-clrhome1" aria-selected="true">PSO</a></li>
                                 <li class="nav-item"><a class="nav-link" id="pills-clrprofile-tab1"
                                         data-bs-toggle="pill" href="#pills-clrprofile1" role="tab"
-                                        aria-controls="pills-clrprofile1" aria-selected="false">KNN</a></li>
+                                        aria-controls="pills-clrprofile1" aria-selected="false">Nearest Neighbor</a></li>
                             </ul>
                             <div class="tab-content" id="pills-clrtabContent1">
                                 <div class="tab-pane fade show active" id="pills-clrhome1" role="tabpanel"

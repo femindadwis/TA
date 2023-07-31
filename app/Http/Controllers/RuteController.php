@@ -137,82 +137,83 @@ class RuteController extends Controller
     }
 
     // fungsi itung jarak mapbox api
-    private function calculateDistances($locations)
-    {
-        $apiKey = 'pk.eyJ1Ijoicnl0b2RldiIsImEiOiJjbGtncDB3a3YwMXV3M2VvOHFqdmd2NWY4In0.pag9rpV51QYupsyPdSFfOw';
-        $coordinates = [];
-
-        foreach ($locations as $location) {
-            $coordinates[] = $location->lng . ',' . $location->lat;
-        }
-
-        $coordinates = implode(';', $coordinates);
-
-        $url = "https://api.mapbox.com/directions-matrix/v1/mapbox/driving/{$coordinates}?access_token={$apiKey}&annotations=distance";
-        $response = Http::get($url);
-
-        if ($response->ok()) {
-            $data = $response->json();
-
-            // Initialize the distances array as an empty array
-            $distances = [];
-
-            foreach ($data['distances'] as $i => $row) {
-                // $i corresponds to the index of the origin location in the locations array
-                $originId = $locations[$i]->id;
-
-                foreach ($row as $j => $distance) {
-                    // $j corresponds to the index of the destination location in the locations array
-                    $destinationId = $locations[$j]->id;
-
-                    // Convert the distance from meters to kilometers and format it with two decimal places
-                    $distances[$originId][$destinationId] = number_format($distance / 1000, 2);
-                }
-            }
-
-            return $distances;
-        }
-
-        // Return an empty array if the API request fails or no data is available
-        return [];
-    }
-
-    // fungsi itung jarak google maps api
     // private function calculateDistances($locations)
     // {
-    //     $apiKey = 'AIzaSyBmBL3_MRsk7qiOqSXgNr-x59cz_vXU9Fg';
-    //     $distances = [];
+    //     $apiKey = 'pk.eyJ1Ijoicnl0b2RldiIsImEiOiJjbGtncDB3a3YwMXV3M2VvOHFqdmd2NWY4In0.pag9rpV51QYupsyPdSFfOw';
+    //     $coordinates = [];
 
     //     foreach ($locations as $location) {
-    //         $origins = $destinations = [];
-
-    //         foreach ($locations as $otherLocation) {
-    //             $origins[] = $location->lat . ',' . $location->lng;
-    //             $destinations[] = $otherLocation->lat . ',' . $otherLocation->lng;
-    //         }
-
-    //         $origins = implode('|', $origins);
-    //         $destinations = implode('|', $destinations);
-
-    //         $url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins={$origins}&destinations={$destinations}&key={$apiKey}";
-
-    //         $response = Http::get($url);
-
-    //         if ($response->ok()) {
-    //             $data = $response->json();
-
-    //             foreach ($data['rows'] as $i => $row) {
-    //                 foreach ($row['elements'] as $j => $element) {
-    //                     if ($element['status'] == 'OK' && isset($element['distance']['value'])) {
-    //                         $distances[$location->id][$locations[$j]->id] = $element['distance']['value'] / 1000;
-    //                     }
-    //                 }
-    //             }
-    //         }
+    //         $coordinates[] = $location->lng . ',' . $location->lat;
     //     }
 
-    //     return $distances;
+    //     $coordinates = implode(';', $coordinates);
+
+    //     $url = "https://api.mapbox.com/directions-matrix/v1/mapbox/driving/{$coordinates}?access_token={$apiKey}&annotations=distance";
+    //     $response = Http::get($url);
+
+    //     if ($response->ok()) {
+    //         $data = $response->json();
+
+    //         // Initialize the distances array as an empty array
+    //         $distances = [];
+
+    //         foreach ($data['distances'] as $i => $row) {
+    //             // $i corresponds to the index of the origin location in the locations array
+    //             $originId = $locations[$i]->id;
+
+    //             foreach ($row as $j => $distance) {
+    //                 // $j corresponds to the index of the destination location in the locations array
+    //                 $destinationId = $locations[$j]->id;
+
+    //                 // Convert the distance from meters to kilometers and format it with two decimal places
+    //                 $distances[$originId][$destinationId] = number_format($distance / 1000, 2);
+    //             }
+    //         }
+
+    //         return $distances;
+    //     }
+
+    //     // Return an empty array if the API request fails or no data is available
+    //     return [];
     // }
+
+    // fungsi itung jarak google maps api
+    private function calculateDistances($locations)
+    {
+        $apiKey = 'AIzaSyBmBL3_MRsk7qiOqSXgNr-x59cz_vXU9Fg';
+        $distances = [];
+
+        foreach ($locations as $location) {
+            $origins = $destinations = [];
+
+            foreach ($locations as $otherLocation) {
+                $origins[] = $location->lat . ',' . $location->lng;
+                $destinations[] = $otherLocation->lat . ',' . $otherLocation->lng;
+            }
+
+            $origins = implode('|', $origins);
+            $destinations = implode('|', $destinations);
+
+            $url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins={$origins}&destinations={$destinations}&key={$apiKey}";
+
+            $response = Http::get($url);
+
+            if ($response->ok()) {
+                $data = $response->json();
+
+                foreach ($data['rows'] as $i => $row) {
+                    foreach ($row['elements'] as $j => $element) {
+                        if ($element['status'] == 'OK' && isset($element['distance']['value'])) {
+                            $distances[$location->id][$locations[$j]->id] = $element['distance']['value'] / 1000;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $distances;
+    }
+
     public function findOptimalRoute($locations, $jarak)
 
     {
@@ -229,7 +230,7 @@ class RuteController extends Controller
             }
         }
 
-        // KNN: Urutkan kota-kota berdasarkan jarak terdekat ke kota awal (id = 1)
+        // NN: Urutkan kota-kota berdasarkan jarak terdekat ke kota awal (id = 1)
         $startingLocationId = 1;
         $startingLocationIndex = array_search($startingLocationId, array_column($locationsArray, 'id'));
         $visited = array_fill(0, $numLocations, false);
@@ -319,6 +320,7 @@ class RuteController extends Controller
                 $globalBestFitness = $particles[$i]['personal_best_fitness'];
             }
         }
+        // dd($globalBestParticleIndex);
 
         // PSO Iterations
         $bestRouteWithoutID1 = $this->convertPositionToLocationIDs($particles[$globalBestParticleIndex]['personal_best'], $locationsArray, $startIndex);

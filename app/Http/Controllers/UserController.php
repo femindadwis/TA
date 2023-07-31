@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -32,14 +33,25 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        // insert data ke table user
-        DB::table('users')->insert([
+        $userData = [
             'name' => $request->name,
             'username' => $request->username,
             'password' => Hash::make($request->password),
             'level' => $request->level,
-        ]);
-        // alihkan halaman user
+        ];
+
+        if ($request->level == 2) {
+            $user = User::create($userData);
+
+            // Simpan user_id ke tabel admins
+            Admin::create([
+                'user_id' => $user->id,
+                // Kolom-kolom lain yang Anda butuhkan untuk tabel admins
+            ]);
+        } else {
+            User::create($userData);
+        }
+
         return redirect('/user/user');
 
     }
@@ -48,7 +60,7 @@ class UserController extends Controller
     {
 
         $user = DB::table('users')->where('id',$id)->get();
-
+        // $user = User::findOrFail($id);
         return view('user/user_edit',['user' => $user]);
     }
 
@@ -57,13 +69,15 @@ class UserController extends Controller
     {
         // update data user
 
-        DB::table('users')->where('id',$request->id)->update([
+        $userData = [
             'name' => $request->name,
             'username' => $request->username,
             'password' => Hash::make($request->password),
             'level' => $request->level,
-        ]);
-        // alihkan halaman ke halaman user
+        ];
+
+        User::where('id', $request->id)->update($userData);
+
         return redirect('/user/user')->with('success', 'User Telah di Ubah!');
     }
 

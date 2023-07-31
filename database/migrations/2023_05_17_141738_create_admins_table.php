@@ -15,7 +15,12 @@ return new class extends Migration
     {
         Schema::create('admins', function (Blueprint $table) {
             $table->id();
+            // Kolom-kolom lain yang Anda butuhkan untuk tabel admins
+            $table->unsignedBigInteger('user_id');
             $table->timestamps();
+
+            // Definisikan foreign key constraint untuk user_id
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

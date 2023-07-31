@@ -31,8 +31,8 @@
                                                         <td>
                                                             @if ($location->id === $destLocation->id)
                                                                 -
-                                                            @elseif (isset($distances[$location->id][$destLocation->id]))
-                                                                {{ $distances[$location->id][$destLocation->id] }}
+                                                            @elseif (isset($jarak[$location->id][$destLocation->id]))
+                                                                {{ $jarak[$location->id][$destLocation->id] }}
                                                                 km
                                                             @else
                                                                 -

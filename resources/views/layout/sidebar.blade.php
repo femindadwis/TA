@@ -45,9 +45,9 @@
                     <li class="dropdown">
                         <a class="nav-link menu-title " href="javascript:void(0)"><i data-feather="airplay"></i><span>Data</span></a>
                         <ul class="nav-submenu menu-content"  style="display: none;">
-                            @if (Auth::user()->level == 1 )
+                            {{-- @if (Auth::user()->level == 1 ) --}}
                             <li><a href="/user/user" class="">Data User</a></li>
-                            @endif
+                            {{-- @endif --}}
                             <li><a href="/jenis_kendaraan/jenis_kendaraan" class="">Data Jenis Kendaraan</a></li>
                             <li><a href="/driver/driver" class="">Data Driver</a></li>
                             <li><a href="/lokasi/lokasi" class="">Data Lokasi</a></li>
