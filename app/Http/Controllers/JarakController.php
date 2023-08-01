@@ -161,7 +161,7 @@ class JarakController extends Controller
 
     private function calculateDistances($locations)
     {
-        $apiKey = 'pk.eyJ1Ijoicnl0b2RldiIsImEiOiJjbGtncDB3a3YwMXV3M2VvOHFqdmd2NWY4In0.pag9rpV51QYupsyPdSFfOw';
+        $apiKey = 'pk.eyJ1IjoiZmVtaW5kYTE2IiwiYSI6ImNsa25sc243bjB4czEzZG1tOTFxOXRmd2gifQ.LfN9gOS8caeDzvmoRIgDGQ';
         $coordinates = [];
 
         foreach ($locations as $location) {

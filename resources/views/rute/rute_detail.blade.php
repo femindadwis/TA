@@ -55,27 +55,15 @@
                                     <div id="map-canvas-pso"></div>
                                     <!-- Tampilkan urutan lokasi -->
                                     <div id="route-order" class="mt-3">
-                                        @if (isset($optimalRoutePSO))
+
                                             <p>Optimal Route:</p>
                                             <ol>
-                                                @foreach ($optimalRoutePSO ?? [] as $key => $locationId)
-                                                    <li>
-                                                        {{ collect($locations)->where('id', $locationId)->first()['name'] }}
-                                                    </li>
-                                                @endforeach
 
-                                                @if (end($optimalRoutePSO) !== 1)
-                                                    <li>
-                                                        {{ collect($locations)->where('id', 1)->first()['name'] }}
-                                                    </li>
-                                                @endif
+                                                        <li>{{ $route->urutan }}</li>
+
                                             </ol>
-                                        @endif
-
                                         <div lass="mt-3">
-                                            @if (isset($totaljarak))
-                                                Total Distance: {{ $totaljarak }} km<br>
-                                            @endif
+                                            Total Distance: {{ $route->jarak }}<br>
                                         </div>
                                     </div>
                                 </div>
@@ -122,7 +110,7 @@
 
 <script>
     mapboxgl.accessToken =
-        'pk.eyJ1Ijoicnl0b2RldiIsImEiOiJjbGtncDB3a3YwMXV3M2VvOHFqdmd2NWY4In0.pag9rpV51QYupsyPdSFfOw';
+        'pk.eyJ1IjoiZmVtaW5kYTE2IiwiYSI6ImNsa25sc243bjB4czEzZG1tOTFxOXRmd2gifQ.LfN9gOS8caeDzvmoRIgDGQ';
     var minLat = Infinity;
     var maxLat = -Infinity;
     var minLng = Infinity;

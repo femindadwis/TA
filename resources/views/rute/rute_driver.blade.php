@@ -77,6 +77,7 @@
                                                 Total Distance: {{ $totaljarak }} km<br>
                                             @endif
                                         </div>
+                                        
                                     </div>
                                 </div>
                                 <div class="tab-pane fade" id="pills-clrprofile1" role="tabpanel"
@@ -122,7 +123,7 @@
 
 <script>
     mapboxgl.accessToken =
-        'pk.eyJ1Ijoicnl0b2RldiIsImEiOiJjbGtncDB3a3YwMXV3M2VvOHFqdmd2NWY4In0.pag9rpV51QYupsyPdSFfOw';
+        'pk.eyJ1IjoiZmVtaW5kYTE2IiwiYSI6ImNsa25sc243bjB4czEzZG1tOTFxOXRmd2gifQ.LfN9gOS8caeDzvmoRIgDGQ';
     var minLat = Infinity;
     var maxLat = -Infinity;
     var minLng = Infinity;

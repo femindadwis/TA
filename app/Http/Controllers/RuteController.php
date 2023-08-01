@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use App\Models\{Driver, User, Driver_lokasi, Lokasi, Jarak};
+use App\Models\{Driver, User, Driver_lokasi, Lokasi, Jarak, Route};
 use Illuminate\Support\Facades\Http;
 use App\Models\Jeniskendaraan;
 
@@ -33,8 +33,10 @@ class RuteController extends Controller
         $locationIds = $driverLocations->pluck('lokasi_id');
         $locations = Lokasi::whereIn('id', $locationIds)->get();
 
+        // Menghitung jarak antara lokasi-lokasi yang ada
         $distances = $this->calculateDistances($locations);
 
+        // Memproses dan menyimpan data jarak antara lokasi-lokasi ke dalam tabel Jarak
         foreach ($distances as $loc1Id => $distancesToOther) {
             foreach ($distancesToOther as $loc2Id => $distance) {
                 Jarak::updateOrCreate(
@@ -52,29 +54,59 @@ class RuteController extends Controller
         foreach ($jarakData as $data) {
             $jarak[$data['loc_1']][$data['loc_2']] = $data['distance'];
         }
-        ksort($jarak);
-        foreach ($jarak as &$row) {
-            ksort($row);
-        }
+
 
         $optimalRoute = $this->findOptimalRoute($locations, $jarak);
         $optimalRoutePSO = $this->findOptimalRoutePSO($locations, $jarak);
-
-        // Menghitung total jarak tempuh
-        $totalDistance = $this->calculateTotalDistances($optimalRoute, $jarak);
         $totaljarak = $this->calculateTotalDistances($optimalRoutePSO, $jarak);
+
+        $routeString = implode('-', $optimalRoutePSO);
+        $driverId = $id;
+
+        // Check if there is an existing route data for the driver
+        $route = Route::where('driver_id', $driverId)->first();
+        if ($route) {
+            if ($totaljarak < $route->jarak) {
+                $route->update([
+                    'urutan' => $routeString,
+                    'jarak' => $totaljarak,
+                ]);
+            } else {
+
+            }
+        } else {
+            $route = Route::create([
+                'driver_id' => $driverId,
+                'urutan' => $routeString,
+                'jarak' => $totaljarak,
+            ]);
+        }
+        if ($route && count($optimalRoutePSO) > count(explode('-', $route->urutan))) {
+            $route->delete();
+            $route = Route::create([
+                'driver_id' => $driverId,
+                'urutan' => $routeString,
+                'jarak' => $totaljarak,
+            ]);
+        }
+
+
+        $totalDistance = $this->calculateTotalDistances($optimalRoute, $jarak);
         $data = [
             'driver' => $driver,
             'user' => User::all(),
+            // 'allLocations' => $allLocations,
             'locations' => $locations,
             'distances' => $distances,
             'driver_lokasi' => $driver_lokasi,
             'optimalRoute' => $optimalRoute,
             'optimalRoutePSO' => $optimalRoutePSO,
             'totalDistance' => $totalDistance,
-            'totaljarak' => $totaljarak
+            'totaljarak' => $totaljarak,
+            'route' => $route,
+
         ];
-        // dd($totaljarak);
+
         return view('rute.rute_detail', $data);
     }
 
@@ -84,7 +116,7 @@ class RuteController extends Controller
         $driver = Driver::where('user_id', $user)->first();
         $user_id = $driver->user_id;
         $driver_lokasi = Driver_lokasi::where('user_id', $user_id)->get();
-        // Ambil semua lokasi dari tabel driver_lokasi berdasarkan user_id
+
         $driverLocations = Driver_Lokasi::where('user_id', $user_id)->get();
 
         // Ambil seluruh data dari model Lokasi yang sesuai dengan lokasi_id pada driver_lokasi
@@ -273,16 +305,14 @@ class RuteController extends Controller
     {
         mt_srand(42);
         $numLocations = count($locations);
-        $swarmSize = $numLocations * 100;
-        $maxIterations = 200;
+        $swarmSize = $numLocations * 5;
+        $maxIterations = 100;
 
         $wMin = 0.4;
         $wMax = 0.9;
-        $c1 = 1.0;
-        $c2 = 1.0;
-        $maxVelocity = 0.2;
-        $maxExecutionTime = 5;
-        // Convert Eloquent collection $locations into an array to get location IDs
+        $c1 = 2.0;
+        $c2 = 2.0;
+
         $locationsArray = $locations->pluck('id')->toArray();
 
         // Find the index of location ID = 1
@@ -291,7 +321,7 @@ class RuteController extends Controller
         // Initialize particles and random initial positions
         $particles = [];
         for ($i = 0; $i < $swarmSize; $i++) {
-            // Generate random initial position (route) for each particle (excluding ID = 1)
+
             $particle = [];
             for ($j = 0; $j < $numLocations - 1; $j++) {
                 if ($j < $startIndex) {
@@ -301,7 +331,14 @@ class RuteController extends Controller
                 }
             }
 
-            $velocity = array_fill(0, $numLocations - 1, 0);
+            $velocity = [];
+            for ($j = 0; $j < $numLocations - 1; $j++) {
+                if ($j < $startIndex) {
+                    $velocity[] = (float) number_format(mt_rand() / mt_getrandmax(), 4);
+                } else {
+                    $velocity[] = (float) number_format(mt_rand() / mt_getrandmax(), 4);
+                }
+            }
 
             $particles[] = [
                 'particle' => $particle,
@@ -311,7 +348,6 @@ class RuteController extends Controller
             ];
         }
 // dd($particles);
-
         $globalBestParticleIndex = 0;
         $globalBestFitness = $particles[0]['personal_best_fitness'];
         for ($i = 1; $i < $swarmSize; $i++) {
@@ -324,60 +360,42 @@ class RuteController extends Controller
 
         // PSO Iterations
         $bestRouteWithoutID1 = $this->convertPositionToLocationIDs($particles[$globalBestParticleIndex]['personal_best'], $locationsArray, $startIndex);
-        $startTime = microtime(true);
+        // $startTime = microtime(true);
 
         for ($iteration = 0; $iteration < $maxIterations; $iteration++) {
-            $currentTime = microtime(true);
-            if ($currentTime - $startTime >= $maxExecutionTime) {
-                break;
-            }
+
             $w = $wMax - (($wMax - $wMin) * $iteration) / $maxIterations;
             for ($i = 0; $i < $swarmSize; $i++) {
                 mt_srand();
                 for ($j = 0; $j < $numLocations - 1; $j++) {
-                    $r1 = mt_rand() / mt_getrandmax();
-                    $r2 = mt_rand() / mt_getrandmax();
+                    $r1 = (float) number_format(mt_rand() / mt_getrandmax(), 4);
+                    $r2 = (float) number_format(mt_rand() / mt_getrandmax(), 4);
                     $particles[$i]['velocity'][$j] =
                         $w * $particles[$i]['velocity'][$j] +
                         $c1 * $r1 * ($particles[$i]['personal_best'][$j] - $particles[$i]['particle'][$j]) +
                         $c2 * $r2 * ($particles[$globalBestParticleIndex]['personal_best'][$j] - $particles[$i]['particle'][$j]);
 
-                    // Velocity clamping
-                    if ($particles[$i]['velocity'][$j] > $maxVelocity) {
-                        $particles[$i]['velocity'][$j] = $maxVelocity;
-                    } elseif ($particles[$i]['velocity'][$j] < -$maxVelocity) {
-                        $particles[$i]['velocity'][$j] = -$maxVelocity;
-                    }
                 }
-
-                // Update each element of the position (route) based on velocity
                 for ($j = 0; $j < $numLocations - 1; $j++) {
                     $particles[$i]['particle'][$j] += $particles[$i]['velocity'][$j];
-
-                    if ($particles[$i]['particle'][$j] < 0) {
-                        $particles[$i]['particle'][$j] = 0;
-                    } elseif ($particles[$i]['particle'][$j] > 1) {
-                        $particles[$i]['particle'][$j] = 1;
-                    }
                 }
 
                 $newRoute = $this->convertPositionToLocationIDs($particles[$i]['particle'], $locationsArray, $startIndex);
                 array_unshift($newRoute, 1);
 
-                // Ignore the first location with ID = 1 in fitness calculation
+
                 $newFitness = $this->calculateTotalDistances(array_slice($newRoute, 1), $jarak);
 
                 // Update personal best of the particle if the new fitness is better
-                if ($newFitness < $particles[$i]['personal_best_fitness']) {
+                if ($newFitness <= $particles[$i]['personal_best_fitness']) {
                     $particles[$i]['personal_best'] = $particles[$i]['particle'];
                     $particles[$i]['personal_best_fitness'] = $newFitness;
 
                     // Update global best (gbest) if a better solution is found
-                    if ($newFitness < $globalBestFitness) { // Use "<" for updating global best
+                    if ($newFitness <= $globalBestFitness) {
                         $globalBestParticleIndex = $i;
                         $globalBestFitness = $newFitness;
 
-                        // Update the best route without location ID = 1 found so far
                         $bestRouteWithoutID1 = $this->convertPositionToLocationIDs($particles[$i]['particle'], $locationsArray, $startIndex);
                     }
                 }
@@ -385,8 +403,8 @@ class RuteController extends Controller
         }
 
 
-        $bestRouteWithID1 = array_merge($bestRouteWithoutID1);
-
+        $bestRouteWithID1 = array_merge($bestRouteWithoutID1, [1]);
+// dd($bestRouteWithID1);
         return $bestRouteWithID1;
     }
 
@@ -435,4 +453,27 @@ class RuteController extends Controller
 
         return $totalJarak;
     }
+
+//     private function savePSO($optimalRoutePSO, $id)
+// {
+
+//     foreach ($optimalRoutePSO as $index => $lokasi_id) {
+//         // Check if a record with the same driver_id and urutan already exists
+//         $existingRoute = Route::where('driver_id', $id)
+//             ->where('urutan', $index + 1)
+//             ->first();
+
+//         if ($existingRoute) {
+//             // If the record exists, update the lokasi_id
+//             $existingRoute->update(['lokasi_id' => $lokasi_id]);
+//         } else {
+//             // If the record doesn't exist, create a new one
+//             Route::create([
+//                 'driver_id' => $id,
+//                 'urutan' => $index + 1,
+//                 'lokasi_id' => $lokasi_id,
+//             ]);
+//         }
+//     }
+// }
 }

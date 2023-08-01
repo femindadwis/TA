@@ -9,6 +9,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Jarak;
 use App\Models\Driver_lokasi;
+use App\Models\Route;
 class Lokasi extends Model
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -32,6 +33,11 @@ class Lokasi extends Model
     public function driver_lokasis()
     {
         return $this->hasMany(Driver_lokasi::class);
+    }
+
+    public function route()
+    {
+        return $this->hasMany(Route::class, 'lokasi_id');
     }
     protected static function boot()
     {
