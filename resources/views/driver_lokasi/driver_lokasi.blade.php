@@ -44,12 +44,8 @@
                                                 <td>{{ $dl->users->name }}</td>
                                                 <td>{{ $dl->lokasi->name }}</td>
                                                 <td>
-                                                    <a class="fa fa-edit"
-                                                        href="{{ route('driver_lokasi.edit', $dl->user_id) }}"
-                                                        title="Edit"></a>
-                                                    <a class="btn btn-sm btn-success-outline"
-                                                        href="/driver_lokasi/hapus/{{ $dl->id }}"
-                                                        title="Hapus"><span class="fa fa-trash-o"></span></a>
+                                                    <a class="fa fa-edit" href="{{ route('driver_lokasi.edit', $dl->user_id) }}" title="Edit"></a> &nbsp;&nbsp;
+                                                    <a class="fa fa-trash-o" href="/driver_lokasi/hapus/{{ $dl->id }}"  title="Hapus"></a> &nbsp;&nbsp;
                                                 </td>
                                             </tr>
                                         @endforeach

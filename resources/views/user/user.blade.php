@@ -52,8 +52,8 @@
                             </td>
 
                             <td>
-                                <a class="fa fa-edit" href="/user/edit/{{ $u->id }}" title="Edit"></span></a>
-                                <a class="btn btn-sm btn-success-outline" href="/user/hapus/{{ $u->id }}" title="Hapus"><span class="fa fa-trash-o"></span></a>
+                                <a class="fa fa-edit" href="/user/edit/{{ $u->id }}" title="Edit"></a> &nbsp;&nbsp;
+                                <a class="fa fa-trash-o" href="/user/hapus/{{ $u->id }}"  title="Hapus"></a> &nbsp;&nbsp;
                             </td>
                         </tr>
                         @endforeach
@@ -65,5 +65,6 @@
             </div>
 
 </div></div></div></div></div></div></div>
+
 @include('layout.footer')
 @include('layout.js')

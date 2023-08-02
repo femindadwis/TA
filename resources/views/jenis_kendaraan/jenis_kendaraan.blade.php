@@ -12,7 +12,7 @@
 <div class="col-sm-12">
     <div class="card">
         <div class="card-header">
-            <h5>Tabel Jenis Kendaraan <a class="fa fa-plus-square-o" href="/driver_lokasi/tambah"
+            <h5>Tabel Jenis Kendaraan <a class="fa fa-plus-square-o" href="/jenis_kendaraan/tambah"
                     title="Edit"></a> </h5>
 
         </div>
@@ -35,8 +35,9 @@
 
 
                             <td>
-                                <a class="fa fa-edit" href="{{route('jenis_kendaraan.edit', $jk->id)}}" title="Edit"></span></a>
-                                <a class="btn btn-sm btn-success-outline" href="/jenis_kendaraan/hapus/{{ $jk->id }}" title="Hapus"><span class="fa fa-trash-o"></span></a>
+                                <a class="fa fa-edit"href="{{route('jenis_kendaraan.edit', $jk->id)}}" title="Edit"></a> &nbsp;&nbsp;
+                                <a class="fa fa-trash-o" href="/jenis_kendaraan/hapus/{{ $jk->id }}"  title="Hapus"></a> &nbsp;&nbsp;
+
                             </td>
                         </tr>
                     @endforeach

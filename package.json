@@ -15,6 +15,7 @@
         "vite": "^4.0.0"
     },
     "dependencies": {
-        "icofont": "^1.0.0"
+        "icofont": "^1.0.0",
+        "sweetalert2": "^11.7.20"
     }
 }

@@ -32,7 +32,7 @@ class JenisKendaraanController extends Controller
             'jenis_kendaraan' => $request->jenis_kendaraan,
         ]);
         // alihkan halaman lokasi
-        return redirect('/jenis_kendaraan/jenis_kendaraan');
+        return redirect('/jenis_kendaraan/jenis_kendaraan')->with('toast_success', 'Jenis kendaraan telah ditambahkan!');
 
     }
 
@@ -53,7 +53,7 @@ class JenisKendaraanController extends Controller
 
         ]);
         // alihkan halaman ke halaman lokasi
-        return redirect('/jenis_kendaraan/jenis_kendaraan')->with('success', 'jenis_kendaraan Telah di Ubah!');
+        return redirect('/jenis_kendaraan/jenis_kendaraan')->with('toast_success', 'Jenis kendaraan telah diubah!');
     }
 
     public function hapus($id)
@@ -62,7 +62,7 @@ class JenisKendaraanController extends Controller
         DB::table('jeniskendaraan')->where('id',$id)->delete();
 
         // alihkan halaman ke halaman lokasi
-        return redirect('/jenis_kendaraan/jenis_kendaraan');
+        return redirect('/jenis_kendaraan/jenis_kendaraan')->with('toast_success', 'Jenis kendaraan telah dihapus!');
 
     }
 }

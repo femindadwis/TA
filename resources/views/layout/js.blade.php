@@ -20,6 +20,8 @@
     <script src="{{ asset('template_dashboard/assets/js/map-js/custom.js') }}"></script>
 <!-- Plugins JS Ends-->
  <!-- Plugins JS start-->
+ <script src="https://laravel.pixelstrap.com/viho/assets/js/sweet-alert/sweetalert.min.js"></script>
+ <script src="https://laravel.pixelstrap.com/viho/assets/js/sweet-alert/app.js"></script>
  {{-- table --}}
  {{-- <script src="{{ asset('template_dashboard/assets/js/datatable/datatables/jquery.dataTables.min.js') }}"></script>
  <script src="{{ asset('template_dashboard/assets/js/datatable/datatables/datatable.custom.js') }}"></script> --}}

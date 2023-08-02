@@ -42,7 +42,7 @@ class LokasiController extends Controller
             'foto' => $foto,
         ]);
         // alihkan halaman lokasi
-        return redirect('/lokasi/lokasi');
+        return redirect('/lokasi/lokasi')->with('toast_success', 'Lokasi telah ditambahkan!');
 
     }
 
@@ -69,7 +69,7 @@ class LokasiController extends Controller
             'foto' => $foto,
         ]);
         // alihkan halaman ke halaman lokasi
-        return redirect('/lokasi/lokasi')->with('success', 'lokasi Telah di Ubah!');
+        return redirect('/lokasi/lokasi')->with('toast_success', 'Lokasi telah diubah!');
     }
 
     public function hapus($id)
@@ -78,7 +78,7 @@ class LokasiController extends Controller
         DB::table('lokasi')->where('id',$id)->delete();
 
         // alihkan halaman ke halaman lokasi
-        return redirect('/lokasi/lokasi');
+        return redirect('/lokasi/lokasi')->with('toast_success', 'Lokasi telah dihapus!');
 
     }
 }

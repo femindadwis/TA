@@ -18,6 +18,7 @@ class RuteController extends Controller
         $data = [
             "driver" => Driver::all(),
         ];
+        alert()->info('Info','Sebelum buka rute, buka jarak terlebih dahulu');
         return view('rute.rute', $data);
     }
 
@@ -454,26 +455,14 @@ class RuteController extends Controller
         return $totalJarak;
     }
 
-//     private function savePSO($optimalRoutePSO, $id)
-// {
+    public function reset($id)
+    {
+        // menghapus data user berdasarkan id yang dipilih
+        DB::table('route')->where('driver_id',$id)->delete();
+        $name =  DB::table('driver')->where('id',$id)->value('name');
+        $pesan = "Rute $name telah direset!";
+        // alihkan halaman ke halaman user
+        return redirect('/rute/rute')->with('toast_success', $pesan);
 
-//     foreach ($optimalRoutePSO as $index => $lokasi_id) {
-//         // Check if a record with the same driver_id and urutan already exists
-//         $existingRoute = Route::where('driver_id', $id)
-//             ->where('urutan', $index + 1)
-//             ->first();
-
-//         if ($existingRoute) {
-//             // If the record exists, update the lokasi_id
-//             $existingRoute->update(['lokasi_id' => $lokasi_id]);
-//         } else {
-//             // If the record doesn't exist, create a new one
-//             Route::create([
-//                 'driver_id' => $id,
-//                 'urutan' => $index + 1,
-//                 'lokasi_id' => $lokasi_id,
-//             ]);
-//         }
-//     }
-// }
+    }
 }

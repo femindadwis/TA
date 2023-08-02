@@ -41,8 +41,8 @@
 
 
                             <td>
-                                <a class="fa fa-edit" href="{{route('lokasi.edit', $l->id)}}" title="Edit"></span></a>
-                                <a class="btn btn-sm btn-success-outline" href="/lokasi/hapus/{{ $l->id }}" title="Hapus"><span class="fa fa-trash-o"></span></a>
+                                <a class="fa fa-edit" href="{{route('lokasi.edit', $l->id)}}"title="Edit"></a> &nbsp;&nbsp;
+                                <a class="fa fa-trash-o" href="/lokasi/hapus/{{ $l->id }}"  title="Hapus"></a> &nbsp;&nbsp;
                             </td>
                         </tr>
                     @endforeach

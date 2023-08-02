@@ -58,7 +58,7 @@
                         <a class="nav-link menu-title link-nav" href="{{ route('jarak') }}"><i data-feather="git-pull-request"></i><span>Jarak</span></a>
                     </li>
                     <li class="dropdown">
-                        <a class="nav-link menu-title link-nav" href="/rute/rute"><i data-feather="navigation"></i><span>Rute</span></a>
+                        <a class="nav-link menu-title link-nav" href="{{ route('rute') }}" title="index"><i data-feather="navigation"></i><span>Rute</span></a>
                     </li>
 @endif
 
@@ -84,5 +84,6 @@
             <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
         </div>
     </nav>
+
 </header>
 

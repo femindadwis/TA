@@ -51,7 +51,7 @@ class AutentikasiController extends Controller
         if (Auth::attempt($validasi)) {
             $request->session()->regenerate();
 
-            return redirect()->intended("/dashboard");
+            return redirect()->intended("/dashboard")->with('toast_success', 'Berhasil Login');
         } else {
             return back();
         }
@@ -60,7 +60,6 @@ class AutentikasiController extends Controller
     public function logout()
     {
         Auth::logout();
-
         return redirect("/login");
     }
 }

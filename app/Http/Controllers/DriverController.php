@@ -51,7 +51,7 @@ class DriverController extends Controller
             'jeniskendaraan_id' => $request->jeniskendaraan_id,
         ]);
         // alihkan halaman driver
-        return redirect('/driver/driver');
+        return redirect('/driver/driver')->with('toast_success', 'Driver Telah ditambahkan!');
 
     }
 
@@ -81,7 +81,7 @@ class DriverController extends Controller
             'jeniskendaraan_id' => $request->jeniskendaraan_id,
         ]);
         // alihkan halaman ke halaman driver
-        return redirect('/driver/driver')->with('success', 'driver Telah di Ubah!');
+        return redirect('/driver/driver')->with('toast_success', 'Driver Telah diubah!');
     }
 
     public function hapus($id)
@@ -90,7 +90,7 @@ class DriverController extends Controller
         DB::table('driver')->where('id',$id)->delete();
 
         // alihkan halaman ke halaman driver
-        return redirect('/driver/driver');
+        return redirect('/driver/driver')->with('toast_success', 'Driver Telah dihapus!');
 
     }
     public function detail($id)

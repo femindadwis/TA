@@ -7,11 +7,15 @@
         <div class="container-fluid">
 <div class="page-header">
 <div class="row">
-
  <!-- Feature Unable /Disable Order Starts-->
  <div class="col-sm-12">
     <div class="card">
         <div class="card-header">
+            @if(session('info'))
+            <div class="alert alert-info">
+                {{ session('info') }}
+            </div>
+        @endif
             <h5>Pilihan Driver</h5>
             <span>Data Rute</span>
 
@@ -34,8 +38,12 @@
                             <td>{{ $d->name }} </td>
 
                             <td>
-                                <a class="fa fa-location-arrow" href="/rute/detail/{{ $d->id }}" title="Detail"></a>
+
+                                <a class="fa fa-location-arrow" href="/rute/detail/{{ $d->id }}" title="Detail"></a> &nbsp;&nbsp;
+                                <a class="fa fa-trash-o" href="/rute/reset/{{ $d->id }}"  title="Hapus"></a>
+
                             </td>
+
                         </tr>
                         @endforeach
                     </tbody>

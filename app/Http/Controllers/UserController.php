@@ -18,8 +18,7 @@ class UserController extends Controller
            $user = User::whereIn('level', [2, 3])->get();
         }
 
-        // mengirim data pegawai ke view index
-        // return view('user/user',['user' => $user]);
+
         return view ('user/user', ['user' => $user]);
     }
 
@@ -52,7 +51,7 @@ class UserController extends Controller
             User::create($userData);
         }
 
-        return redirect('/user/user');
+        return redirect('/user/user')->with('toast_success', 'User telah ditambahkan!');
 
     }
 
@@ -78,16 +77,18 @@ class UserController extends Controller
 
         User::where('id', $request->id)->update($userData);
 
-        return redirect('/user/user')->with('success', 'User Telah di Ubah!');
+        return redirect('/user/user')->with('toast_success', 'User telah diubah!');
     }
 
     public function hapus($id)
     {
         // menghapus data user berdasarkan id yang dipilih
         DB::table('users')->where('id',$id)->delete();
-
+        $title = 'Delete User!';
+        $text = "Are you sure you want to delete?";
+        confirmDelete($title, $text);
         // alihkan halaman ke halaman user
-        return redirect('/user/user');
+        return redirect('/user/user')->with('toast_success', 'User Telah dihapus!');
 
     }
 }

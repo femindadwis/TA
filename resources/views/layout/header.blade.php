@@ -37,6 +37,7 @@
 <!-- Feather icon-->
 <link rel="stylesheet" type="text/css" href="{{ asset('template_dashboard/assets/css/feather-icon.css') }}">
 <!-- Plugins css start-->
+<link rel="stylesheet" type="text/css" href="https://laravel.pixelstrap.com/viho/assets/css/sweetalert2.css">
 <link rel="stylesheet" type="text/css" href="{{ asset('template_dashboard/assets/css/mapsjs-ui.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ asset('template_dashboard/assets/css/datatables.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ asset('template_dashboard/assets/css/date-picker.css') }}">

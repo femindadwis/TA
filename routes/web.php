@@ -107,6 +107,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/rute/rute', [RuteController::class, 'index'])->name('rute');
     Route::get('/rute/detail/{id}', [RuteController::class, 'detail'])->name('rute_detail');
+    Route::get('/rute/reset/{id}', [RuteController::class, 'reset']);
     // Route::get('/rute/rute_gmaps', [RuteController::class, 'index'])->name('rute');
     // Route::get('/rute/rute_gmaps/perdriver/{id}', [RuteController::class, 'detail'])->name('rute_gmaps.detail');
     // Route::post('/rute/rute_gmaps', [RuteController::class, 'calculateRoute'])->name('calculate-route');
