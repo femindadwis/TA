@@ -53,7 +53,8 @@ class AutentikasiController extends Controller
 
             return redirect()->intended("/dashboard")->with('toast_success', 'Berhasil Login');
         } else {
-            return back();
+            // toast('Error Toast','error');
+            return redirect("/login")->with('toast_error', 'Username/Password Salah');
         }
     }
 
