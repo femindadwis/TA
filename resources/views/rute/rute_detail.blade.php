@@ -45,7 +45,8 @@
                                         aria-controls="pills-clrhome1" aria-selected="true">PSO</a></li>
                                 <li class="nav-item"><a class="nav-link" id="pills-clrprofile-tab1"
                                         data-bs-toggle="pill" href="#pills-clrprofile1" role="tab"
-                                        aria-controls="pills-clrprofile1" aria-selected="false">Nearest Neighbor</a></li>
+                                        aria-controls="pills-clrprofile1" aria-selected="false">Nearest Neighbor</a>
+                                </li>
                             </ul>
                             <div class="tab-content" id="pills-clrtabContent1">
                                 <div class="tab-pane fade show active" id="pills-clrhome1" role="tabpanel"
@@ -56,12 +57,14 @@
                                     <!-- Tampilkan urutan lokasi -->
                                     <div id="route-order" class="mt-3">
 
-                                            <p>Optimal Route:</p>
-                                            <ol>
+                                        <p>Optimal Route:</p>
+                                        <ol>
+                                            @foreach ($urutanLokasi as $lokasi)
+                                                <li>{{ $lokasi->name }}</li>
+                                            @endforeach
 
-                                                        <li>{{ $route->urutan }}</li>
 
-                                            </ol>
+                                        </ol>
                                         <div lass="mt-3">
                                             Total Distance: {{ $route->jarak }}<br>
                                         </div>
@@ -73,26 +76,14 @@
                                     <div id="map-canvas"></div>
                                     <!-- Tampilkan urutan lokasi -->
                                     <div id="route-order" class="mt-3">
-                                        @if (isset($optimalRoute))
                                             <p>Optimal Route:</p>
                                             <ol>
-                                                @foreach ($optimalRoute as $key => $locationId)
-                                                    <li>
-                                                        {{ collect($locations)->where('id', $locationId)->first()['name'] }}
-                                                    </li>
-                                                @endforeach
-                                                @if (end($optimalRoute) !== 1)
-                                                    <li>
-                                                        {{ collect($locations)->where('id', 1)->first()['name'] }}
-                                                    </li>
-                                                @endif
+                                                @foreach ($urutanLokasinn as $lokasinn)
+                                                <li>{{ $lokasinn->name }}</li>
+                                            @endforeach
                                             </ol>
-                                        @endif
-
                                         <div lass="mt-3">
-                                            @if (isset($totalDistance))
-                                                Total Distance: {{ $totalDistance }} km<br>
-                                            @endif
+                                            Total Distance: {{ $routenn->jarak }}<br>
                                         </div>
 
                                     </div>

@@ -21,10 +21,12 @@
                             <tr>
                                 <?php $no=1; ?>
                                 <th>No</th>
+                                <th>Foto</th>
                                 <th>Lokasi</th>
                                 <th>Alamat</th>
                                 <th>Longitude</th>
                                 <th>Latitude</th>
+                                <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -32,10 +34,12 @@
 <tr>
 
                                              <td>{{ $no++ }}</td>
+                                             <td><img src="{{ asset('storage/'.$dl->lokasi->foto) }}" alt="" height="100px" width="100px"> </td>
                                             <td>{{ $dl->lokasi->name }}</td>
                                             <td>{{ $dl->lokasi->alamat }}</td>
                                             <td>{{ $dl->lokasi->lng }}</td>
                                             <td>{{ $dl->lokasi->lat }}</td>
+                                            <td><a class="fa fa-edit" href="{{route('driver_lokasi.lokasiedit', $dl->lokasi->id)}}"title="Edit"></a> &nbsp;&nbsp;</td>
                                         </tr>
                                         @endforeach
                                     </tbody>

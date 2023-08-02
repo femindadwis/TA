@@ -7,18 +7,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use App\Models\{Driver, User, Driver_lokasi, Lokasi, Jarak, Route};
+use App\Models\{Driver, User, Driver_lokasi, Lokasi, Jarak, Route, Routenn};
 use Illuminate\Support\Facades\Http;
-use App\Models\Jeniskendaraan;
+
 
 class RuteController extends Controller
 {
     public function index()
     {
         $data = [
+
             "driver" => Driver::all(),
         ];
-        alert()->info('Info','Sebelum buka rute, buka jarak terlebih dahulu');
+
         return view('rute.rute', $data);
     }
 
@@ -47,38 +48,65 @@ class RuteController extends Controller
             }
         }
 
-        // Mendapatkan data jarak dari database
         $jarakData = Jarak::select('loc_1', 'loc_2', 'distance')->get()->toArray();
-
-        // Mengonversi data jarak ke dalam bentuk matriks
         $jarak = [];
         foreach ($jarakData as $data) {
             $jarak[$data['loc_1']][$data['loc_2']] = $data['distance'];
         }
-
-
+        $driverId = $id;
+        // data NN
         $optimalRoute = $this->findOptimalRoute($locations, $jarak);
+        $totalDistance = $this->calculateTotalDistances($optimalRoute, $jarak);
+        $routeString = implode('-', $optimalRoute);
+        $routenn = Routenn::where('driver_id', $driverId)->first();
+        if ($routenn) {
+            if ($totalDistance < $routenn->jarak) {
+                $routenn->update([
+                    'urutan' => $routeString,
+                    'jarak' => $totalDistance,
+                ]);
+            } else {
+            }
+        } else {
+            $routenn = Routenn::create([
+                'driver_id' => $driverId,
+                'urutan' => $routeString,
+                'jarak' => $totalDistance,
+            ]);
+        }
+        if ($routenn && count($optimalRoute) > count(explode('-', $routenn->urutan))) {
+            $routenn->delete();
+            $routenn = Routenn::create([
+                'driver_id' => $driverId,
+                'urutan' => $routeString,
+                'jarak' => $totalDistance,
+            ]);
+        }
+        // nampilin nama lokasi
+        $urutanLokasinn = [];
+        $arrayLokasi = explode('-', $routenn->urutan);
+        foreach ($arrayLokasi as $id) {
+            $lokasinn = Lokasi::find($id);
+            $urutanLokasinn[] = $lokasinn;
+        }
+
+        // data PSO
         $optimalRoutePSO = $this->findOptimalRoutePSO($locations, $jarak);
         $totaljarak = $this->calculateTotalDistances($optimalRoutePSO, $jarak);
-
-        $routeString = implode('-', $optimalRoutePSO);
-        $driverId = $id;
-
-        // Check if there is an existing route data for the driver
+        $routeStrings = implode('-', $optimalRoutePSO);
         $route = Route::where('driver_id', $driverId)->first();
         if ($route) {
             if ($totaljarak < $route->jarak) {
                 $route->update([
-                    'urutan' => $routeString,
+                    'urutan' => $routeStrings,
                     'jarak' => $totaljarak,
                 ]);
             } else {
-
             }
         } else {
             $route = Route::create([
                 'driver_id' => $driverId,
-                'urutan' => $routeString,
+                'urutan' => $routeStrings,
                 'jarak' => $totaljarak,
             ]);
         }
@@ -86,17 +114,21 @@ class RuteController extends Controller
             $route->delete();
             $route = Route::create([
                 'driver_id' => $driverId,
-                'urutan' => $routeString,
+                'urutan' => $routeStrings,
                 'jarak' => $totaljarak,
             ]);
         }
+        // nampilin nama lokasi
+        $urutanLokasi = [];
+        $arrayLokasis = explode('-', $route->urutan);
+        foreach ($arrayLokasis as $id) {
+            $lokasi = Lokasi::find($id);
+            $urutanLokasi[] = $lokasi;
+        }
 
-
-        $totalDistance = $this->calculateTotalDistances($optimalRoute, $jarak);
         $data = [
             'driver' => $driver,
             'user' => User::all(),
-            // 'allLocations' => $allLocations,
             'locations' => $locations,
             'distances' => $distances,
             'driver_lokasi' => $driver_lokasi,
@@ -104,7 +136,11 @@ class RuteController extends Controller
             'optimalRoutePSO' => $optimalRoutePSO,
             'totalDistance' => $totalDistance,
             'totaljarak' => $totaljarak,
+            'urutanLokasi' => $urutanLokasi,
+            'urutanLokasinn' => $urutanLokasinn,
             'route' => $route,
+            'routenn' => $routenn,
+
 
         ];
 
@@ -113,19 +149,22 @@ class RuteController extends Controller
 
     public function rute()
     {
+
         $user = auth()->user()->id;
         $driver = Driver::where('user_id', $user)->first();
         $user_id = $driver->user_id;
         $driver_lokasi = Driver_lokasi::where('user_id', $user_id)->get();
-
+        // Ambil semua lokasi dari tabel driver_lokasi berdasarkan user_id
         $driverLocations = Driver_Lokasi::where('user_id', $user_id)->get();
 
         // Ambil seluruh data dari model Lokasi yang sesuai dengan lokasi_id pada driver_lokasi
         $locationIds = $driverLocations->pluck('lokasi_id');
         $locations = Lokasi::whereIn('id', $locationIds)->get();
 
+        // Menghitung jarak antara lokasi-lokasi yang ada
         $distances = $this->calculateDistances($locations);
 
+        // Memproses dan menyimpan data jarak antara lokasi-lokasi ke dalam tabel Jarak
         foreach ($distances as $loc1Id => $distancesToOther) {
             foreach ($distancesToOther as $loc2Id => $distance) {
                 Jarak::updateOrCreate(
@@ -135,25 +174,84 @@ class RuteController extends Controller
             }
         }
 
-        // Mendapatkan data jarak dari database
         $jarakData = Jarak::select('loc_1', 'loc_2', 'distance')->get()->toArray();
-
-        // Mengonversi data jarak ke dalam bentuk matriks
         $jarak = [];
         foreach ($jarakData as $data) {
             $jarak[$data['loc_1']][$data['loc_2']] = $data['distance'];
         }
-        ksort($jarak);
-        foreach ($jarak as &$row) {
-            ksort($row);
+        $driverId = $driver->id;
+        // data NN
+        $optimalRoute = $this->findOptimalRoute($locations, $jarak);
+        $totalDistance = $this->calculateTotalDistances($optimalRoute, $jarak);
+        $routeString = implode('-', $optimalRoute);
+        $routenn = Routenn::where('driver_id', $driverId)->first();
+        if ($routenn) {
+            if ($totalDistance < $routenn->jarak) {
+                $routenn->update([
+                    'urutan' => $routeString,
+                    'jarak' => $totalDistance,
+                ]);
+            } else {
+            }
+        } else {
+            $routenn = Routenn::create([
+                'driver_id' => $driverId,
+                'urutan' => $routeString,
+                'jarak' => $totalDistance,
+            ]);
+        }
+        if ($routenn && count($optimalRoute) > count(explode('-', $routenn->urutan))) {
+            $routenn->delete();
+            $routenn = Routenn::create([
+                'driver_id' => $driverId,
+                'urutan' => $routeString,
+                'jarak' => $totalDistance,
+            ]);
+        }
+        // nampilin nama lokasi
+        $urutanLokasinn = [];
+        $arrayLokasi = explode('-', $routenn->urutan);
+        foreach ($arrayLokasi as $id) {
+            $lokasinn = Lokasi::find($id);
+            $urutanLokasinn[] = $lokasinn;
         }
 
-        $optimalRoute = $this->findOptimalRoute($locations, $jarak);
+        // data PSO
         $optimalRoutePSO = $this->findOptimalRoutePSO($locations, $jarak);
-
-        // Menghitung total jarak tempuh
-        $totalDistance = $this->calculateTotalDistances($optimalRoute, $jarak);
         $totaljarak = $this->calculateTotalDistances($optimalRoutePSO, $jarak);
+        $routeStrings = implode('-', $optimalRoutePSO);
+        $route = Route::where('driver_id', $driverId)->first();
+        if ($route) {
+            if ($totaljarak < $route->jarak) {
+                $route->update([
+                    'urutan' => $routeStrings,
+                    'jarak' => $totaljarak,
+                ]);
+            } else {
+            }
+        } else {
+            $route = Route::create([
+                'driver_id' => $driverId,
+                'urutan' => $routeStrings,
+                'jarak' => $totaljarak,
+            ]);
+        }
+        if ($route && count($optimalRoutePSO) > count(explode('-', $route->urutan))) {
+            $route->delete();
+            $route = Route::create([
+                'driver_id' => $driverId,
+                'urutan' => $routeStrings,
+                'jarak' => $totaljarak,
+            ]);
+        }
+        // nampilin nama lokasi
+        $urutanLokasi = [];
+        $arrayLokasis = explode('-', $route->urutan);
+        foreach ($arrayLokasis as $id) {
+            $lokasi = Lokasi::find($id);
+            $urutanLokasi[] = $lokasi;
+        }
+
         $data = [
             'driver' => $driver,
             'user' => User::all(),
@@ -163,7 +261,13 @@ class RuteController extends Controller
             'optimalRoute' => $optimalRoute,
             'optimalRoutePSO' => $optimalRoutePSO,
             'totalDistance' => $totalDistance,
-            'totaljarak' => $totaljarak
+            'totaljarak' => $totaljarak,
+            'urutanLokasi' => $urutanLokasi,
+            'urutanLokasinn' => $urutanLokasinn,
+            'route' => $route,
+            'routenn' => $routenn,
+
+
         ];
         // dd($totaljarak);
         return view('rute.rute_driver', $data);
@@ -294,9 +398,11 @@ class RuteController extends Controller
 
         // Ubah indeks menjadi id kota
         $optimalRoute = array_map(function ($index) use ($locationsArray) {
-            return $locationsArray[$index]['id'];
+            return $locationsArray[$index]['id'] ;
         }, $route);
 
+array_push($optimalRoute, 1);
+// dd($optimalRoute);
         return $optimalRoute;
     }
 
@@ -457,12 +563,37 @@ class RuteController extends Controller
 
     public function reset($id)
     {
-        // menghapus data user berdasarkan id yang dipilih
-        DB::table('route')->where('driver_id',$id)->delete();
-        $name =  DB::table('driver')->where('id',$id)->value('name');
-        $pesan = "Rute $name telah direset!";
-        // alihkan halaman ke halaman user
-        return redirect('/rute/rute')->with('toast_success', $pesan);
+        try {
 
+            DB::beginTransaction();
+            DB::table('route')->where('driver_id', $id)->delete();
+            DB::table('routenn')->where('driver_id', $id)->delete();
+            $name =  DB::table('driver')->where('id', $id)->value('name');
+            $pesan = "Rute $name telah direset!";
+            DB::commit();
+
+            return redirect('/rute/rute')->with('toast_success', $pesan);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect('/rute/rute')->with('toast_error', 'Gagal mereset rute. Silakan coba lagi.');
+        }
+    }
+
+    public function resetdriver($id)
+    {
+        try {
+
+            DB::beginTransaction();
+            DB::table('route')->where('driver_id', $id)->delete();
+            DB::table('routenn')->where('driver_id', $id)->delete();
+            $name =  DB::table('driver')->where('id', $id)->value('name');
+            $pesan = "Rute $name telah direset!";
+            DB::commit();
+
+            return redirect('/jarak/jarak_driver')->with('toast_success', $pesan);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect('/jarak/jarak_driver')->with('toast_error', 'Gagal mereset rute. Silakan coba lagi.');
+        }
     }
 }

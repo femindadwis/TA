@@ -99,6 +99,7 @@ class DriverLokasiController extends Controller
         return redirect('/driver_lokasi/driver_lokasi')->with('toast_success', 'Lokasi driver Telah dihapus!');
     }
 
+
     public function lokasi()
     {
         $user = auth()->user()->id;
@@ -110,5 +111,31 @@ class DriverLokasiController extends Controller
         ];
 
         return view('driver_lokasi.lokasi', $data);
+    }
+
+    public function lokasiedit($id)
+    {
+
+        $lokasi = DB::table('lokasi')->where('id',$id)->get();
+
+        return view('driver_lokasi/lokasidriver_edit',['lokasi' => $lokasi]);
+    }
+
+
+    public function lokasiupdate(Request $request)
+    {
+        // update data lokasi
+        if($request->hasFile('foto')){
+            $foto = $request->file('foto')->store('Lokasi');
+        }
+        DB::table('lokasi')->where('id',$request->id)->update([
+            'name' => $request->name,
+            'alamat' => $request->alamat,
+            'lng' => $request->lng,
+            'lat' => $request->lat,
+            'foto' => $foto,
+        ]);
+        // alihkan halaman ke halaman lokasi
+        return redirect('driver_lokasi/lokasi')->with('toast_success', 'Lokasi telah diubah!');
     }
 }

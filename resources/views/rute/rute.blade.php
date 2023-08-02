@@ -11,13 +11,10 @@
  <div class="col-sm-12">
     <div class="card">
         <div class="card-header">
-            @if(session('info'))
-            <div class="alert alert-info">
-                {{ session('info') }}
-            </div>
-        @endif
+            <h6>Data Rute</h6>
             <h5>Pilihan Driver</h5>
-            <span>Data Rute</span>
+            <span>Buka data jarak terlebih dahulu sebelum memulai rute</span>
+
 
         </div>
         <div class="card-body" style="padding-top: 5px;">
@@ -40,7 +37,7 @@
                             <td>
 
                                 <a class="fa fa-location-arrow" href="/rute/detail/{{ $d->id }}" title="Detail"></a> &nbsp;&nbsp;
-                                <a class="fa fa-trash-o" href="/rute/reset/{{ $d->id }}"  title="Hapus"></a>
+                                <a class="fa fa-repeat" href="/rute/reset/{{ $d->id }}"  title="Reset"></a>
 
                             </td>
 

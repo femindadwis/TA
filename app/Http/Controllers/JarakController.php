@@ -19,7 +19,7 @@ class JarakController extends Controller
             "driver" => Driver::all(),
 
         ];
-        alert()->info('Info','Sebelum membuka jarak isi terlebih dahulu data lokasi driver!');
+        toast('Sebelum membuka jarak isi terlebih dahulu data lokasi driver!','info');
         return view('jarak.jarak', $data);
     }
 
@@ -66,7 +66,7 @@ class JarakController extends Controller
             'locations' => $locations,
             'distances' => $distances,
             'driver_lokasi' => $driver_lokasi,
-
+            'jarak' => $jarak,
         ];
         // dd($totaljarak);
         return view('jarak.jarak_driver', $data);

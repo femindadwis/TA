@@ -34,8 +34,8 @@
                 <div class="card">
                     <div class="card-header pb-0">
 
-                        <h5 class="pull-left">Rute {{ $driver->user->name }}</h5>
-
+                        <h5 class="pull-left">Rute {{ $driver->user->name }} &nbsp;&nbsp;
+                        <a class="fa fa-repeat" href="/rute/resetdriver/{{ $driver->id }}"  title="Reset"></a></h5>
                     </div>
                     <div class="card-body">
                         <div class="tabbed-card">
@@ -77,7 +77,7 @@
                                                 Total Distance: {{ $totaljarak }} km<br>
                                             @endif
                                         </div>
-                                        
+
                                     </div>
                                 </div>
                                 <div class="tab-pane fade" id="pills-clrprofile1" role="tabpanel"

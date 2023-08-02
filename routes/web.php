@@ -92,9 +92,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/driver_lokasi/edit/{id}', [DriverLokasiController::class, 'edit'])->name('driver_lokasi.edit');
     Route::post('/driver_lokasi/update', [DriverLokasiController::class, 'update']);
     Route::get('/driver_lokasi/hapus/{id}', [DriverLokasiController::class, 'hapus']);
-
    Route::get('/driver_lokasi/lokasi', [DriverLokasiController::class, 'lokasi'])->name('lokasi');
-
+   Route::get('/driver_lokasi/lokasiedit/{id}', [DriverLokasiController::class, 'lokasiedit'])->name('driver_lokasi.lokasiedit');
+   Route::post('/driver_lokasi/lokasiupdate', [DriverLokasiController::class, 'lokasiupdate']);
     // JENIS KENDARAAN
     Route::get('/jenis_kendaraan/jenis_kendaraan', [JenisKendaraanController::class, 'index'])->name('jenis_kendaraan');
     Route::get('/jenis_kendaraan/tambah', [JenisKendaraanController::class, 'tambah']);
@@ -108,6 +108,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/rute/rute', [RuteController::class, 'index'])->name('rute');
     Route::get('/rute/detail/{id}', [RuteController::class, 'detail'])->name('rute_detail');
     Route::get('/rute/reset/{id}', [RuteController::class, 'reset']);
+    Route::get('/rute/resetdriver/{id}', [RuteController::class, 'resetdriver']);
     // Route::get('/rute/rute_gmaps', [RuteController::class, 'index'])->name('rute');
     // Route::get('/rute/rute_gmaps/perdriver/{id}', [RuteController::class, 'detail'])->name('rute_gmaps.detail');
     // Route::post('/rute/rute_gmaps', [RuteController::class, 'calculateRoute'])->name('calculate-route');

@@ -15,8 +15,6 @@ class LokasiController extends Controller
     {
         $lokasi = Lokasi::all();
 
-        // mengirim data pegawai ke view index
-        // return view('lokasi/lokasi',['lokasi' => $lokasi]);
         return view('lokasi.lokasi', compact('lokasi'));
     }
 

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Models\Jeniskendaraan;
 use App\Models\Route;
+use App\Models\Routenn;
 
 class Driver extends Model
 {
@@ -33,6 +34,10 @@ public function jeniskendaraan()
 public function route()
     {
         return $this->hasMany(Route::class, 'driver_id');
+    }
+public function routenn()
+    {
+        return $this->hasMany(Routenn::class, 'driver_id');
     }
 
 }
