@@ -23,13 +23,12 @@ class LokasiController extends Controller
 
         // memanggil view tambah
         return view('lokasi/lokasi_tambah');
-
     }
 
     public function store(Request $request)
     {
-        if($request->hasFile('foto')){
-            $foto = $request->file('foto')->store('Lokasi');
+        if ($request->hasFile('foto')) {
+            $foto = $request->file('foto')->store('Lokasi', 'public');
         }
         // insert data ke table lokasi
         DB::table('lokasi')->insert([
@@ -41,25 +40,24 @@ class LokasiController extends Controller
         ]);
         // alihkan halaman lokasi
         return redirect('/lokasi/lokasi')->with('toast_success', 'Lokasi telah ditambahkan!');
-
     }
 
     public function edit($id)
     {
 
-        $lokasi = DB::table('lokasi')->where('id',$id)->get();
+        $lokasi = DB::table('lokasi')->where('id', $id)->get();
 
-        return view('lokasi/lokasi_edit',['lokasi' => $lokasi]);
+        return view('lokasi/lokasi_edit', ['lokasi' => $lokasi]);
     }
 
 
     public function update(Request $request)
     {
         // update data lokasi
-        if($request->hasFile('foto')){
-            $foto = $request->file('foto')->store('Lokasi');
+        if ($request->hasFile('foto')) {
+            $foto = $request->file('foto')->store('Lokasi', 'public');
         }
-        DB::table('lokasi')->where('id',$request->id)->update([
+        DB::table('lokasi')->where('id', $request->id)->update([
             'name' => $request->name,
             'alamat' => $request->alamat,
             'lng' => $request->lng,
@@ -73,10 +71,9 @@ class LokasiController extends Controller
     public function hapus($id)
     {
         // menghapus data lokasi berdasarkan id yang dipilih
-        DB::table('lokasi')->where('id',$id)->delete();
+        DB::table('lokasi')->where('id', $id)->delete();
 
         // alihkan halaman ke halaman lokasi
         return redirect('/lokasi/lokasi')->with('toast_success', 'Lokasi telah dihapus!');
-
     }
 }

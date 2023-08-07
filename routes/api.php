@@ -25,3 +25,4 @@ Route::post('/add-lokasi', [Controllers\Api\LokasiApiController::class, 'store']
 Route::put('/update-lokasi', [Controllers\Api\LokasiApiController::class, 'update'])->middleware('auth:sanctum');
 Route::delete('/delete-lokasi', [Controllers\Api\LokasiApiController::class, 'destroy'])->middleware('auth:sanctum');
 Route::get('/image/{id}', [Controllers\Api\LokasiApiController::class, 'getImage'])->middleware('auth:sanctum');
+Route::get('/rute', [Controllers\Api\LokasiApiController::class, 'rute'])->middleware('auth:sanctum');

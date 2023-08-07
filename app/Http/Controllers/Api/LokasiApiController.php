@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Storage;
 
 
 use App\Models\Lokasi;
+use App\Models\Driver;
+use App\Models\Route;
 
 class LokasiApiController extends Controller
 {
@@ -29,7 +31,7 @@ class LokasiApiController extends Controller
             $lokasi = Lokasi::find($dl->lokasi_id);
             $foto = null;
             if ($lokasi->foto) {
-                $foto = Storage::disk('public')->get("foto_tps/{$lokasi->foto}");
+                $foto = Storage::disk('public')->get("{$lokasi->foto}");
                 $foto = base64_encode($foto);
             }
             $lokasi->foto = $foto;
@@ -56,10 +58,9 @@ class LokasiApiController extends Controller
 
         if ($request->hasFile('foto')) {
             $foto = $request->file('foto');
-            // Nama file yang disimpan sesuai dengan fotoName
-            $filename = $request->fotoName;
-            // Menyimpan foto dengan nama file yang telah ditentukan
-            $foto->storeAs('foto_tps', $filename, 'public');
+            $fotoName = $request->fotoName;
+            $fileName = 'Lokasi' . $fotoName;
+            $foto->storeAs('Lokasi', $fileName, 'public');
         }
 
         $lokasi = new Lokasi();
@@ -119,5 +120,20 @@ class LokasiApiController extends Controller
     {
         $data = Lokasi::find($id);
         return response()->file(public_path("storage/foto_tps/$data->foto"));
+    }
+
+    public function rute()
+    {
+        $user = Auth::user();
+        $driver = Driver::where('user_id', $user->id)->get();
+        $rute = Route::where('driver_id', $driver[0]->id)->get();
+        $urutanLokasi = [];
+        $arrayLokasi = explode('-', $rute[0]->urutan);
+
+        foreach ($arrayLokasi as $id) {
+            $lokasi = Lokasi::find($id);
+            $urutanLokasi[] = $lokasi;
+        }
+        return response()->json($urutanLokasi);
     }
 }
