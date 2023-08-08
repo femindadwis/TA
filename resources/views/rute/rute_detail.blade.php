@@ -1,10 +1,6 @@
 @include('layout.header')
 @include('layout.navbar')
 @include('layout.sidebar')
-<link href="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css" rel="stylesheet">
-<link rel="stylesheet"
-    href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.css"
-    type="text/css" />
 </head>
 <style>
     #map-canvas {
@@ -23,9 +19,10 @@
 </style>
 <script src="https://code.jquery.com/jquery-3.6.1.min.js"
     integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
-<script src="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js"></script>
-<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.js"></script>
-
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAH3DGxYTYsCIHj1Zv1t7ksfKXb7emWnVc&callback=initMap" async
+    defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAH3DGxYTYsCIHj1Zv1t7ksfKXb7emWnVc&callback=initMapPSO"
+    async defer></script>
 </head>
 <div class="page-body">
     <div class="container-fluid">
@@ -45,8 +42,7 @@
                                         aria-controls="pills-clrhome1" aria-selected="true">PSO</a></li>
                                 <li class="nav-item"><a class="nav-link" id="pills-clrprofile-tab1"
                                         data-bs-toggle="pill" href="#pills-clrprofile1" role="tab"
-                                        aria-controls="pills-clrprofile1" aria-selected="false">Nearest Neighbor</a>
-                                </li>
+                                        aria-controls="pills-clrprofile1" aria-selected="false">KNN</a></li>
                             </ul>
                             <div class="tab-content" id="pills-clrtabContent1">
                                 <div class="tab-pane fade show active" id="pills-clrhome1" role="tabpanel"
@@ -56,7 +52,6 @@
                                     <div id="map-canvas-pso"></div>
                                     <!-- Tampilkan urutan lokasi -->
                                     <div id="route-order" class="mt-3">
-
                                         <p>Optimal Route:</p>
                                         <ol>
                                             @foreach ($urutanLokasi as $lokasi)
@@ -84,6 +79,7 @@
                                             </ol>
                                         <div lass="mt-3">
                                             Total Distance: {{ $routenn->jarak }}<br>
+
                                         </div>
 
                                     </div>
@@ -97,22 +93,14 @@
         </div>
     </div>
 </div>
-
+</div>
+</div>
 
 <script>
-    mapboxgl.accessToken =
-        'pk.eyJ1IjoiZmVtaW5kYTE2IiwiYSI6ImNsa25sc243bjB4czEzZG1tOTFxOXRmd2gifQ.LfN9gOS8caeDzvmoRIgDGQ';
-    var minLat = Infinity;
-    var maxLat = -Infinity;
-    var minLng = Infinity;
-    var maxLng = -Infinity;
-
     function initMapPSO() {
-        var map = new mapboxgl.Map({
-            container: 'map-canvas-pso',
-            style: 'mapbox://styles/mapbox/streets-v11',
-            center: [108.280413, -6.408218], // indramayu
-            zoom: 12
+        var map = new google.maps.Map(document.getElementById('map-canvas-pso'), {
+            zoom: 12,
+            center: new google.maps.LatLng(-6.123456, 106.789012)
         });
 
         var locations = [
@@ -125,40 +113,106 @@
             @endforeach
         ];
 
+        var markers = [];
         for (var i = 0; i < locations.length; i++) {
             var location = locations[i];
-            var marker = new mapboxgl.Marker({
-                    color: 'red'
-                })
-                .setLngLat([location.lng, location.lat])
-                .setPopup(new mapboxgl.Popup({
-                    offset: 25
-                }).setHTML("<b>Nama Lokasi : </b>" + location.name +
-                    "<br> <b>Latitude : </b> " + location.lat +
-                    "<br> <b>Longtitude : </b>" + location.lng))
-                .addTo(map);
-
-            minLat = Math.min(minLat, location.lat);
-            maxLat = Math.max(maxLat, location.lat);
-            minLng = Math.min(minLng, location.lng);
-            maxLng = Math.max(maxLng, location.lng);
+            var marker = new google.maps.Marker({
+                position: {
+                    lat: location.lat,
+                    lng: location.lng
+                },
+                map: map,
+                title: location.name // Menampilkan nama lokasi saat marker diklik
+            });
+            markers.push(marker);
         }
 
-        map.fitBounds([
-            [minLng, minLat], // southwestern corner of the bounds
-            [maxLng, maxLat] // northeastern corner of the bounds
-        ], {
-            padding: 50
+        var directionsService = new google.maps.DirectionsService();
+        var directionsRenderer = new google.maps.DirectionsRenderer({
+            suppressMarkers: true,
+            polylineOptions: {
+                strokeColor: '#FF0000',
+                strokeOpacity: 1.0,
+                strokeWeight: 2
+            },
+            map: map
         });
-        getRoute(map, locations);
+
+        var waypoints = locations.slice(1, locations.length - 1).map(function(location) {
+            return {
+                location: new google.maps.LatLng(location.lat, location.lng),
+                stopover: true
+            };
+        });
+        var request = {
+            origin: new google.maps.LatLng(locations[0].lat, locations[0].lng),
+            destination: new google.maps.LatLng(locations[locations.length - 1].lat, locations[locations.length - 1]
+                .lng),
+            waypoints: waypoints,
+            optimizeWaypoints: true,
+            travelMode: google.maps.TravelMode.DRIVING
+        };
+        directionsService.route(request, function(response, status) {
+            if (status == google.maps.DirectionsStatus.OK) {
+                directionsRenderer.setDirections(response);
+                var route = response.routes[0];
+                var legs = route.legs;
+                var lastLeg = legs[legs.length - 1];
+                var lastLocation = lastLeg.end_location;
+
+                // Menambahkan marker lokasi mulai sebagai waypoint terakhir
+                var startMarker = new google.maps.Marker({
+                    position: request.origin,
+                    map: map
+                });
+                // Menghubungkan lokasi terakhir ke lokasi mulai
+                var routeToStart = new google.maps.DirectionsRenderer({
+                    suppressMarkers: true,
+                    polylineOptions: {
+                        strokeColor: '#FF0000',
+                        strokeOpacity: 1.0,
+                        strokeWeight: 2
+                    }
+                });
+                routeToStart.setMap(map);
+
+                var routeRequestToStart = {
+                    origin: lastLocation,
+                    destination: request.origin,
+                    travelMode: google.maps.TravelMode.DRIVING
+                };
+
+                directionsService.route(routeRequestToStart, function(response, status) {
+                    if (status == google.maps.DirectionsStatus.OK) {
+                        routeToStart.setDirections(response);
+                    }
+                });
+            }
+        });
+
+
+        // Menambahkan event listener untuk menampilkan info window saat marker diklik
+        markers.forEach(function(marker) {
+            marker.addListener('click', function() {
+                var infoWindow = new google.maps.InfoWindow({
+                    content: marker.title
+                });
+                infoWindow.open(map, marker);
+            });
+        });
+
+        // Fit map bounds to show all markers and route
+        var bounds = new google.maps.LatLngBounds();
+        for (var i = 0; i < markers.length; i++) {
+            bounds.extend(markers[i].getPosition());
+        }
+        map.fitBounds(bounds);
     }
 
     function initMap() {
-        var map = new mapboxgl.Map({
-            container: 'map-canvas',
-            style: 'mapbox://styles/mapbox/streets-v11',
-            center: [108.280413, -6.408218], // indramayu
-            zoom: 12
+        var map = new google.maps.Map(document.getElementById('map-canvas'), {
+            zoom: 12,
+            center: new google.maps.LatLng(-6.123456, 106.789012)
         });
 
         var locations = [
@@ -171,76 +225,100 @@
             @endforeach
         ];
 
+        var markers = [];
         for (var i = 0; i < locations.length; i++) {
             var location = locations[i];
-            var marker = new mapboxgl.Marker({
-                    color: 'red'
-                })
-                .setLngLat([location.lng, location.lat])
-                .setPopup(new mapboxgl.Popup({
-                    offset: 25
-                }).setHTML("<b>Nama Lokasi : </b>" + location.name +
-                    "<br> <b>Latitude : </b> " + location.lat +
-                    "<br> <b>Longtitude : </b>" + location.lng))
-                .addTo(map);
-
-            minLat = Math.min(minLat, location.lat);
-            maxLat = Math.max(maxLat, location.lat);
-            minLng = Math.min(minLng, location.lng);
-            maxLng = Math.max(maxLng, location.lng);
-        }
-
-        map.fitBounds([
-            [minLng, minLat], // southwestern corner of the bounds
-            [maxLng, maxLat] // northeastern corner of the bounds
-        ], {
-            padding: 50
-        });
-        getRoute(map, locations);
-    }
-
-    async function getRoute(map, locations) {
-        var waypoints = locations.map(location => `${location.lng},${location.lat}`).join(';');
-        const query = await fetch(
-            `https://api.mapbox.com/directions/v5/mapbox/driving/${waypoints}?&geometries=geojson&access_token=${mapboxgl.accessToken}`, {
-                method: 'GET'
-            }
-        );
-        console.log(waypoints);
-        const json = await query.json();
-        const data = json.routes[0];
-        const route = data.geometry.coordinates;
-        const geojson = {
-            type: 'Feature',
-            properties: {},
-            geometry: {
-                type: 'LineString',
-                coordinates: route
-            }
-        };
-        // if the route already exists on the map, we'll reset it using setData
-        if (map.getSource('route')) {
-            map.getSource('route').setData(geojson);
-        }
-        // otherwise, we'll make a new request
-        else {
-            map.addLayer({
-                id: 'route',
-                type: 'line',
-                source: {
-                    type: 'geojson',
-                    data: geojson
+            var marker = new google.maps.Marker({
+                position: {
+                    lat: location.lat,
+                    lng: location.lng
                 },
-                layout: {
-                    'line-join': 'round',
-                    'line-cap': 'round'
-                },
-                paint: {
-                    'line-color': '#3887be',
-                    'line-width': 10,
-                }
+                map: map,
+                title: location.name // Menampilkan nama lokasi saat marker diklik
             });
+            markers.push(marker);
         }
+
+        var directionsService = new google.maps.DirectionsService();
+        var directionsRenderer = new google.maps.DirectionsRenderer({
+            suppressMarkers: true,
+            polylineOptions: {
+                strokeColor: '#FF0000',
+                strokeOpacity: 1.0,
+                strokeWeight: 2
+            },
+            map: map
+        });
+
+        var waypoints = locations.slice(1, locations.length - 1).map(function(location) {
+            return {
+                location: new google.maps.LatLng(location.lat, location.lng),
+                stopover: true
+            };
+        });
+        var request = {
+            origin: new google.maps.LatLng(locations[0].lat, locations[0].lng),
+            destination: new google.maps.LatLng(locations[locations.length - 1].lat, locations[locations.length - 1]
+                .lng),
+            waypoints: waypoints,
+            optimizeWaypoints: true,
+            travelMode: google.maps.TravelMode.DRIVING
+        };
+        directionsService.route(request, function(response, status) {
+            if (status == google.maps.DirectionsStatus.OK) {
+                directionsRenderer.setDirections(response);
+                var route = response.routes[0];
+                var legs = route.legs;
+                var lastLeg = legs[legs.length - 1];
+                var lastLocation = lastLeg.end_location;
+
+                // Menambahkan marker lokasi mulai sebagai waypoint terakhir
+                var startMarker = new google.maps.Marker({
+                    position: request.origin,
+                    map: map
+                });
+                // Menghubungkan lokasi terakhir ke lokasi mulai
+                var routeToStart = new google.maps.DirectionsRenderer({
+                    suppressMarkers: true,
+                    polylineOptions: {
+                        strokeColor: '#FF0000',
+                        strokeOpacity: 1.0,
+                        strokeWeight: 2
+                    }
+                });
+                routeToStart.setMap(map);
+
+                var routeRequestToStart = {
+                    origin: lastLocation,
+                    destination: request.origin,
+                    travelMode: google.maps.TravelMode.DRIVING
+                };
+
+                directionsService.route(routeRequestToStart, function(response, status) {
+                    if (status == google.maps.DirectionsStatus.OK) {
+                        routeToStart.setDirections(response);
+                    }
+                });
+            }
+        });
+
+
+        // Menambahkan event listener untuk menampilkan info window saat marker diklik
+        markers.forEach(function(marker) {
+            marker.addListener('click', function() {
+                var infoWindow = new google.maps.InfoWindow({
+                    content: marker.title
+                });
+                infoWindow.open(map, marker);
+            });
+        });
+
+        // Fit map bounds to show all markers and route
+        var bounds = new google.maps.LatLngBounds();
+        for (var i = 0; i < markers.length; i++) {
+            bounds.extend(markers[i].getPosition());
+        }
+        map.fitBounds(bounds);
     }
 
     // buat manggil fungsi keduanya

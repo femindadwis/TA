@@ -317,7 +317,7 @@ class RuteController extends Controller
     // fungsi itung jarak google maps api
     private function calculateDistances($locations)
     {
-        $apiKey = 'AIzaSyBmBL3_MRsk7qiOqSXgNr-x59cz_vXU9Fg';
+        $apiKey = 'AIzaSyAH3DGxYTYsCIHj1Zv1t7ksfKXb7emWnVc';
         $distances = [];
 
         foreach ($locations as $location) {
@@ -422,10 +422,10 @@ array_push($optimalRoute, 1);
 
         $locationsArray = $locations->pluck('id')->toArray();
 
-        // Find the index of location ID = 1
+
         $startIndex = array_search(1, $locationsArray);
 
-        // Initialize particles and random initial positions
+        // Inisialisasi particle
         $particles = [];
         for ($i = 0; $i < $swarmSize; $i++) {
 
@@ -493,12 +493,12 @@ array_push($optimalRoute, 1);
 
                 $newFitness = $this->calculateTotalDistances(array_slice($newRoute, 1), $jarak);
 
-                // Update personal best of the particle if the new fitness is better
+                // Update personal best
                 if ($newFitness <= $particles[$i]['personal_best_fitness']) {
                     $particles[$i]['personal_best'] = $particles[$i]['particle'];
                     $particles[$i]['personal_best_fitness'] = $newFitness;
 
-                    // Update global best (gbest) if a better solution is found
+                    // Update global best
                     if ($newFitness <= $globalBestFitness) {
                         $globalBestParticleIndex = $i;
                         $globalBestFitness = $newFitness;

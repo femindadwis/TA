@@ -21,7 +21,7 @@
                                 <table class="display" id="basic-2">
                                     <thead>
                                         <tr>
-                                            <?php $no = 1; ?>
+                                            <?php $no = 1;    $driver_lokasi = $driver_lokasi->sortBy('user_id');?>
                                             <th>No</th>
                                             <th>Nama</th>
                                             <th>Lokasi</th>

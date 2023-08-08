@@ -123,35 +123,33 @@ class JarakController extends Controller
         return view('jarak.jarak_detail', $data);
     }
 
-    // fungsi itung jarak google maps api
+    // // fungsi itung jarak google maps api
     // private function calculateDistances($locations)
     // {
-    //     $apiKey = 'AIzaSyBmBL3_MRsk7qiOqSXgNr-x59cz_vXU9Fg';
+    //     $apiKey = 'AIzaSyDXJvsqexS-SvQkN8brEcic-Uq-iIp52zA';
     //     $distances = [];
 
+    //     $origins = $destinations = [];
+
     //     foreach ($locations as $location) {
-    //         $origins = $destinations = [];
+    //         $origins[] = $location->lat . ',' . $location->lng;
+    //         $destinations[] = $location->lat . ',' . $location->lng; // Use the same locations for origins and destinations
+    //     }
 
-    //         foreach ($locations as $otherLocation) {
-    //             $origins[] = $location->lat . ',' . $location->lng;
-    //             $destinations[] = $otherLocation->lat . ',' . $otherLocation->lng;
-    //         }
+    //     $origins = implode('|', $origins);
+    //     $destinations = implode('|', $destinations);
 
-    //         $origins = implode('|', $origins);
-    //         $destinations = implode('|', $destinations);
+    //     $url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins={$origins}&destinations={$destinations}&key={$apiKey}";
 
-    //         $url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins={$origins}&destinations={$destinations}&key={$apiKey}";
+    //     $response = Http::get($url);
 
-    //         $response = Http::get($url);
+    //     if ($response->ok()) {
+    //         $data = $response->json();
 
-    //         if ($response->ok()) {
-    //             $data = $response->json();
-
-    //             foreach ($data['rows'] as $i => $row) {
-    //                 foreach ($row['elements'] as $j => $element) {
-    //                     if ($element['status'] == 'OK' && isset($element['distance']['value'])) {
-    //                         $distances[$location->id][$locations[$j]->id] = $element['distance']['value'] / 1000;
-    //                     }
+    //         foreach ($data['rows'] as $i => $row) {
+    //             foreach ($row['elements'] as $j => $element) {
+    //                 if ($element['status'] == 'OK' && isset($element['distance']['value'])) {
+    //                     $distances[$locations[$i]->id][$locations[$j]->id] = $element['distance']['value'] / 1000;
     //                 }
     //             }
     //         }

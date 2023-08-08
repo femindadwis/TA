@@ -1,10 +1,6 @@
 @include('layout.header')
 @include('layout.navbar')
 @include('layout.sidebar')
-<link href="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css" rel="stylesheet">
-<link rel="stylesheet"
-    href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.css"
-    type="text/css" />
 </head>
 <style>
     #map-canvas {
@@ -16,16 +12,17 @@
         max-width: 200px;
     }
 
-    #map-canvas-pso {
+    #map {
         width: 100%;
         height: 500px;
     }
 </style>
 <script src="https://code.jquery.com/jquery-3.6.1.min.js"
     integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
-<script src="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js"></script>
-<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.js"></script>
-
+{{-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBmBL3_MRsk7qiOqSXgNr-x59cz_vXU9Fg&callback=initialize"> --}}
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDXJvsqexS-SvQkN8brEcic-Uq-iIp52zA&callback=initMap">
+</script>
 </head>
 <div class="page-body">
     <div class="container-fluid">
@@ -34,7 +31,7 @@
                 <div class="card">
                     <div class="card-header pb-0">
 
-                        <h5 class="pull-left">MAPS</h5>
+                        <h5 class="pull-left">Maps</h5>
 
                     </div>
                     <div class="card-body">
@@ -42,81 +39,149 @@
                             <ul class="pull-right nav nav-pills nav-primary" id="pills-clrtab1" role="tablist">
                                 <li class="nav-item"><a class="nav-link active" id="pills-clrhome-tab1"
                                         data-bs-toggle="pill" href="#pills-clrhome1" role="tab"
-                                        aria-controls="pills-clrhome1" aria-selected="true">SEMUA</a></li>
+                                        aria-controls="pills-clrhome1" aria-selected="true">Semua</a></li>
                                 <li class="nav-item"><a class="nav-link" id="pills-clrprofile-tab1"
                                         data-bs-toggle="pill" href="#pills-clrprofile1" role="tab"
-                                        aria-controls="pills-clrprofile1" aria-selected="false">DRIVER</a></li>
+                                        aria-controls="pills-clrprofile1" aria-selected="false">Driver</a></li>
                             </ul>
                             <div class="tab-content" id="pills-clrtabContent1">
                                 <div class="tab-pane fade show active" id="pills-clrhome1" role="tabpanel"
                                     aria-labelledby="pills-clrhome-tab1">
+                                    {{-- <div class="card-body" style="padding-top: 5px;"> --}}
                                     <div id="map-canvas"></div>
                                 </div>
+
                                 <div class="tab-pane fade" id="pills-clrprofile1" role="tabpanel"
                                     aria-labelledby="pills-clrprofile-tab1">
                                     <div id="map"></div>
                                 </div>
+
                             </div>
                         </div>
                     </div>
                 </div>
-
             </div>
+
         </div>
     </div>
 </div>
 </div>
+</div>
+</div>
+</div>
+
 <script>
-    mapboxgl.accessToken =
-        'pk.eyJ1Ijoicnl0b2RldiIsImEiOiJjbGtncDB3a3YwMXV3M2VvOHFqdmd2NWY4In0.pag9rpV51QYupsyPdSFfOw';
+    var marker;
+    var locations
 
-    const locations = @json($locations);
-    var minLat = Infinity;
-    var maxLat = -Infinity;
-    var minLng = Infinity;
-    var maxLng = -Infinity;
+    function initialize() {
+        var mapCanvas = document.getElementById('map-canvas');
+        var mapOptions = {
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        }
+        var map = new google.maps.Map(mapCanvas, mapOptions);
+        var infoWindow = new google.maps.InfoWindow;
+        var bounds = new google.maps.LatLngBounds();
 
-
-    function initMap() {
-        var map = new mapboxgl.Map({
-            container: 'map-canvas',
-            style: 'mapbox://styles/mapbox/streets-v11',
-            center: [108.280413, -6.408218], // indramayu
-            zoom: 12
-        });
-
-        for (var i = 0; i < locations.length; i++) {
-            var location = locations[i];
-            var marker = new mapboxgl.Marker({
-                    color: 'red'
-                })
-                .setLngLat([location.lng, location.lat])
-                .setPopup(new mapboxgl.Popup({
-                    offset: 25
-                }).setHTML("<b>Nama Lokasi : </b>" + location.name +
-                    "<br> <b>Latitude : </b> " + location.lat +
-                    "<br> <b>Longtitude : </b>" + location.lng))
-                .addTo(map);
-
-            minLat = Math.min(minLat, location.lat);
-            maxLat = Math.max(maxLat, location.lat);
-            minLng = Math.min(minLng, location.lng);
-            maxLng = Math.max(maxLng, location.lng);
+        function bindInfoWindow(marker, map, infoWindow, html) {
+            google.maps.event.addListener(marker, 'click', function() {
+                infoWindow.setContent(html);
+                infoWindow.open(map, marker);
+            });
         }
 
-        map.fitBounds([
-            [minLng, minLat], // southwestern corner of the bounds
-            [maxLng, maxLat] // northeastern corner of the bounds
-        ], {
-            padding: 50
-        });
-        getRoute(map, locations);
+        function addMarker(lat, lng, info) {
+            var pt = new google.maps.LatLng(lat, lng);
+            bounds.extend(pt);
+            var marker = new google.maps.Marker({
+                map: map,
+                position: pt
+            });
+            map.fitBounds(bounds);
+            bindInfoWindow(marker, map, infoWindow, info);
+        }
+
+        const items = @json($locations);
+
+        items.forEach(item => {
+            addMarker(
+                item.lat,
+                item.lng,
+                "<b>Nama Lokasi : </b>" + item.name +
+                "<br> <b>Latitude : </b> " + item.lat +
+                "<br> <b>Longtitude : </b>" + item.lng, );
+        })
+
     }
+    var marker;
+    var lokasi = @json($lokasi);
 
+    function initMap() {
+        var mapCanvas = document.getElementById('map');
+        var mapOptions = {
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        var map = new google.maps.Map(mapCanvas, mapOptions);
+        var infoWindow = new google.maps.InfoWindow;
+        var bounds = new google.maps.LatLngBounds();
 
+        function bindInfoWindow(marker, map, infoWindow, html) {
+            google.maps.event.addListener(marker, 'click', function() {
+                infoWindow.setContent(html);
+                infoWindow.open(map, marker);
+            });
+        }
 
+        function addMarker(lat, lng, info, color) {
+            var pt = new google.maps.LatLng(lat, lng);
+            bounds.extend(pt);
+
+            var marker = new google.maps.Marker({
+                map: map,
+                position: pt,
+                icon: getCustomMarkerIcon(color),
+
+            });
+            map.fitBounds(bounds);
+            bindInfoWindow(marker, map, infoWindow, info);
+        }
+
+        function getCustomMarkerIcon(color) {
+            // Buat ikon marker dengan latar belakang sesuai warna yang diinginkan.
+            return {
+                path: google.maps.SymbolPath.CIRCLE,
+                fillColor: color, // Warna latar belakang
+                fillOpacity: 1,
+                strokeColor: '#000',
+                strokeWeight: 0,
+                scale: 8
+            };
+        }
+        const items = @json($lokasi);
+
+        items.forEach(item => {
+            addMarker(
+                item.lat,
+                item.lng,
+                "<b>Nama Lokasi : </b>" + item.name +
+                "<br> <b>Latitude : </b> " + item.lat +
+                "<br> <b>Driver : </b> " + item.driver_name +
+                "<br> <b>Longtitude : </b>" + item.lng,
+                item.color,
+            );
+        });
+    }
+    // function getMarkerIcon(color) {
+    //     return {
+    //     url: 'https://maps.google.com/mapfiles/ms/icons/' + lokasi.color + '-dot.png', // Use HTTPS URL
+    //     scaledSize: new google.maps.Size(32, 32), // Size of the pin icon
+    //     fillColor: color, // Customize the color
+    // };
+
+    //     }
     // buat manggil fungsi keduanya
     window.addEventListener('load', function() {
+        initialize();
         initMap();
     });
 </script>

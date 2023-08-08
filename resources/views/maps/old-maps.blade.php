@@ -21,7 +21,7 @@
     integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
 {{-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBmBL3_MRsk7qiOqSXgNr-x59cz_vXU9Fg&callback=initialize"> --}}
 </script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB1aq0A7638rvdGO7xwZu9ekeBx2_8XlfU&callback=initMap">
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDXJvsqexS-SvQkN8brEcic-Uq-iIp52zA&callback=initMap">
 </script>
 </head>
 <div class="page-body">

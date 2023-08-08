@@ -56,30 +56,21 @@
 	            <div class="col-xl-5"><img class="bg-img-cover bg-center" src="{{ asset('template_dashboard/assets/images/login/indramayu.jpg') }}" alt="looginpage" /></div>
 	            <div class="col-xl-7 p-0">
 	                <div class="login-card">
-	                    <form class="theme-form login-form" method="POST" action="{{ url('login') }}">
+	                    <form class="theme-form login-form" method="POST" action="{{ route('password.update') }}">
                             @csrf
-
-	                        <h4>Login</h4>
-	                        <h6>Welcome back! Log in to your account.</h6>
+	                        <h4>Reset Password</h4>
+	                        <h6>Reset your password.</h6>
 
 
 	                        <div class="form-group">
 	                            <label>Username</label>
 	                            <div class="input-group">
 	                                <span class="input-group-text"><i class="fa fa-envelope-o"></i></span>
-	                                <input class="form-control form-control-lg @error('username') is-invalid @enderror" id="username" type="username" name="username" value="{{ old('username') }}" required autocomplete="username" autofocus placeholder="username" />
-
-                                    @error('username')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-
+	                                <input class="form-control" id="username" type="text" name="username" value="{{ $username }}" autofocus placeholder="username" readonly />
                                 </div>
 	                        </div>
-
+                            <input type="hidden" name="token" value="{{ $token }}">
 	                        <div class="form-group">
-
 	                            <label>Password</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa fa-lock"></i></span>
@@ -94,14 +85,22 @@
                                         <span class="show-hide"><i class="fa fa-eye"></i></span>
                                     </div>
                                 </div>
-                                <br>
+<br>
+                                    <div class="form-group">
+                                        <label>Confirm Password</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fa fa-lock"></i></span>
+                                            <input class="form-control form-control-lg @error('password') is-invalid @enderror" id="password" type="password" name="password_confirmation" required autocomplete="current-password" placeholder="Password" />
+                                            @error('password')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                            @enderror
 
-                                <a class="link" href="{{ route('password.request') }}">
-                                    Forgot Your Password?
-                                </a>
-                              <br>
-	                        <br>
-	                        <button class="btn btn-primary btn-block" type="submit">Login</button><br>
+                                        </div>
+                                    </div>
+
+	                        <button class="btn btn-primary btn-block" type="submit">Reset</button><br>
 
 	                        {{-- <p>Don't have account?<a class="ms-2" href="/register">Create Account</a></p> --}}
 {{-- </div> --}}

@@ -13,6 +13,7 @@ use App\Http\Controllers\DriverLokasiController;
 use App\Http\Controllers\RuteController;
 use App\Http\Controllers\JenisKendaraanController;
 use App\Http\Controllers\PSOController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
 
 use App\Http\Controllers\Autentikasi\AutentikasiController;
 
@@ -33,10 +34,20 @@ Route::get('/', function () {
 
 
 Route::group(["middleware" => ["guest"]], function () {
-    Route::get("/login", [AutentikasiController::class, "login"]);
+    Route::get("/login", [AutentikasiController::class, "login"])->name('login');
     Route::post("/login", [AutentikasiController::class, "post_login"]);
     Route::get("/register", [AutentikasiController::class, "register"]);
     Route::post("/register", [AutentikasiController::class, "post_register"]);
+
+    Route::get('/forgot-password', [ForgotPasswordController::class, 'showResetForm'])->name('password.request');
+    Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink'])->name('password.email');
+    Route::get('/reset-password/{username}/{token}', [ForgotPasswordController::class, 'showResetPasswordForm'])->name('password.reset');
+    Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])->name('password.update');
+
+    // Route::post('/forgot-password', 'ForgotPasswordController@sendResetLink')->name('password.email');
+    // Route::get('/reset-password/{username}/{token}', 'ForgotPasswordController@showResetPasswordForm')->name('password.reset');
+    // Route::post('/reset-password', 'ForgotPasswordController@resetPassword')->name('password.update');
+
 
 });
 

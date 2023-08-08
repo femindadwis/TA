@@ -48,7 +48,7 @@ class DriverLokasiController extends Controller
         }
 
         DB::table('driver_lokasis')->insert($data);
-        return redirect('/driver_lokasi/driver_lokasi')->with('toast_success', 'Lokasi driver Telah ditambahkan!');
+        return redirect('/driver_lokasi/driver_lokasi')->with('toast_success', 'Lokasi driver telah ditambahkan!');
     }
 
     public function edit($id)
@@ -86,7 +86,7 @@ class DriverLokasiController extends Controller
                 ]);
             }
         }
-        return redirect('/driver_lokasi/driver_lokasi')->with('toast_success', 'Lokasi driver Telah diubah!');
+        return redirect('/driver_lokasi/driver_lokasi')->with('toast_success', 'Lokasi driver telah diubah!');
     }
 
 
@@ -96,7 +96,7 @@ class DriverLokasiController extends Controller
         DB::table('driver_lokasis')->where('id', $id)->delete();
 
         // alihkan halaman ke halaman driver
-        return redirect('/driver_lokasi/driver_lokasi')->with('toast_success', 'Lokasi driver Telah dihapus!');
+        return redirect('/driver_lokasi/driver_lokasi')->with('toast_success', 'Lokasi driver telah dihapus!');
     }
 
 
