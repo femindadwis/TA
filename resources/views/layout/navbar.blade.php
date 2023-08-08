@@ -24,9 +24,9 @@
           <li>
             <div class="mode"><i class="fa fa-moon-o"></i></div>
         </li>
-          <li>
+          {{-- <li>
               <div class=""><a href="/profil/profil"><i class="fa fa-user"></i></a></div>
-          </li>
+          </li> --}}
 
 
           </li>

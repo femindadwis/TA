@@ -19,7 +19,7 @@
 </style>
 <script src="https://code.jquery.com/jquery-3.6.1.min.js"
     integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAH3DGxYTYsCIHj1Zv1t7ksfKXb7emWnVc&callback=initMap" async
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDXJvsqexS-SvQkN8brEcic-Uq-iIp52zA&callback=initMap" async
     defer></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAH3DGxYTYsCIHj1Zv1t7ksfKXb7emWnVc&callback=initMapPSO"
     async defer></script>
@@ -149,7 +149,7 @@
             destination: new google.maps.LatLng(locations[locations.length - 1].lat, locations[locations.length - 1]
                 .lng),
             waypoints: waypoints,
-            optimizeWaypoints: true,
+            optimizeWaypoints: false,
             travelMode: google.maps.TravelMode.DRIVING
         };
         directionsService.route(request, function(response, status) {
@@ -261,7 +261,7 @@
             destination: new google.maps.LatLng(locations[locations.length - 1].lat, locations[locations.length - 1]
                 .lng),
             waypoints: waypoints,
-            optimizeWaypoints: true,
+            optimizeWaypoints: false,
             travelMode: google.maps.TravelMode.DRIVING
         };
         directionsService.route(request, function(response, status) {

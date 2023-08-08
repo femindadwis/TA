@@ -148,7 +148,7 @@
             destination: new google.maps.LatLng(locations[locations.length - 1].lat, locations[locations.length - 1]
                 .lng),
             waypoints: waypoints,
-            optimizeWaypoints: true,
+            optimizeWaypoints: false,
             travelMode: google.maps.TravelMode.DRIVING
         };
         directionsService.route(request, function(response, status) {
@@ -259,7 +259,7 @@
             destination: new google.maps.LatLng(locations[locations.length - 1].lat, locations[locations.length - 1]
                 .lng),
             waypoints: waypoints,
-            optimizeWaypoints: true,
+            optimizeWaypoints: false,
             travelMode: google.maps.TravelMode.DRIVING
         };
         directionsService.route(request, function(response, status) {
