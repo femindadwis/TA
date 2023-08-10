@@ -34,7 +34,8 @@
                             <td>{{ $d->name }} </td>
 
                             <td>
-                                <a class="fa fa-code-fork" href="/jarak/detail/{{ $d->id }}" title="Detail"></a>
+                                <a class="fa fa-code-fork" href="/jarak/detail/{{ $d->id }}" title="Detail"></a>&nbsp;&nbsp;
+                                <a class="fa fa-repeat" href="/jarak/reset/{{ $d->id }}"  title="Reset"></a>
                             </td>
                         </tr>
                         @endforeach

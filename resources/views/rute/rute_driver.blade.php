@@ -62,7 +62,7 @@
 
                                             </ol>
                                             <div lass="mt-3">
-                                                Total Distance: {{ $route->jarak }}<br>
+                                                Total Distance: {{ $route->jarak }} km<br>
                                             </div>
                                         </div>
                                     </div>
@@ -79,7 +79,7 @@
                                                 @endforeach
                                                 </ol>
                                             <div lass="mt-3">
-                                                Total Distance: {{ $routenn->jarak }}<br>
+                                                Total Distance: {{ $routenn->jarak }} km<br>
 
                                         </div>
 

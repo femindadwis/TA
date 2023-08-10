@@ -5,7 +5,7 @@
           <p class="mb-0">Created by Feminda Dwi Sismayanti © 2023.</p>
         </div>
         <div class="col-md-6">
-          <p class="pull-right mb-0">CR. Made with Layout Viho. All rights reserved.</i></p>
+          <p class="pull-right mb-0"></i></p>
         </div>
       </div>
     </div>

@@ -95,6 +95,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/jarak/detail/{id}', [JarakController::class, 'detail'])->name('jarak_detail');
     Route::get('/jarak/jarak_driver', [JarakController::class, 'jarak'])->name('jarak_driver');
     // Route::post('/jarak/create', [JarakController::class, 'create'])->name('jarak.create');
+    Route::post('/simpan/jarak', [JarakController::class, 'simpanJarak'])->name('simpan.jarak');
+    Route::get('/jarak/reset/{id}', [JarakController::class, 'reset']);
+    Route::get('/jarak/resetdriver/{id}', [JarakController::class, 'resetdriver']);
 
     // driver_lokasi
     Route::get('/driver_lokasi/driver_lokasi', [DriverLokasiController::class, 'index'])->name('driver_lokasi');
@@ -128,8 +131,8 @@ Route::group(['middleware' => 'auth'], function () {
 
 
     // ROUTE RUTE PSO
-    Route::get('/rute/rute_pso', [PSOController::class, 'index'])->name('rute_pso');
-    Route::get('/maps/data/{id}', [PSOController::class, 'data'])->name('maps.data');
+    // Route::get('/rute/rute_pso', [PSOController::class, 'index'])->name('rute_pso');
+    // Route::get('/maps/data/{id}', [PSOController::class, 'data'])->name('maps.data');
 
 
 });

@@ -19,9 +19,9 @@
 </style>
 <script src="https://code.jquery.com/jquery-3.6.1.min.js"
     integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDXJvsqexS-SvQkN8brEcic-Uq-iIp52zA&callback=initMap" async
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCfDg7Rknio90wPC0XaxJ6-l9JKppBygpU&callback=initMap" async
     defer></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAH3DGxYTYsCIHj1Zv1t7ksfKXb7emWnVc&callback=initMapPSO"
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCfDg7Rknio90wPC0XaxJ6-l9JKppBygpU&callback=initMapPSO"
     async defer></script>
 </head>
 <div class="page-body">
@@ -42,7 +42,7 @@
                                         aria-controls="pills-clrhome1" aria-selected="true">PSO</a></li>
                                 <li class="nav-item"><a class="nav-link" id="pills-clrprofile-tab1"
                                         data-bs-toggle="pill" href="#pills-clrprofile1" role="tab"
-                                        aria-controls="pills-clrprofile1" aria-selected="false">KNN</a></li>
+                                        aria-controls="pills-clrprofile1" aria-selected="false">Nearest Neighbor</a></li>
                             </ul>
                             <div class="tab-content" id="pills-clrtabContent1">
                                 <div class="tab-pane fade show active" id="pills-clrhome1" role="tabpanel"
@@ -61,7 +61,7 @@
 
                                         </ol>
                                         <div lass="mt-3">
-                                            Total Distance: {{ $route->jarak }}<br>
+                                            Total Distance: {{ $route->jarak }} km<br>
                                         </div>
                                     </div>
                                 </div>
@@ -78,7 +78,7 @@
                                             @endforeach
                                             </ol>
                                         <div lass="mt-3">
-                                            Total Distance: {{ $routenn->jarak }}<br>
+                                            Total Distance: {{ $routenn->jarak }} km<br>
 
                                         </div>
 

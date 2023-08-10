@@ -35,18 +35,18 @@ class RuteController extends Controller
         $locationIds = $driverLocations->pluck('lokasi_id');
         $locations = Lokasi::whereIn('id', $locationIds)->get();
 
-        // Menghitung jarak antara lokasi-lokasi yang ada
-        $distances = $this->calculateDistances($locations);
+        // // Menghitung jarak antara lokasi-lokasi yang ada
+        // $distances = $this->calculateDistances($locations);
 
-        // Memproses dan menyimpan data jarak antara lokasi-lokasi ke dalam tabel Jarak
-        foreach ($distances as $loc1Id => $distancesToOther) {
-            foreach ($distancesToOther as $loc2Id => $distance) {
-                Jarak::updateOrCreate(
-                    ['loc_1' => $loc1Id, 'loc_2' => $loc2Id],
-                    ['distance' => $distance]
-                );
-            }
-        }
+        // // Memproses dan menyimpan data jarak antara lokasi-lokasi ke dalam tabel Jarak
+        // foreach ($distances as $loc1Id => $distancesToOther) {
+        //     foreach ($distancesToOther as $loc2Id => $distance) {
+        //         Jarak::updateOrCreate(
+        //             ['loc_1' => $loc1Id, 'loc_2' => $loc2Id],
+        //             ['distance' => $distance]
+        //         );
+        //     }
+        // }
 
         $jarakData = Jarak::select('loc_1', 'loc_2', 'distance')->get()->toArray();
         $jarak = [];
@@ -130,7 +130,7 @@ class RuteController extends Controller
             'driver' => $driver,
             'user' => User::all(),
             'locations' => $locations,
-            'distances' => $distances,
+            // 'distances' => $distances,
             'driver_lokasi' => $driver_lokasi,
             'optimalRoute' => $optimalRoute,
             'optimalRoutePSO' => $optimalRoutePSO,
@@ -161,18 +161,18 @@ class RuteController extends Controller
         $locationIds = $driverLocations->pluck('lokasi_id');
         $locations = Lokasi::whereIn('id', $locationIds)->get();
 
-        // Menghitung jarak antara lokasi-lokasi yang ada
-        $distances = $this->calculateDistances($locations);
+        // // Menghitung jarak antara lokasi-lokasi yang ada
+        // $distances = $this->calculateDistances($locations);
 
-        // Memproses dan menyimpan data jarak antara lokasi-lokasi ke dalam tabel Jarak
-        foreach ($distances as $loc1Id => $distancesToOther) {
-            foreach ($distancesToOther as $loc2Id => $distance) {
-                Jarak::updateOrCreate(
-                    ['loc_1' => $loc1Id, 'loc_2' => $loc2Id],
-                    ['distance' => $distance]
-                );
-            }
-        }
+        // // Memproses dan menyimpan data jarak antara lokasi-lokasi ke dalam tabel Jarak
+        // foreach ($distances as $loc1Id => $distancesToOther) {
+        //     foreach ($distancesToOther as $loc2Id => $distance) {
+        //         Jarak::updateOrCreate(
+        //             ['loc_1' => $loc1Id, 'loc_2' => $loc2Id],
+        //             ['distance' => $distance]
+        //         );
+        //     }
+        // }
 
         $jarakData = Jarak::select('loc_1', 'loc_2', 'distance')->get()->toArray();
         $jarak = [];
@@ -256,7 +256,7 @@ class RuteController extends Controller
             'driver' => $driver,
             'user' => User::all(),
             'locations' => $locations,
-            'distances' => $distances,
+            // 'distances' => $distances,
             'driver_lokasi' => $driver_lokasi,
             'optimalRoute' => $optimalRoute,
             'optimalRoutePSO' => $optimalRoutePSO,
@@ -315,41 +315,41 @@ class RuteController extends Controller
     // }
 
     // fungsi itung jarak google maps api
-    private function calculateDistances($locations)
-    {
-        $apiKey = 'AIzaSyAH3DGxYTYsCIHj1Zv1t7ksfKXb7emWnVc';
-        $distances = [];
+    // private function calculateDistances($locations)
+    // {
+    //     $apiKey = '';
+    //     $distances = [];
 
-        foreach ($locations as $location) {
-            $origins = $destinations = [];
+    //     foreach ($locations as $location) {
+    //         $origins = $destinations = [];
 
-            foreach ($locations as $otherLocation) {
-                $origins[] = $location->lat . ',' . $location->lng;
-                $destinations[] = $otherLocation->lat . ',' . $otherLocation->lng;
-            }
+    //         foreach ($locations as $otherLocation) {
+    //             $origins[] = $location->lat . ',' . $location->lng;
+    //             $destinations[] = $otherLocation->lat . ',' . $otherLocation->lng;
+    //         }
 
-            $origins = implode('|', $origins);
-            $destinations = implode('|', $destinations);
+    //         $origins = implode('|', $origins);
+    //         $destinations = implode('|', $destinations);
 
-            $url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins={$origins}&destinations={$destinations}&key={$apiKey}";
+    //         $url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins={$origins}&destinations={$destinations}&key={$apiKey}";
 
-            $response = Http::get($url);
+    //         $response = Http::get($url);
 
-            if ($response->ok()) {
-                $data = $response->json();
+    //         if ($response->ok()) {
+    //             $data = $response->json();
 
-                foreach ($data['rows'] as $i => $row) {
-                    foreach ($row['elements'] as $j => $element) {
-                        if ($element['status'] == 'OK' && isset($element['distance']['value'])) {
-                            $distances[$location->id][$locations[$j]->id] = $element['distance']['value'] / 1000;
-                        }
-                    }
-                }
-            }
-        }
+    //             foreach ($data['rows'] as $i => $row) {
+    //                 foreach ($row['elements'] as $j => $element) {
+    //                     if ($element['status'] == 'OK' && isset($element['distance']['value'])) {
+    //                         $distances[$location->id][$locations[$j]->id] = $element['distance']['value'] / 1000;
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
 
-        return $distances;
-    }
+    //     return $distances;
+    // }
 
     public function findOptimalRoute($locations, $jarak)
 
@@ -580,20 +580,30 @@ array_push($optimalRoute, 1);
     }
 
     public function resetdriver($id)
-    {
-        try {
+{
+    try {
+        // Begin a database transaction
+        DB::beginTransaction();
 
-            DB::beginTransaction();
-            DB::table('route')->where('driver_id', $id)->delete();
-            DB::table('routenn')->where('driver_id', $id)->delete();
-            $name =  DB::table('driver')->where('id', $id)->value('name');
-            $pesan = "Rute $name telah direset!";
-            DB::commit();
+        // Delete related data from the 'jaraks' table
+        DB::table('jaraks')->where('loc_1', $id)->orWhere('loc_2', $id)->delete();
 
-            return redirect('/jarak/jarak_driver')->with('toast_success', $pesan);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return redirect('/jarak/jarak_driver')->with('toast_error', 'Gagal mereset rute. Silakan coba lagi.');
-        }
+        // Get the driver's name for the success message
+        $name = DB::table('driver')->where('id', $id)->value('name');
+        $pesan = "Jarak $name telah direset!";
+
+        // Commit the transaction
+        DB::commit();
+
+        // Redirect with success message
+        return redirect('/jarak/jarak_driver')->with('toast_success', $pesan);
+    } catch (\Exception $e) {
+        // Roll back the transaction on exception
+        DB::rollBack();
+
+        // Redirect with error message
+        return redirect('/jarak/jarak_driver')->with('toast_error', 'Gagal mereset jarak. Silakan coba lagi.');
     }
+}
+
 }
