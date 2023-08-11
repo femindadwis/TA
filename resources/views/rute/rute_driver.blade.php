@@ -19,9 +19,9 @@
 </style>
 <script src="https://code.jquery.com/jquery-3.6.1.min.js"
     integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAH3DGxYTYsCIHj1Zv1t7ksfKXb7emWnVc&callback=initMap" async
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCfDg7Rknio90wPC0XaxJ6-l9JKppBygpU&callback=initMap" async
     defer></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAH3DGxYTYsCIHj1Zv1t7ksfKXb7emWnVc&callback=initMapPSO"
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCfDg7Rknio90wPC0XaxJ6-l9JKppBygpU&callback=initMapPSO"
     async defer></script>
 </head>
 <div class="page-body">

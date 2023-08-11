@@ -410,9 +410,9 @@ array_push($optimalRoute, 1);
 
     public function findOptimalRoutePSO($locations, $jarak)
     {
-        mt_srand(42);
+        mt_srand(1234);
         $numLocations = count($locations);
-        $swarmSize = $numLocations * 5;
+        $swarmSize = $numLocations * 10;
         $maxIterations = 100;
 
         $wMin = 0.4;

@@ -148,81 +148,81 @@ if (empty($jarakData)) {
         return view('jarak.jarak_detail', $data);
     }
 
-    private function calculateDistances($locations)
-    {
-        $apiKey = 'AIzaSyCfDg7Rknio90wPC0XaxJ6-l9JKppBygpU';
-        $distances = [];
-
-        $origins = $destinations = [];
-
-        foreach ($locations as $location) {
-            $origins[] = $location->lat . ',' . $location->lng;
-            $destinations[] = $location->lat . ',' . $location->lng; // Use the same locations for origins and destinations
-        }
-
-        $origins = implode('|', $origins);
-        $destinations = implode('|', $destinations);
-
-        $url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins={$origins}&destinations={$destinations}&key={$apiKey}";
-
-        $response = Http::get($url);
-
-        if ($response->ok()) {
-            $data = $response->json();
-
-            dd($data); // Dump the response data for debugging
-
-            foreach ($data['rows'] as $i => $row) {
-                foreach ($row['elements'] as $j => $element) {
-                    if ($element['status'] == 'OK' && isset($element['distance']['value'])) {
-                        $distances[$locations[$i]->id][$locations[$j]->id] = $element['distance']['value'] / 1000;
-                    }
-                }
-            }
-        }
-
-        return $distances;
-    }
-
-
-
     // private function calculateDistances($locations)
     // {
-    //     $apiKey = 'pk.eyJ1IjoiZmVtaW5kYTE2IiwiYSI6ImNsa25sc243bjB4czEzZG1tOTFxOXRmd2gifQ.LfN9gOS8caeDzvmoRIgDGQ';
-    //     $coordinates = [];
+    //     $apiKey = 'AIzaSyCfDg7Rknio90wPC0XaxJ6-l9JKppBygpU';
+    //     $distances = [];
+
+    //     $origins = $destinations = [];
 
     //     foreach ($locations as $location) {
-    //         $coordinates[] = $location->lng . ',' . $location->lat;
+    //         $origins[] = $location->lat . ',' . $location->lng;
+    //         $destinations[] = $location->lat . ',' . $location->lng; // Use the same locations for origins and destinations
     //     }
 
-    //     $coordinates = implode(';', $coordinates);
+    //     $origins = implode('|', $origins);
+    //     $destinations = implode('|', $destinations);
 
-    //     $url = "https://api.mapbox.com/directions-matrix/v1/mapbox/driving/{$coordinates}?access_token={$apiKey}&annotations=distance";
+    //     $url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins={$origins}&destinations={$destinations}&key={$apiKey}";
+
     //     $response = Http::get($url);
 
     //     if ($response->ok()) {
     //         $data = $response->json();
 
-    //         // Initialize the distances array as an empty array
-    //         $distances = [];
+    //         dd($data); // Dump the response data for debugging
 
-    //         foreach ($data['distances'] as $i => $row) {
-    //             // $i corresponds to the index of the origin location in the locations array
-    //             $originId = $locations[$i]->id;
-
-    //             foreach ($row as $j => $distance) {
-    //                 // $j corresponds to the index of the destination location in the locations array
-    //                 $destinationId = $locations[$j]->id;
-
-    //                 // Convert the distance from meters to kilometers and format it with two decimal places
-    //                 $distances[$originId][$destinationId] = number_format($distance / 1000, 2);
+    //         foreach ($data['rows'] as $i => $row) {
+    //             foreach ($row['elements'] as $j => $element) {
+    //                 if ($element['status'] == 'OK' && isset($element['distance']['value'])) {
+    //                     $distances[$locations[$i]->id][$locations[$j]->id] = $element['distance']['value'] / 1000;
+    //                 }
     //             }
     //         }
-
-    //         return $distances;
     //     }
-    //     return [];
+
+    //     return $distances;
     // }
+
+
+
+    private function calculateDistances($locations)
+    {
+        $apiKey = 'pk.eyJ1IjoiZmVtaW5kYTE2IiwiYSI6ImNsa25sc243bjB4czEzZG1tOTFxOXRmd2gifQ.LfN9gOS8caeDzvmoRIgDGQ';
+        $coordinates = [];
+
+        foreach ($locations as $location) {
+            $coordinates[] = $location->lng . ',' . $location->lat;
+        }
+
+        $coordinates = implode(';', $coordinates);
+
+        $url = "https://api.mapbox.com/directions-matrix/v1/mapbox/driving/{$coordinates}?access_token={$apiKey}&annotations=distance";
+        $response = Http::get($url);
+
+        if ($response->ok()) {
+            $data = $response->json();
+
+            // Initialize the distances array as an empty array
+            $distances = [];
+
+            foreach ($data['distances'] as $i => $row) {
+                // $i corresponds to the index of the origin location in the locations array
+                $originId = $locations[$i]->id;
+
+                foreach ($row as $j => $distance) {
+                    // $j corresponds to the index of the destination location in the locations array
+                    $destinationId = $locations[$j]->id;
+
+                    // Convert the distance from meters to kilometers and format it with two decimal places
+                    $distances[$originId][$destinationId] = number_format($distance / 1000, 2);
+                }
+            }
+
+            return $distances;
+        }
+        return [];
+    }
 
     public function simpanJarak(Request $request)
     {

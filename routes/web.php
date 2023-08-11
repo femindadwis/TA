@@ -58,6 +58,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
 
     // ROUTE USER
+    
     Route::get('/user/user', [UserController::class, 'index'])->name('user');
     Route::get('/user/tambah', [UserController::class, 'tambah'])->name('user_tambah');
     Route::post('/user/store', [UserController::class, 'store'])->name('user_tambah');
@@ -111,7 +112,7 @@ Route::group(['middleware' => 'auth'], function () {
    Route::post('/driver_lokasi/lokasiupdate', [DriverLokasiController::class, 'lokasiupdate']);
     // JENIS KENDARAAN
     Route::get('/jenis_kendaraan/jenis_kendaraan', [JenisKendaraanController::class, 'index'])->name('jenis_kendaraan');
-    Route::get('/jenis_kendaraan/tambah', [JenisKendaraanController::class, 'tambah']);
+    Route::get('/jenis_kendaraan/tambah', [JenisKendaraanController::class, 'tambah'])->name('jenis_kendaraan.tambah');
     Route::post('/jenis_kendaraan/store', [JenisKendaraanController::class, 'store']);
     Route::get('/jenis_kendaraan/edit/{id}', [JenisKendaraanController::class, 'edit'])->name('jenis_kendaraan.edit');
     Route::post('/jenis_kendaraan/update', [JenisKendaraanController::class, 'update']);
