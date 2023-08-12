@@ -8,8 +8,6 @@ use App\Models\Driver_lokasi;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
-
-
 use App\Models\Lokasi;
 use App\Models\Driver;
 use App\Models\Route;
@@ -48,7 +46,6 @@ class LokasiApiController extends Controller
             'alamat' => 'required',
             'long' => 'required',
             'lat' => 'required',
-            'fotoName' => 'required',
             'foto' => 'required|image|mimes:jpeg,png,jpg',
         ]);
 
@@ -57,10 +54,7 @@ class LokasiApiController extends Controller
         }
 
         if ($request->hasFile('foto')) {
-            $foto = $request->file('foto');
-            $fotoName = $request->fotoName;
-            $fileName = 'Lokasi' . $fotoName;
-            $foto->storeAs('Lokasi', $fileName, 'public');
+            $foto = $request->file('foto')->store('Lokasi', 'public');
         }
 
         $lokasi = new Lokasi();
@@ -68,7 +62,7 @@ class LokasiApiController extends Controller
         $lokasi->alamat = $request->alamat;
         $lokasi->lng = $request->long;
         $lokasi->lat = $request->lat;
-        $lokasi->foto = $request->fotoName;
+        $lokasi->foto = $foto;
         $lokasi->save();
 
         $driverLokasi = new Driver_lokasi();
@@ -81,25 +75,29 @@ class LokasiApiController extends Controller
 
     public function update(Request $request)
     {
-        $user = Auth::user();
-        $lokasi = Lokasi::find($request->id);
-        //cek user
-        if ($user->id != $lokasi->user_id) {
-            return response()->json(['error' => 'Unauthorized']);
-        }
-        //validasi data masuk
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'alamat' => 'required',
-            'lng' => 'required',
+            'long' => 'required',
             'lat' => 'required',
+            'foto' => 'required|image|mimes:jpeg,png,jpg',
         ]);
-        //bila gagal validasi
+
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()]);
+            return response()->json(['error' => $validator->errors()], 500);
         }
-        //update note
-        Lokasi::where('id', $request->id)->update($request->all());
+
+        if ($request->hasFile('foto')) {
+            $foto = $request->file('foto')->store('Lokasi', 'public');
+        }
+
+        $lokasi = Lokasi::find($request->id);
+        $lokasi->name = $request->name;
+        $lokasi->alamat = $request->alamat;
+        $lokasi->lng = $request->long;
+        $lokasi->lat = $request->lat;
+        $lokasi->foto = $foto;
+        $lokasi->save();
 
         return response()->json(['message' => 'Lokasi updated!']);
     }
@@ -114,12 +112,6 @@ class LokasiApiController extends Controller
         }
         Lokasi::where('id', $request->id)->delete();
         return response()->json(['message' => 'Lokasi deleted!']);
-    }
-
-    public function getImage($id)
-    {
-        $data = Lokasi::find($id);
-        return response()->file(public_path("storage/foto_tps/$data->foto"));
     }
 
     public function rute()
